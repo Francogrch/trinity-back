@@ -1,0 +1,117 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table usuario {
+  id integer [primary key]
+  nombre varchar
+  apellido varchar
+  rol varchar
+  tarjeta_id integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tarjeta {
+  id integer [primary key]
+  numero varchar
+}
+
+Table reserva {
+  id integer [primary key]
+  propiedad_id integer
+  inquilino_id integer
+  chat_id integer
+  estado varchar
+  fecha_inicio date
+  fecha_fin date
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table propiedad {
+  id integer [primary key]
+  nombre varchar [note: 'Debe ser único?']
+  descripcion varchar
+  ubicacion varchar
+  huespedes integer
+  ambientes integer
+  banios integer
+  cocheras integer
+  pol_cancel_id integer
+  pol_reserva_id integer
+  precioNoche real
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table politica_cancelacion {
+  id integer [primary key]
+}
+
+Table politica_reserva {
+  id integer [primary key]
+}
+
+Table calificacion_user {
+  id integer [primary key]
+  evaluado_id integer [not null]   // el usuario que recibe la calificación
+  evaluador_id integer [not null]  // el usuario que califica (dueño o inquilino)
+  puntaje integer
+  comentario text
+  created_at timestamp
+}
+
+Table calificacion_prop {
+  id integer [primary key]
+  propiedad_id integer [not null] // FK a propiedad
+  usuario_id integer [not null]   // quién califica
+  puntaje integer                 // de 1 a 5, por ejemplo
+  comentario text
+  created_at timestamp
+}
+
+Table chat {
+  id integer [primary key]
+  mensaje_id integer
+  emisor_id integer
+  receptor_id integer
+}
+
+Table mensaje {
+  id integer [primary key]
+  chat_id integer [not null]
+  emisor_id integer
+  receptor_id integer
+  hora timestamp
+  texto text
+}
+
+
+Table imagen_propiedad {
+  id integer [primary key]
+  propiedad_id integer [not null]
+  url text [note: 'URL de la imagen almacenada']
+}
+
+// Relaciones
+
+Ref: usuario.tarjeta_id > tarjeta.id
+
+Ref: reserva.propiedad_id > propiedad.id
+Ref: reserva.inquilino_id > usuario.id
+Ref: reserva.chat_id > chat.id
+
+Ref: propiedad.pol_cancel_id > politica_cancelacion.id
+Ref: propiedad.pol_reserva_id > politica_reserva.id
+
+Ref: imagen_propiedad.propiedad_id > propiedad.id
+
+Ref: mensaje.chat_id > chat.id
+Ref: mensaje.emisor_id > usuario.id
+Ref: mensaje.receptor_id > usuario.id
+
+Ref: calificacion_user.evaluado_id - usuario.id
+Ref: calificacion_user.evaluador_id - usuario.id
+
+Ref: calificacion_prop.usuario_id - usuario.id
+Ref: calificacion_prop.propiedad_id - propiedad.id
