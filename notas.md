@@ -12,9 +12,17 @@ Activar entorno:
 
     pip install -r ./requirements.txt  
 
+## Resetear la base de datos
+
+    flask resetdb
+
 ## Correr flask
 
-    flask --app ./run.py run --debug
+    flask run
+
 o
 
-    python run.py
+    flask --app ./app.py run --debug
+o
+
+    python app.py
