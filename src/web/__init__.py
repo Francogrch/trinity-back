@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 
 from src.models import database, seed
 from src.web.controllers.users import user_blueprint
@@ -8,6 +9,9 @@ from src.web.controllers.propiedades import propiedad_blueprint
 def create_app():
     app = Flask(__name__)
     app.config.from_object('src.web.config.Config')
+
+    #Config CORS
+    CORS(app)
 
     with app.app_context():
         database.init_db(app)
