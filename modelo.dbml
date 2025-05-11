@@ -38,8 +38,12 @@ Table propiedad {
   id integer [primary key]
   nombre varchar [unique]
   descripcion varchar
-  id_ubicacion integer
-  id_localidad integer
+  entre_calles varchar
+  calle varchar
+  numero varchar
+  piso varchar
+  depto varchar
+  id_ciudad integer
   huespedes integer
   ambientes integer
   banios integer
@@ -50,25 +54,16 @@ Table propiedad {
   updated_at timestamp
 }
 
-Table localidad {
-  id integer [primary key]
-  id_provincia integer
-  ciudad varchar
-}
-
-Table ubicacion {
-  id integer [primary key]
-  
-  calle varchar
-  numero varchar
-  piso varchar
-  depto varchar
-
-}
 Table provincia {
   id integer [primary key]
-  descripcion varchar
+  nombre varchar
 }
+Table ciudad {
+  id integer [primary key]
+  nombre varchar
+  id_provincia integer
+}
+
 
 Table politica_reserva {
   id integer [primary key]
@@ -125,8 +120,6 @@ Ref: reserva.inquilino_id > usuario.id
 Ref: reserva.chat_id > chat.id
 
 Ref: propiedad.id_pol_reserva > politica_reserva.id
-Ref: propiedad.id_ubicacion - ubicacion.id
-Ref: propiedad.id_localidad - localidad.id
 
 Ref: imagen_propiedad.propiedad_id > propiedad.id
 
@@ -140,6 +133,6 @@ Ref: calificacion_user.evaluador_id - usuario.id
 Ref: calificacion_prop.usuario_id > usuario.id
 Ref: calificacion_prop.propiedad_id > propiedad.id
 
-Ref: localidad.id_provincia > provincia.id
+Ref: propiedad.id_ciudad > ciudad.id
 Ref: usuario.rol > rol.id
-
+Ref: ciudad.id_provincia < provincia.id
