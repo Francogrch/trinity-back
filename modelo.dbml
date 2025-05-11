@@ -3,12 +3,18 @@
 
 Table usuario {
   id integer [primary key]
+  num_id integer [unique] 
   nombre varchar
   apellido varchar
-  rol varchar
+  rol integer
   tarjeta_id integer
   created_at timestamp
   updated_at timestamp
+}
+
+Table rol {
+  id integer [primary key]
+  descripcion varchar
 }
 
 Table tarjeta {
@@ -30,26 +36,43 @@ Table reserva {
 
 Table propiedad {
   id integer [primary key]
-  nombre varchar [note: 'Debe ser único?']
+  nombre varchar [unique]
   descripcion varchar
-  ubicacion varchar
+  id_ubicacion integer
+  id_localidad integer
   huespedes integer
   ambientes integer
   banios integer
   cocheras integer
-  pol_cancel_id integer
-  pol_reserva_id integer
+  id_pol_reserva integer
   precioNoche real
   created_at timestamp
   updated_at timestamp
 }
 
-Table politica_cancelacion {
+Table localidad {
   id integer [primary key]
+  id_provincia integer
+  ciudad varchar
+}
+
+Table ubicacion {
+  id integer [primary key]
+  
+  calle varchar
+  numero varchar
+  piso varchar
+  depto varchar
+
+}
+Table provincia {
+  id integer [primary key]
+  descripcion varchar
 }
 
 Table politica_reserva {
   id integer [primary key]
+  descripcion varchar
 }
 
 Table calificacion_user {
@@ -95,14 +118,15 @@ Table imagen_propiedad {
 
 // Relaciones
 
-Ref: usuario.tarjeta_id > tarjeta.id
+Ref: usuario.tarjeta_id - tarjeta.id
 
 Ref: reserva.propiedad_id > propiedad.id
 Ref: reserva.inquilino_id > usuario.id
 Ref: reserva.chat_id > chat.id
 
-Ref: propiedad.pol_cancel_id > politica_cancelacion.id
-Ref: propiedad.pol_reserva_id > politica_reserva.id
+Ref: propiedad.id_pol_reserva > politica_reserva.id
+Ref: propiedad.id_ubicacion - ubicacion.id
+Ref: propiedad.id_localidad - localidad.id
 
 Ref: imagen_propiedad.propiedad_id > propiedad.id
 
@@ -113,5 +137,9 @@ Ref: mensaje.receptor_id > usuario.id
 Ref: calificacion_user.evaluado_id - usuario.id
 Ref: calificacion_user.evaluador_id - usuario.id
 
-Ref: calificacion_prop.usuario_id - usuario.id
-Ref: calificacion_prop.propiedad_id - propiedad.id
+Ref: calificacion_prop.usuario_id > usuario.id
+Ref: calificacion_prop.propiedad_id > propiedad.id
+
+Ref: localidad.id_provincia > provincia.id
+Ref: usuario.rol > rol.id
+
