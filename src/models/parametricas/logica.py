@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PrimerPagoPorcentaje
 
 
 def get_provincias():
@@ -23,6 +23,20 @@ def create_tipos_propiedad(tipo):
         db.session.add(tipo_propiedad)
         db.session.commit()
         return tipo_propiedad
+    except:
+        db.session.rollback()
+        return None
+
+def get_porcentajes():
+    porcentaje = PrimerPagoPorcentaje.query.all()
+    return porcentaje
+
+def create_porcentaje(porcentaje):
+    try:
+        nuevo = PrimerPagoPorcentaje(porcentaje)
+        db.session.add(nuevo)
+        db.session.commit()
+        return nuevo
     except:
         db.session.rollback()
         return None

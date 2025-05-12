@@ -10,7 +10,7 @@ def get_propiedades():
 def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,
     piso, depto, id_ciudad, huespedes, ambientes,
-    banios, cocheras, id_pol_reserva, precioNoche, id_tipo
+    banios, cocheras, id_porcentaje, precioNoche, id_tipo
 ):
     try:
         nueva = Propiedad(
@@ -26,7 +26,7 @@ def create_propiedad(
             ambientes=ambientes,
             banios=banios,
             cocheras=cocheras,
-            id_pol_reserva=id_pol_reserva,
+            id_porcentaje=id_porcentaje,
             precioNoche=precioNoche,
             id_tipo=id_tipo
         )
