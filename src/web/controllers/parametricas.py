@@ -25,3 +25,24 @@ def get_ciudades_by_provincia():
     else:
         return jsonify({'error': 'No hay ciudades'}), 400
 
+
+@parametricas_blueprint.get('/tipos')
+def get_tipos_propiedad():
+    tipos = parametricas.get_tipos_propiedad()
+    if tipos:
+        return jsonify([{
+        'id': t.id,
+        'tipo': t.tipo
+        } for t in tipos])
+    else:
+        return jsonify({'error': 'No hay tipos de propiedad definidos'}), 400
+
+
+@parametricas_blueprint.post('/tipos')
+def create_tipos_propiedad():
+    data = request.get_json()
+    tipo = parametricas.create_tipos_propiedad(tipo=data['tipo'])
+    if tipo:
+        return jsonify({'mensaje': 'Tipo creado'}), 201
+    else:
+        return jsonify({'error': 'Error al crear el tipo'}), 400

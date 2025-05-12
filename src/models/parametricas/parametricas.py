@@ -27,3 +27,15 @@ class Ciudad(db.Model):
     def __repr__(self):
         return f"<{self.provincia}, {self.nombre}>"
 
+
+class PropiedadTipos(db.Model):
+    __tablename__ = "propiedad_tipos"
+    id = db.Column(db.Integer, primary_key=True)
+    tipo = db.Column(db.String, unique=True, nullable=False)
+
+    def __init__(self, tipo):
+        self.tipo = tipo
+
+    def __repr__(self):
+        return self.tipo
+

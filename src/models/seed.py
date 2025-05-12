@@ -1,7 +1,11 @@
-from src.models import users, propiedades
+from src.models import users, propiedades, parametricas
 
 
 def run():
+    # Tipos de propiedades
+    dpto = parametricas.create_tipos_propiedad("Departamento")
+    cabana = parametricas.create_tipos_propiedad("Cabaña")
+
     # Usuarios de ejemplo
     user1 = users.create_usuario(nombre="Juan", rol="Nadie")
     user2 = users.create_usuario(nombre="Raul", rol="Empleado")
