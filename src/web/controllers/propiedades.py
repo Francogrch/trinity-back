@@ -11,13 +11,14 @@ def get_propiedades():
     return jsonify([{
         'id': p.id,
         'nombre': p.nombre,
+        'tipo': p.tipo.tipo,
         'descripcion': p.descripcion,
         'entre_calles': p.entre_calles,
         'calle': p.calle,
         'numero': p.numero,
         'piso': p.piso,
         'depto': p.depto,
-        'id_ciudad': p.id_ciudad,
+        'ciudad': p.ciudad.nombre,
         'huespedes': p.huespedes,
         'ambientes': p.ambientes,
         'banios': p.banios,
@@ -46,7 +47,8 @@ def create_propiedad():
         banios=data['banios'],
         cocheras=data['cocheras'],
         id_pol_reserva=data['id_pol_reserva'],
-        precioNoche=data['precioNoche']
+        precioNoche=data['precioNoche'],
+        id_tipo=data['id_tipo']
     )
     if nueva:
         return jsonify({'mensaje': 'Propiedad creada'}), 201

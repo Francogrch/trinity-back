@@ -11,13 +11,18 @@ class Propiedad(db.Model):
     numero = db.Column(db.String, nullable=False)
     piso = db.Column(db.String, nullable=False)
     depto = db.Column(db.String, nullable=False)
-    id_ciudad = db.Column(db.Integer, nullable=False)
     huespedes = db.Column(db.Integer, nullable=False)
     ambientes = db.Column(db.Integer, nullable=False)
     banios = db.Column(db.Integer, nullable=False)
     cocheras = db.Column(db.Integer, nullable=False)
-    id_pol_reserva = db.Column(db.Integer, nullable=False)
     precioNoche = db.Column(db.Float, nullable=False)
+    id_pol_reserva = db.Column(db.Integer, nullable=False)
+    #Relación con Tipos de propiedad
+    id_tipo = db.Column(db.Integer, db.ForeignKey("propiedad_tipos.id"))
+    tipo = db.relationship("PropiedadTipo")
+    #Relación con Ciudad
+    id_ciudad = db.Column(db.Integer, db.ForeignKey("ciudades.id"))
+    ciudad = db.relationship("Ciudad")
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
@@ -27,7 +32,7 @@ class Propiedad(db.Model):
         self, nombre, descripcion, entre_calles, calle,
         numero, piso, depto, id_ciudad,
         huespedes, ambientes, banios,
-        cocheras, id_pol_reserva, precioNoche
+        cocheras, id_pol_reserva, precioNoche, id_tipo
     ):
         self.nombre = nombre
         self.descripcion = descripcion
@@ -43,6 +48,7 @@ class Propiedad(db.Model):
         self.cocheras = cocheras
         self.id_pol_reserva = id_pol_reserva
         self.precioNoche = precioNoche
+        self.id_tipo = id_tipo
 
     def __repr__(self):
         return f"<Propiedad {self.nombre}>"

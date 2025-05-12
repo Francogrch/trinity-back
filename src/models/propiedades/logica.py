@@ -10,7 +10,7 @@ def get_propiedades():
 def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,
     piso, depto, id_ciudad, huespedes, ambientes,
-    banios, cocheras, id_pol_reserva, precioNoche
+    banios, cocheras, id_pol_reserva, precioNoche, id_tipo
 ):
     try:
         nueva = Propiedad(
@@ -27,7 +27,8 @@ def create_propiedad(
             banios=banios,
             cocheras=cocheras,
             id_pol_reserva=id_pol_reserva,
-            precioNoche=precioNoche
+            precioNoche=precioNoche,
+            id_tipo=id_tipo
         )
         db.session.add(nueva)
         db.session.commit()

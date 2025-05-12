@@ -28,7 +28,7 @@ class Ciudad(db.Model):
         return f"<{self.provincia}, {self.nombre}>"
 
 
-class PropiedadTipos(db.Model):
+class PropiedadTipo(db.Model):
     __tablename__ = "propiedad_tipos"
     id = db.Column(db.Integer, primary_key=True)
     tipo = db.Column(db.String, unique=True, nullable=False)

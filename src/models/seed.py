@@ -26,7 +26,8 @@ def run():
         banios=2,
         cocheras=1,
         id_pol_reserva=1,
-        precioNoche=150.0
+        precioNoche=150.0,
+        id_tipo=dpto.id
     )
 
     prop2 = propiedades.create_propiedad(
@@ -43,7 +44,8 @@ def run():
         banios=1,
         cocheras=0,
         id_pol_reserva=1,
-        precioNoche=75.0
+        precioNoche=75.0,
+        id_tipo=dpto.id
     )
 
     prop3 = propiedades.create_propiedad(
@@ -60,5 +62,6 @@ def run():
         banios=1,
         cocheras=2,
         id_pol_reserva=2,
-        precioNoche=120.0
+        precioNoche=120.0,
+        id_tipo=cabana.id
     )
