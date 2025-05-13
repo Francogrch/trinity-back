@@ -1,7 +1,16 @@
-from src.models import users, propiedades
+from src.models import users, propiedades, parametricas
 
 
 def run():
+    # Tipos de propiedades
+    dpto = parametricas.create_tipos_propiedad("Departamento")
+    cabana = parametricas.create_tipos_propiedad("Cabaña")
+
+    # Porcentajes del primer pago
+    cero = parametricas.create_porcentaje(0)
+    veinte = parametricas.create_porcentaje(0.20)
+    cien = parametricas.create_porcentaje(1)
+
     # Usuarios de ejemplo
     user1 = users.create_usuario(nombre="Juan", rol="Nadie")
     user2 = users.create_usuario(nombre="Raul", rol="Empleado")
@@ -21,8 +30,9 @@ def run():
         ambientes=4,
         banios=2,
         cocheras=1,
-        id_pol_reserva=1,
-        precioNoche=150.0
+        id_porcentaje=1,
+        precioNoche=150.0,
+        id_tipo=dpto.id
     )
 
     prop2 = propiedades.create_propiedad(
@@ -38,8 +48,9 @@ def run():
         ambientes=2,
         banios=1,
         cocheras=0,
-        id_pol_reserva=1,
-        precioNoche=75.0
+        id_porcentaje=1,
+        precioNoche=75.0,
+        id_tipo=dpto.id
     )
 
     prop3 = propiedades.create_propiedad(
@@ -55,6 +66,7 @@ def run():
         ambientes=3,
         banios=1,
         cocheras=2,
-        id_pol_reserva=2,
-        precioNoche=120.0
+        id_porcentaje=2,
+        precioNoche=120.0,
+        id_tipo=cabana.id
     )
