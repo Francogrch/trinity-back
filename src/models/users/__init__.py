@@ -1,1 +1,1 @@
-from .logica import create_usuario, get_usuarios
+from .logica import create_usuario, get_usuarios, get_schema_usuario

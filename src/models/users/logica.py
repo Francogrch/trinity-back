@@ -1,6 +1,6 @@
 from src.models.database import db
 
-from src.models.users.user import Usuario
+from src.models.users.user import Usuario, UsuarioSchema
 
 
 def get_usuarios():
@@ -16,4 +16,7 @@ def create_usuario(nombre, rol):
         return nuevo
     except:
         db.session.rollback()
-        return None
+        raise()
+
+def get_schema_usuario():
+    return UsuarioSchema()
