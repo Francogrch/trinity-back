@@ -40,12 +40,14 @@ class PropiedadTipo(db.Model):
         return self.tipo
 
 
-class PrimerPagoPorcentaje(db.Model):
-    __tablename__ = "primer_pago_porcentajes"
+class PoliticaReserva(db.Model):
+    __tablename__ = "politicas_reserva"
     id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String, unique=True, nullable=False)
     porcentaje = db.Column(db.Float, unique=True, nullable=False)
 
-    def __init__(self, porcentaje):
+    def __init__(self, label, porcentaje):
+        self.label = label
         self.porcentaje = porcentaje
 
     def __repr__(self):

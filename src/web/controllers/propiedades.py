@@ -23,7 +23,7 @@ def get_propiedades():
         'ambientes': p.ambientes,
         'banios': p.banios,
         'cocheras': p.cocheras,
-        'porcentaje': p.primer_pago_porcentaje.porcentaje,
+        'pol_reserva': p.pol_reserva.label,
         'precioNoche': p.precioNoche,
         'created_at': p.created_at.isoformat(),
         'updated_at': p.updated_at.isoformat()
@@ -46,7 +46,7 @@ def create_propiedad():
         ambientes=data['ambientes'],
         banios=data['banios'],
         cocheras=data['cocheras'],
-        id_porcentaje=data['id_porcentaje'],
+        id_pol_reserva=data['id_pol_reserva'],
         precioNoche=data['precioNoche'],
         id_tipo=data['id_tipo']
     )

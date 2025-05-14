@@ -48,10 +48,11 @@ def create_tipos_propiedad():
         return jsonify({'error': 'Error al crear el tipo'}), 400
 
 
-@parametricas_blueprint.get('/porcentajes')
-def get_porcentajes():
-    porcentajes = parametricas.get_porcentajes()
+@parametricas_blueprint.get('/politicas')
+def get_pol_reserva():
+    pol_reserva = parametricas.get_pol_reserva()
     return jsonify([{
         'id': p.id,
+        'label': p.label,
         'porcentaje': p.porcentaje
-    } for p in porcentajes])
+    } for p in pol_reserva])
