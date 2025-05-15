@@ -1,6 +1,8 @@
 from src.models.database import db
 from src.models.marshmallow import ma
 
+from marshmallow import EXCLUDE
+
 
 class Provincia(db.Model):
     __tablename__ = "provincias"
@@ -65,6 +67,9 @@ class CiudadSchema(ma.Schema):
     nombre = ma.String(required=True, dump_only=True)
 
 class PropiedadTipoSchema(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     id = ma.Integer(dump_only=True)
     tipo = ma.String(required=True)
 

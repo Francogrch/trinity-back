@@ -25,14 +25,16 @@ def run():
         numero="123",
         piso="1",
         depto="A",
-        id_ciudad=1,
         huespedes=6,
         ambientes=4,
         banios=2,
         cocheras=1,
-        id_pol_reserva=1,
         precioNoche=150.0,
-        id_tipo=dpto.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_tipo=dpto.id,
+        id_ciudad=1
     )
 
     prop2 = propiedades.create_propiedad(
@@ -43,14 +45,16 @@ def run():
         numero="456",
         piso="2",
         depto="B",
-        id_ciudad=2,
         huespedes=3,
         ambientes=2,
         banios=1,
         cocheras=0,
-        id_pol_reserva=1,
         precioNoche=75.0,
-        id_tipo=dpto.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_tipo=dpto.id,
+        id_ciudad=2,
     )
 
     prop3 = propiedades.create_propiedad(
@@ -61,12 +65,14 @@ def run():
         numero="789",
         piso="PB",
         depto="Único",
-        id_ciudad=3,
         huespedes=4,
         ambientes=3,
         banios=1,
         cocheras=2,
-        id_pol_reserva=2,
         precioNoche=120.0,
-        id_tipo=cabana.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_tipo=cabana.id,
+        id_ciudad=3,
     )
