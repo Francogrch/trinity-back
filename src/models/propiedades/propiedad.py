@@ -89,3 +89,4 @@ class PropiedadSchema(ma.Schema):
     id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
+    pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
