@@ -1,13 +1,16 @@
 from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required  # Importa el decorador para proteger rutas con JWT
 from src.models import propiedades
+from src.services import propiedad_service  # Importa el servicio de propiedades
 
 propiedad_blueprint = Blueprint(
     'propiedades', __name__, url_prefix="/propiedades")
 
 
 @propiedad_blueprint.get('/')
+@jwt_required()
 def get_propiedades():
-    props = propiedades.get_propiedades()
+    props = propiedad_service.obtener_todas_las_propiedades()  # Llama al servicio para obtener propiedades
     return jsonify([{
         'id': p.id,
         'nombre': p.nombre,
@@ -30,9 +33,10 @@ def get_propiedades():
 
 
 @propiedad_blueprint.post('/')
+@jwt_required()
 def create_propiedad():
     data = request.get_json()
-    nueva = propiedades.create_propiedad(
+    nueva = propiedad_service.crear_propiedad(
         nombre=data['nombre'],
         descripcion=data['descripcion'],
         entre_calles=data['entre_calles'],
@@ -47,7 +51,7 @@ def create_propiedad():
         cocheras=data['cocheras'],
         id_pol_reserva=data['id_pol_reserva'],
         precioNoche=data['precioNoche']
-    )
+    )  # Llama al servicio para crear propiedad
     if nueva:
         return jsonify({'mensaje': 'Propiedad creada'}), 201
     else:

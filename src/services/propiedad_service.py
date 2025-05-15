@@ -1,17 +1,15 @@
-from src.models.database import db
+"""
+Servicio de propiedades: lógica de negocio y operaciones sobre propiedades.
+"""
 from src.models.propiedades.propiedad import Propiedad
+from src.models.database import db
 
+def obtener_todas_las_propiedades():
+    """Devuelve la lista de todas las propiedades."""
+    return Propiedad.query.all()
 
-def get_propiedades():
-    propiedades = Propiedad.query.all()
-    return propiedades
-
-
-def create_propiedad(
-    nombre, descripcion, entre_calles, calle, numero,
-    piso, depto, id_ciudad, huespedes, ambientes,
-    banios, cocheras, id_pol_reserva, precioNoche
-):
+def crear_propiedad(nombre, descripcion, entre_calles, calle, numero, piso, depto, id_ciudad, huespedes, ambientes, banios, cocheras, id_pol_reserva, precioNoche):
+    """Crea una nueva propiedad con los datos recibidos."""
     try:
         nueva = Propiedad(
             nombre=nombre,
@@ -32,6 +30,7 @@ def create_propiedad(
         db.session.add(nueva)
         db.session.commit()
         return nueva
-    except:
+    except Exception as e:
         db.session.rollback()
         return None
+# Puedes agregar aquí más funciones de negocio relacionadas a propiedades

@@ -1,14 +1,14 @@
-from src.models import users, propiedades
-
+from src.services import user_service
+from src.services import propiedad_service
 
 def run():
-    # Usuarios de ejemplo
-    user1 = users.create_usuario(nombre="Juan", rol="Nadie")
-    user2 = users.create_usuario(nombre="Raul", rol="Empleado")
-    user3 = users.create_usuario(nombre="Roberto", rol="Cliente")
+    user1 = user_service.crear_usuario(nombre="Juan", correo="juan@mail.com", rol="Administrador", password="1234")
+    user2 = user_service.crear_usuario(nombre="Raul", correo="raul@mail.com", rol="Empleado", password="1234")
+    user3 = user_service.crear_usuario(nombre="Roberto", correo="roberto@mail.com", rol="Inquilino", password="1234")
+    print("Usuarios de ejemplo creados")
 
     # Propiedades de ejemplo
-    prop1 = propiedades.create_propiedad(
+    prop1 = propiedad_service.crear_propiedad(
         nombre="Casa de Playa",
         descripcion="Hermosa casa frente al mar",
         entre_calles="Calle A y Calle B",
@@ -25,7 +25,7 @@ def run():
         precioNoche=150.0
     )
 
-    prop2 = propiedades.create_propiedad(
+    prop2 = propiedad_service.crear_propiedad(
         nombre="Departamento Céntrico",
         descripcion="Cómodo departamento en el centro",
         entre_calles="Av. Principal y Calle 9",
@@ -42,7 +42,7 @@ def run():
         precioNoche=75.0
     )
 
-    prop3 = propiedades.create_propiedad(
+    prop3 = propiedad_service.crear_propiedad(
         nombre="Cabaña en el bosque",
         descripcion="Acogedora cabaña rodeada de naturaleza",
         entre_calles="Camino viejo y Ruta 5",
@@ -58,3 +58,4 @@ def run():
         id_pol_reserva=2,
         precioNoche=120.0
     )
+    print("Propiedades de ejemplo creadas")

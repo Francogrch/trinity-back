@@ -1,3 +1,21 @@
+# Ignore SQLite database and instance folder
+instance/*.db
+instance/
+
+# Ignore Python cache
 __pycache__/
-instance/alquileres.db
+*.pyc
+
+# Ignore environment files
+.env
 .venv/
+venv/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
