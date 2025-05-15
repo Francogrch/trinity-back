@@ -7,6 +7,10 @@ def get_propiedades():
     return propiedades
 
 
+def get_propiedad_id(id):
+    return Propiedad.query.get(id)
+
+
 def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,
     huespedes, ambientes, banios, cocheras,
@@ -38,7 +42,8 @@ def create_propiedad(
         return nueva
     except:
         db.session.rollback()
-        raise()
+        raise ()
+
 
 def get_schema_propiedad():
     return PropiedadSchema()
