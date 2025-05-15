@@ -1,7 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
 
-from src.models import database, seed, seed_ciudades
+from src.models import database, marshmallow
+from src.models import seed, seed_ciudades
+
 from src.web.controllers.users import user_blueprint
 from src.web.controllers.propiedades import propiedad_blueprint
 from src.web.controllers.parametricas import parametricas_blueprint
@@ -16,6 +18,7 @@ def create_app():
 
     with app.app_context():
         database.init_db(app)
+        marshmallow.init_ma(app)
 
     @app.get("/")
     def home():

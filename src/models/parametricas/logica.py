@@ -1,5 +1,6 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PrimerPagoPorcentaje
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva
+from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
 
 
 def get_provincias():
@@ -25,18 +26,30 @@ def create_tipos_propiedad(tipo):
         return tipo_propiedad
     except:
         db.session.rollback()
-        return None
+        raise()
 
-def get_porcentajes():
-    porcentaje = PrimerPagoPorcentaje.query.all()
-    return porcentaje
+def get_pol_reserva():
+    pol_reserva = PoliticaReserva.query.all()
+    return pol_reserva
 
-def create_porcentaje(porcentaje):
+def create_pol_reserva(label, porcentaje):
     try:
-        nuevo = PrimerPagoPorcentaje(porcentaje)
+        nuevo = PoliticaReserva(label, porcentaje)
         db.session.add(nuevo)
         db.session.commit()
         return nuevo
     except:
         db.session.rollback()
         return None
+
+def get_schema_provincia():
+    return ProvinciaSchema()
+
+def get_schema_ciudad():
+    return CiudadSchema()
+
+def get_schema_tipo_propiedad():
+    return PropiedadTipoSchema()
+
+def get_schema_pol_reserva():
+    return PoliticaReservaSchema()

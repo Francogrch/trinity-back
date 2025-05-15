@@ -7,9 +7,9 @@ def run():
     cabana = parametricas.create_tipos_propiedad("Cabaña")
 
     # Porcentajes del primer pago
-    cero = parametricas.create_porcentaje(0)
-    veinte = parametricas.create_porcentaje(0.20)
-    cien = parametricas.create_porcentaje(1)
+    cero = parametricas.create_pol_reserva("Seña del 0% del valor de la estadía", 0)
+    veinte = parametricas.create_pol_reserva("Seña del 20% del valor de la estadía", 0.2)
+    cien = parametricas.create_pol_reserva("Seña del 100% del valor de la estadía", 1)
 
     # Usuarios de ejemplo
     user1 = users.create_usuario(nombre="Juan", rol="Nadie")
@@ -25,14 +25,16 @@ def run():
         numero="123",
         piso="1",
         depto="A",
-        id_ciudad=1,
         huespedes=6,
         ambientes=4,
         banios=2,
         cocheras=1,
-        id_porcentaje=1,
         precioNoche=150.0,
-        id_tipo=dpto.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_tipo=dpto.id,
+        id_ciudad=1
     )
 
     prop2 = propiedades.create_propiedad(
@@ -43,14 +45,16 @@ def run():
         numero="456",
         piso="2",
         depto="B",
-        id_ciudad=2,
         huespedes=3,
         ambientes=2,
         banios=1,
         cocheras=0,
-        id_porcentaje=1,
         precioNoche=75.0,
-        id_tipo=dpto.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_tipo=dpto.id,
+        id_ciudad=2,
     )
 
     prop3 = propiedades.create_propiedad(
@@ -61,12 +65,14 @@ def run():
         numero="789",
         piso="PB",
         depto="Único",
-        id_ciudad=3,
         huespedes=4,
         ambientes=3,
         banios=1,
         cocheras=2,
-        id_porcentaje=2,
         precioNoche=120.0,
-        id_tipo=cabana.id
+        codigoAcceso="1234",
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_tipo=cabana.id,
+        id_ciudad=3,
     )

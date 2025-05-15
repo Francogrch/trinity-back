@@ -1,4 +1,7 @@
 from src.models.database import db
+from src.models.marshmallow import ma
+
+from marshmallow import EXCLUDE
 
 
 class Provincia(db.Model):
@@ -40,13 +43,37 @@ class PropiedadTipo(db.Model):
         return self.tipo
 
 
-class PrimerPagoPorcentaje(db.Model):
-    __tablename__ = "primer_pago_porcentajes"
+class PoliticaReserva(db.Model):
+    __tablename__ = "politicas_reserva"
     id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String, unique=True, nullable=False)
     porcentaje = db.Column(db.Float, unique=True, nullable=False)
 
-    def __init__(self, porcentaje):
+    def __init__(self, label, porcentaje):
+        self.label = label
         self.porcentaje = porcentaje
 
     def __repr__(self):
         return self.porcentaje
+
+
+class ProvinciaSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(required=True, dump_only=True)
+
+class CiudadSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    id_provincia = ma.Integer(required=True, dump_only=True)
+    nombre = ma.String(required=True, dump_only=True)
+
+class PropiedadTipoSchema(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    tipo = ma.String(required=True)
+
+class PoliticaReservaSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    label = ma.String(required=True)
+    porcentaje = ma.Float(required=True)
