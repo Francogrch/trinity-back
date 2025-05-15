@@ -1,4 +1,5 @@
 from src.models.database import db
+from src.models.marshmallow import ma
 
 
 class Provincia(db.Model):
@@ -52,3 +53,22 @@ class PoliticaReserva(db.Model):
 
     def __repr__(self):
         return self.porcentaje
+
+
+class ProvinciaSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(required=True, dump_only=True)
+
+class CiudadSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    id_provincia = ma.Integer(required=True, dump_only=True)
+    nombre = ma.String(required=True, dump_only=True)
+
+class PropiedadTipoSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    tipo = ma.String(required=True)
+
+class PoliticaReservaSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    label = ma.String(required=True)
+    porcentaje = ma.Float(required=True)
