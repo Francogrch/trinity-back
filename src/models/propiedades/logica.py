@@ -9,9 +9,9 @@ def get_propiedades():
 
 def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,
-    piso, depto, huespedes, ambientes, banios, cocheras,
-    precioNoche, codigoAcceso, is_habilitada, id_pol_reserva,
-    id_tipo, id_ciudad
+    huespedes, ambientes, banios, cocheras,
+    precioNoche, codigoAcceso, is_habilitada,
+    id_pol_reserva, id_tipo, id_ciudad, piso=None, depto=None
 ):
     try:
         nueva = Propiedad(
