@@ -40,7 +40,7 @@ Table propiedad {
   descripcion varchar
   entre_calles varchar
   calle varchar
-  numero varchar
+  numero integer
   piso varchar
   depto varchar
   id_ciudad integer
@@ -48,8 +48,12 @@ Table propiedad {
   ambientes integer
   banios integer
   cocheras integer
-  id_pol_reserva integer
   precioNoche real
+  codigoAcceso varchar
+  is_habilitada boolean
+  id_pol_reserva integer
+  id_tipo integer
+  id_ciudad integer
   created_at timestamp
   updated_at timestamp
 }
