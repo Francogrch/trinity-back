@@ -30,3 +30,30 @@ def create_propiedad():
         return (err.messages, 422)
     except:
         return ({"error": "Propiedad repetida?"}, 400)
+
+
+@propiedad_blueprint.patch('/cambiarEstado/<int:prop_id>')
+def cambiar_estado_propiedad(prop_id):
+    try:
+        propiedad = propiedades.toggle_estado(prop_id)
+    except:
+        return {'error': 'Error al actualizar la propiedad'}, 500
+
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada'}, 404
+
+    return propiedades.get_schema_propiedad().dump(propiedad), 200
+
+
+# Esta logica es de testeo
+@propiedad_blueprint.patch('/eliminar/<int:prop_id>')
+def eliminar_propiedad(prop_id):
+    try:
+        propiedad = propiedades.toggle_estado(prop_id)
+    except:
+        return {'error': 'Error al actualizar la propiedad'}, 500
+
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada'}, 404
+
+    return propiedades.get_schema_propiedad().dump(propiedad), 200

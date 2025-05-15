@@ -2,9 +2,10 @@ from src.models.imagenes.imagen import ImagenSchema, Imagen
 from flask import Blueprint, request, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 import os
-from src.models import imagenes 
+from src.models import imagenes
 
 imagen_blueprint = Blueprint('imagenes', __name__, url_prefix="/imagenes")
+
 
 @imagen_blueprint.post('/')
 def upload_image():
@@ -28,26 +29,28 @@ def upload_image():
 
     return {'error': 'Tipo invalido de archivo'}, 400
 
+
 @imagen_blueprint.get('/')
 def get_imagenes():
     imgs = imagenes.get_imagenes()
     return imagenes.get_schema_imagen().dump(imgs, many=True)
 
-@imagen_blueprint.get('/uploads/<filename>')
+
+@imagen_blueprint.get('/<filename>')
 def get_uploaded_file(filename):
     upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
     return send_from_directory(upload_folder, filename)
 
-@imagen_blueprint.get('/uploads/id/<int:imagen_id>')
+
+@imagen_blueprint.get('/id/<int:imagen_id>')
 def get_uploaded_file_by_id(imagen_id):
     imagen = imagenes.get_imagen_id(imagen_id)
     if not imagen:
         return {'error': 'Imagen no encontrada'}, 404
 
-    filename = os.path.basename(imagen.url)  
+    filename = os.path.basename(imagen.url)
     base_dir = os.path.abspath(os.path.join(current_app.root_path, '..', '..'))
     upload_folder = os.path.join(base_dir, current_app.config['UPLOAD_FOLDER'])
     upload_folder = os.path.abspath(upload_folder)
 
     return send_from_directory(upload_folder, filename)
-

@@ -47,3 +47,17 @@ def create_propiedad(
 
 def get_schema_propiedad():
     return PropiedadSchema()
+
+
+def toggle_estado(prop_id):
+    propiedad = get_propiedad_id(prop_id)
+    if not propiedad:
+        return None
+
+    propiedad.is_habilitada = not propiedad.is_habilitada
+    try:
+        db.session.commit()
+        return propiedad
+    except Exception:
+        db.session.rollback()
+        raise
