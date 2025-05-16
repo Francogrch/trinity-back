@@ -1,11 +1,8 @@
 from flask import request
 from src.models import users
-
-from flask import Blueprint
 from marshmallow import ValidationError
 from flask import Blueprint, request, jsonify  # Importa Blueprint para rutas, request para datos y jsonify para respuestas JSON
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
-from src.services import user_service  # Importa el servicio que maneja la lógica de usuarios
 from src.enums.roles import Rol  # Importa el enum Rol para validaciones de roles
 
 # Crea un blueprint para las rutas relacionadas a usuarios, con prefijo /usuarios

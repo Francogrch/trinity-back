@@ -3,7 +3,7 @@ from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt  # Funciones necesarias para manejo de JWT
 )
 from datetime import timedelta  # Para definir la duración del token
-from src.services import user_service  # Lógica de acceso a datos del usuario
+from src.models.users.logica import get_usuario_by_correo  # Lógica de acceso a datos del usuario
 from src.extensions.jwt import BLOCKLIST  # Lista negra de tokens revocados
 
 # Crea un blueprint para agrupar las rutas de autenticación
@@ -16,7 +16,7 @@ def login():
     Recibe JSON con 'correo' y 'password', verifica las credenciales y devuelve un token JWT si son válidas.
     """
     data = request.get_json()  # Extrae el JSON enviado en el body de la solicitud
-    usuario = user_service.get_usuario_by_correo(data['correo'])  # Busca el usuario por su correo
+    usuario = get_usuario_by_correo(data['correo'])  # Busca el usuario por su correo
 
     if usuario and usuario.check_password(data['password']):  # Si el usuario existe y la contraseña es correcta
         # Define los claims adicionales (datos extras que querés guardar en el token)

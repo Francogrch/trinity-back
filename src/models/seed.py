@@ -12,12 +12,13 @@ def run():
     cien = parametricas.create_pol_reserva("Seña del 100% del valor de la estadía", 1)
 
     # Usuarios de ejemplo
-    user1 = users.create_usuario(nombre="Juan", rol="Nadie")
-    user2 = users.create_usuario(nombre="Raul", rol="Empleado")
-    user3 = users.create_usuario(nombre="Roberto", rol="Cliente")
+    user1 = users.create_usuario(nombre="Juan", correo="juan@mail.com", rol="Administrador", password="1234")
+    user2 = users.create_usuario(nombre="Raul", correo="raul@mail.com", rol="Empleado", password="1234")
+    user3 = users.create_usuario(nombre="Roberto", correo="roberto@mail.com", rol="Inquilino", password="1234")
+    print("Usuarios de ejemplo creados")
 
     # Propiedades de ejemplo
-    prop1 = propiedad_service.crear_propiedad(
+    prop1 = propiedades.create_propiedad(
         nombre="Casa de Playa",
         descripcion="Hermosa casa frente al mar",
         entre_calles="Calle A y Calle B",
@@ -37,7 +38,7 @@ def run():
         id_ciudad=1
     )
 
-    prop2 = propiedad_service.crear_propiedad(
+    prop2 = propiedades.create_propiedad(
         nombre="Departamento Céntrico",
         descripcion="Cómodo departamento en el centro",
         entre_calles="Av. Principal y Calle 9",
@@ -57,7 +58,7 @@ def run():
         id_ciudad=2,
     )
 
-    prop3 = propiedad_service.crear_propiedad(
+    prop3 = propiedades.create_propiedad(
         nombre="Cabaña en el bosque",
         descripcion="Acogedora cabaña rodeada de naturaleza",
         entre_calles="Camino viejo y Ruta 5",

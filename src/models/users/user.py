@@ -1,12 +1,16 @@
+from src.enums.roles import Rol
 from src.models.database import db
 from src.models.marshmallow import ma
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from marshmallow import validate, post_load
 
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True)
+    correo = db.Column(db.String(120), unique=True, nullable=False)  # Campo agregado
     rol = db.Column(db.String(50))
+    password_hash = db.Column(db.String(128), nullable=False)
 
     def __init__(self, nombre, correo, rol, password=None):
         self.nombre = nombre

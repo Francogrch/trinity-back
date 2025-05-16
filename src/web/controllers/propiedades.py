@@ -1,8 +1,7 @@
 from src.models import propiedades
-from src.services import propiedad_service  # Importa el servicio de propiedades
-
 from flask import request, Blueprint
 from marshmallow import ValidationError
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
 
 propiedad_blueprint = Blueprint(
     'propiedades', __name__, url_prefix="/propiedades")
@@ -16,7 +15,7 @@ def get_propiedades():
 
 
 @propiedad_blueprint.get('/id/<int:prop_id>')
-def get_propiedad_id(prop_id):
+def get_propiedad_id_route(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
     return (propiedades.get_schema_propiedad().dump(propiedad), 201)
 
