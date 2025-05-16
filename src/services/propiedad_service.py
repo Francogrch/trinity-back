@@ -1,6 +1,9 @@
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema
 
+def obtener_todas_las_propiedades():
+    """Devuelve la lista de todas las propiedades."""
+    return Propiedad.query.all()
 
 def get_propiedades():
     propiedades = Propiedad.query.all()
@@ -40,7 +43,7 @@ def create_propiedad(
         db.session.add(nueva)
         db.session.commit()
         return nueva
-    except:
+    except Exception as e:
         db.session.rollback()
         raise ()
 

@@ -1,4 +1,5 @@
 from src.models import propiedades
+from src.services import propiedad_service  # Importa el servicio de propiedades
 
 from flask import request, Blueprint
 from marshmallow import ValidationError
@@ -8,6 +9,7 @@ propiedad_blueprint = Blueprint(
 
 
 @propiedad_blueprint.get('/')
+@jwt_required()
 def get_propiedades():
     props = propiedades.get_propiedades()
     return propiedades.get_schema_propiedad().dump(props, many=True)
@@ -20,6 +22,7 @@ def get_propiedad_id(prop_id):
 
 
 @propiedad_blueprint.post('/')
+@jwt_required()
 def create_propiedad():
     data = request.get_json()
     try:

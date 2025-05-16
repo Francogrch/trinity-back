@@ -17,7 +17,7 @@ def run():
     user3 = users.create_usuario(nombre="Roberto", rol="Cliente")
 
     # Propiedades de ejemplo
-    prop1 = propiedades.create_propiedad(
+    prop1 = propiedad_service.crear_propiedad(
         nombre="Casa de Playa",
         descripcion="Hermosa casa frente al mar",
         entre_calles="Calle A y Calle B",
@@ -37,7 +37,7 @@ def run():
         id_ciudad=1
     )
 
-    prop2 = propiedades.create_propiedad(
+    prop2 = propiedad_service.crear_propiedad(
         nombre="Departamento Céntrico",
         descripcion="Cómodo departamento en el centro",
         entre_calles="Av. Principal y Calle 9",
@@ -57,7 +57,7 @@ def run():
         id_ciudad=2,
     )
 
-    prop3 = propiedades.create_propiedad(
+    prop3 = propiedad_service.crear_propiedad(
         nombre="Cabaña en el bosque",
         descripcion="Acogedora cabaña rodeada de naturaleza",
         entre_calles="Camino viejo y Ruta 5",
@@ -76,3 +76,4 @@ def run():
         id_tipo=cabana.id,
         id_ciudad=3,
     )
+    print("Propiedades de ejemplo creadas")
