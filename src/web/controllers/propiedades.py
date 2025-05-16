@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required  # Importa el decorador para proteger rutas con JWT
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa el decorador para proteger rutas con JWT
 from src.models import propiedades
 from src.services import propiedad_service  # Importa el servicio de propiedades
 
@@ -10,7 +10,11 @@ propiedad_blueprint = Blueprint(
 @propiedad_blueprint.get('/')
 @jwt_required()
 def get_propiedades():
+    print("Entró al endpoint /propiedades")
+    print("JWT identity:", get_jwt_identity())
+    print("JWT claims:", get_jwt())
     props = propiedad_service.obtener_todas_las_propiedades()  # Llama al servicio para obtener propiedades
+    print(f"Cantidad de propiedades: {len(props)}")
     return jsonify([{
         'id': p.id,
         'nombre': p.nombre,

@@ -26,7 +26,7 @@ def login():
         }
         # Crea un token JWT con identidad del usuario y claims personalizados
         access_token = create_access_token(
-            identity=usuario.id,  # ID del usuario como identidad principal
+            identity=str(usuario.id),  # ID del usuario como identidad principal
             additional_claims=additional_claims,
             expires_delta=timedelta(hours=2)  # Token válido por 2 horas
         )

@@ -20,9 +20,11 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 
 @jwt.unauthorized_loader
 def unauthorized_response(callback):
+    print("DEBUG: Token requerido - no se envió o está mal el header")
     return {"msg": "Token requerido"}, 401
 
 
 @jwt.invalid_token_loader
 def invalid_token_response(error):
+    print(f"DEBUG: Token inválido - {error}")
     return {"msg": "Token inválido"}, 422
