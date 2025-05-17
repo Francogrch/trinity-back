@@ -4,26 +4,11 @@ from marshmallow import ValidationError
 from flask import Blueprint, request, jsonify  # Importa Blueprint para rutas, request para datos y jsonify para respuestas JSON
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
 from src.enums.roles import Rol  # Importa el enum Rol para validaciones de roles
+from functools import wraps
+from src.web.authorization.roles import rol_requerido
 
 # Crea un blueprint para las rutas relacionadas a usuarios, con prefijo /usuarios
 user_blueprint = Blueprint('users', __name__, url_prefix="/usuarios")
-
-def rol_requerido(roles_permitidos):
-    """
-    Decorador para restringir acceso a rutas según roles permitidos.
-    Uso: @rol_requerido(['Administrador', 'Empleado'])
-    """
-    def decorador(f):
-        @jwt_required()
-        def wrapper(*args, **kwargs):
-            claims = get_jwt()
-            rol_actual = claims.get('rol')
-            if rol_actual not in roles_permitidos:
-                return jsonify({'mensaje': 'Acceso denegado: rol insuficiente'}), 403
-            return f(*args, **kwargs)
-        wrapper.__name__ = f.__name__
-        return wrapper
-    return decorador
 
 def verificar_permiso_creacion_usuario(rol_actual, rol_nuevo):
     """
@@ -54,6 +39,10 @@ def create_usuario():
     claims = get_jwt()
     current_user_rol = claims.get('rol')
     data = request.get_json()
+    permitido, mensaje = verificar_permiso_creacion_usuario(current_user_rol, data['rol'])
+    if not permitido:
+        return jsonify({'mensaje': mensaje}), 403
+    
     try:
         data_usuario = users.get_schema_usuario().load(data)    # Valida JSON del request
         usuario = users.create_usuario(**data_usuario)          # Valida que sea unico en DB
