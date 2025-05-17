@@ -20,20 +20,22 @@ class Propiedad(db.Model):
     cocheras = db.Column(db.Integer, nullable=False)
     precioNoche = db.Column(db.Float, nullable=False)
     codigoAcceso = db.Column(db.String, nullable=False, default="0000")
-    is_habilitada = db.Column(db.Boolean,nullable=False, default=True)
-    #Relación con Porcentaje del primer pago
-    id_pol_reserva = db.Column(db.Integer, db.ForeignKey("politicas_reserva.id"))
+    is_habilitada = db.Column(db.Boolean, nullable=False, default=True)
+    # Relación con Porcentaje del primer pago
+    id_pol_reserva = db.Column(
+        db.Integer, db.ForeignKey("politicas_reserva.id"))
     pol_reserva = db.relationship("PoliticaReserva")
-    #Relación con Tipos de propiedad
+    # Relación con Tipos de propiedad
     id_tipo = db.Column(db.Integer, db.ForeignKey("propiedad_tipos.id"))
     tipo = db.relationship("PropiedadTipo")
-    #Relación con Ciudad
+    # Relación con Ciudad
     id_ciudad = db.Column(db.Integer, db.ForeignKey("ciudades.id"))
     ciudad = db.relationship("Ciudad")
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow, nullable=False)
+    delete_at = db.Column(db.DateTime)
 
     def __init__(
         self, nombre, descripcion, entre_calles, calle,
@@ -62,6 +64,7 @@ class Propiedad(db.Model):
     def __repr__(self):
         return f"<Propiedad {self.nombre}>"
 
+
 class PropiedadSchema(ma.Schema):
     class Meta:
         unknown = EXCLUDE
@@ -79,12 +82,13 @@ class PropiedadSchema(ma.Schema):
     banios = ma.Integer(required=True)
     cocheras = ma.Integer(required=True)
     precioNoche = ma.Float(required=True)
-    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'[0-9][0-9][0-9][0-9]'))
+    codigoAcceso = ma.String(
+        required=True, validate=validate.Regexp(r'[0-9][0-9][0-9][0-9]'))
     is_habilitada = ma.Boolean(required=True)
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
     id_ciudad = ma.Integer(required=True)
-    
+
     ciudad = ma.Function(lambda obj: obj.ciudad.nombre)
     id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)

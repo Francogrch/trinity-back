@@ -49,7 +49,7 @@ def cambiar_estado_propiedad(prop_id):
 @propiedad_blueprint.patch('/eliminar/<int:prop_id>')
 def eliminar_propiedad(prop_id):
     try:
-        propiedad = propiedades.toggle_estado(prop_id)
+        propiedad = propiedades.eliminar_prop(prop_id)
     except:
         return {'error': 'Error al actualizar la propiedad'}, 500
 
