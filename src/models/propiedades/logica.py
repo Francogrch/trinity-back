@@ -8,6 +8,11 @@ def get_propiedades():
     return propiedades
 
 
+def get_propiedades_eliminadas():
+    propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None)).all()
+    return propiedades
+
+
 def get_propiedad_id(id):
     return Propiedad.query.get(id)
 

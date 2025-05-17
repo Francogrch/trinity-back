@@ -13,6 +13,12 @@ def get_propiedades():
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 
+@propiedad_blueprint.get('/eliminadas')
+def get_propiedades_eliminadas():
+    props = propiedades.get_propiedades_eliminadas()
+    return propiedades.get_schema_propiedad().dump(props, many=True)
+
+
 @propiedad_blueprint.get('/id/<int:prop_id>')
 def get_propiedad_id(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
