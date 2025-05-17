@@ -57,3 +57,17 @@ def eliminar_propiedad(prop_id):
         return {'error': 'Propiedad no encontrada'}, 404
 
     return propiedades.get_schema_propiedad().dump(propiedad), 200
+
+
+@propiedad_blueprint.patch('/editar')
+def update_propiedad():
+    data = request.get_json()
+    prop_id = data['id']
+    try:
+        data_propiedad = propiedades.get_schema_propiedad().load(data)
+        propiedad = propiedades.update_propiedad(prop_id, **data_propiedad)
+        return (propiedades.get_schema_propiedad().dump(propiedad), 201)
+    except ValidationError as err:
+        return (err.messages, 422)
+    except:
+        return ({"error": "Propiedad repetida?"}, 400)
