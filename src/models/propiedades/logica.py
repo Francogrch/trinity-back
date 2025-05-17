@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.propiedades.propiedad import Propiedad, PropiedadSchema
+from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
 
 
 def get_propiedades():
@@ -93,5 +93,23 @@ def update_propiedad(
         raise ()
 
 
+def update_codigo_acceso(id, codigoAcceso):
+    propiedad = get_propiedad_id(id)
+    if not propiedad:
+        return None
+
+    propiedad.codigoAcceso = codigoAcceso
+    try:
+        db.session.commit()
+        return propiedad
+    except Exception:
+        db.session.rollback()
+        raise
+
+
 def get_schema_propiedad():
     return PropiedadSchema()
+
+
+def get_schema_codigo_acceso():
+    return CodigoAccesoSchema()

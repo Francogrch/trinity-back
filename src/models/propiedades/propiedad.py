@@ -90,3 +90,10 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+
+class CodigoAccesoSchema(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(required=True)
+    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'^\d{4}$'))

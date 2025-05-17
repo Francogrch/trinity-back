@@ -71,3 +71,18 @@ def update_propiedad():
         return (err.messages, 422)
     except:
         return ({"error": "Propiedad repetida?"}, 400)
+
+
+@propiedad_blueprint.patch('/editarCodigo')
+def update_codigo_acceso():
+    data = request.get_json()
+    try:
+        data_propiedad = propiedades.get_schema_codigo_acceso().load(data)
+        propiedad = propiedades.update_codigo_acceso(**data_propiedad)
+        if propiedad:
+            return (propiedades.get_schema_propiedad().dump(propiedad), 201)
+        return {'error': 'Propiedad no encontrada'}, 404
+    except ValidationError as err:
+        return (err.messages, 422)
+    except:
+        return ({"error": "Propiedad repetida?"}, 400)
