@@ -2,19 +2,27 @@ from src.models import users, propiedades, parametricas
 
 
 def run():
+    # Roles
+    administrador = parametricas.create_rol("Administrador")
+    encargado = parametricas.create_rol("Encargado")
+    inquilino = parametricas.create_rol("Inquilino")
+
     # Tipos de propiedades
     dpto = parametricas.create_tipos_propiedad("Departamento")
     cabana = parametricas.create_tipos_propiedad("Cabaña")
 
     # Porcentajes del primer pago
-    cero = parametricas.create_pol_reserva("Seña del 0% del valor de la estadía", 0)
-    veinte = parametricas.create_pol_reserva("Seña del 20% del valor de la estadía", 0.2)
-    cien = parametricas.create_pol_reserva("Seña del 100% del valor de la estadía", 1)
+    cero = parametricas.create_pol_reserva(
+        "Seña del 0% del valor de la estadía", 0)
+    veinte = parametricas.create_pol_reserva(
+        "Seña del 20% del valor de la estadía", 0.2)
+    cien = parametricas.create_pol_reserva(
+        "Seña del 100% del valor de la estadía", 1)
 
     # Usuarios de ejemplo
-    user1 = users.create_usuario(nombre="Juan", rol="Nadie")
-    user2 = users.create_usuario(nombre="Raul", rol="Empleado")
-    user3 = users.create_usuario(nombre="Roberto", rol="Cliente")
+    user1 = users.create_usuario(nombre="Juan", id_rol=1)
+    user2 = users.create_usuario(nombre="Raul", id_rol=2)
+    user3 = users.create_usuario(nombre="Roberto", id_rol=2)
 
     # Propiedades de ejemplo
     prop1 = propiedades.create_propiedad(
