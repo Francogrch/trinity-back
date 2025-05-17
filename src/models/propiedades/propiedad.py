@@ -79,7 +79,7 @@ class PropiedadSchema(ma.Schema):
     banios = ma.Integer(required=True)
     cocheras = ma.Integer(required=True)
     precioNoche = ma.Float(required=True)
-    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'[0-9][0-9][0-9][0-9]'))
+    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'^\d{4}$'))
     is_habilitada = ma.Boolean(required=True)
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
