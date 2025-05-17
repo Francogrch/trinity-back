@@ -12,15 +12,19 @@ def get_provincias():
     provincias = parametricas.get_provincias()
     return parametricas.get_schema_provincia().dump(provincias, many=True)
 
+
 @parametricas_blueprint.get('/ciudades')
 def get_ciudades_by_provincia():
-    ciudades = parametricas.get_ciudades_by_provincia_id(request.args.get('id', type=int))
+    ciudades = parametricas.get_ciudades_by_provincia_id(
+        request.args.get('id', type=int))
     return parametricas.get_schema_ciudad().dump(ciudades, many=True)
+
 
 @parametricas_blueprint.get('/tipos')
 def get_tipos_propiedad():
     tipos = parametricas.get_tipos_propiedad()
     return parametricas.get_schema_tipo_propiedad().dump(tipos, many=True)
+
 
 @parametricas_blueprint.post('/tipos')
 def create_tipos_propiedad():
@@ -34,7 +38,13 @@ def create_tipos_propiedad():
     except:
         return ({"error": "Tipo repetido?"}, 400)
 
+
 @parametricas_blueprint.get('/politicas')
 def get_pol_reserva():
     pol_reserva = parametricas.get_pol_reserva()
     return parametricas.get_schema_pol_reserva().dump(pol_reserva, many=True)
+
+
+@parametricas_blueprint.get('/roles')
+def get_roles():
+    return parametricas.get_schema_rol().dump(parametricas.get_roles(), many=True)

@@ -8,15 +8,17 @@ def get_usuarios():
     return usuarios
 
     
-def create_usuario(nombre, correo, rol, password):
+def create_usuario(nombre, correo, id_rol, password):
     """Crea un nuevo usuario con los datos recibidos."""
     try:
-        nuevo = Usuario(nombre, correo, rol, password)
+        nuevo = Usuario(nombre, correo, id_rol, password)
         db.session.add(nuevo)
         db.session.commit()
         return nuevo
     except Exception as e:
         db.session.rollback()
+        raise ()
+
         return None
 
 def get_usuario_by_nombre(nombre):

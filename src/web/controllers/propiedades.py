@@ -14,6 +14,12 @@ def get_propiedades():
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 
+@propiedad_blueprint.get('/eliminadas')
+def get_propiedades_eliminadas():
+    props = propiedades.get_propiedades_eliminadas()
+    return propiedades.get_schema_propiedad().dump(props, many=True)
+
+
 @propiedad_blueprint.get('/id/<int:prop_id>')
 def get_propiedad_id_route(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
@@ -51,7 +57,7 @@ def cambiar_estado_propiedad(prop_id):
 @propiedad_blueprint.patch('/eliminar/<int:prop_id>')
 def eliminar_propiedad(prop_id):
     try:
-        propiedad = propiedades.toggle_estado(prop_id)
+        propiedad = propiedades.eliminar_prop(prop_id)
     except:
         return {'error': 'Error al actualizar la propiedad'}, 500
 

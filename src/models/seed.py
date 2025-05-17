@@ -2,19 +2,27 @@ from src.models import users, propiedades, parametricas
 
 
 def run():
+    # Roles
+    administrador = parametricas.create_rol("Administrador")
+    encargado = parametricas.create_rol("Encargado")
+    inquilino = parametricas.create_rol("Inquilino")
+
     # Tipos de propiedades
     dpto = parametricas.create_tipos_propiedad("Departamento")
     cabana = parametricas.create_tipos_propiedad("Cabaña")
 
     # Porcentajes del primer pago
-    cero = parametricas.create_pol_reserva("Seña del 0% del valor de la estadía", 0)
-    veinte = parametricas.create_pol_reserva("Seña del 20% del valor de la estadía", 0.2)
-    cien = parametricas.create_pol_reserva("Seña del 100% del valor de la estadía", 1)
+    cero = parametricas.create_pol_reserva(
+        "Seña del 0% del valor de la estadía", 0)
+    veinte = parametricas.create_pol_reserva(
+        "Seña del 20% del valor de la estadía", 0.2)
+    cien = parametricas.create_pol_reserva(
+        "Seña del 100% del valor de la estadía", 1)
 
     # Usuarios de ejemplo
-    user1 = users.create_usuario(nombre="Juan", correo="juan@mail.com", rol="Administrador", password="1234")
-    user2 = users.create_usuario(nombre="Raul", correo="raul@mail.com", rol="Empleado", password="1234")
-    user3 = users.create_usuario(nombre="Roberto", correo="roberto@mail.com", rol="Inquilino", password="1234")
+    user1 = users.create_usuario(nombre="Juan", correo="juan@mail.com", id_rol=1, password="1234")
+    user2 = users.create_usuario(nombre="Raul", correo="raul@mail.com", id_rol=2, password="1234")
+    user3 = users.create_usuario(nombre="Roberto", correo="roberto@mail.com", id_rol=3, password="1234")
     print("Usuarios de ejemplo creados")
 
     # Propiedades de ejemplo
