@@ -7,14 +7,15 @@ from src.models import seed, seed_ciudades
 from src.web.controllers.users import user_blueprint
 from src.web.controllers.propiedades import propiedad_blueprint
 from src.web.controllers.parametricas import parametricas_blueprint
-from src.web.controllers.imagenes import imagen_blueprint 
+from src.web.controllers.imagenes import imagen_blueprint
+from src.web.controllers.reservas import reserva_blueprint
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('src.web.config.Config')
 
-    #Config CORS
+    # Config CORS
     CORS(app)
 
     with app.app_context():
@@ -31,6 +32,7 @@ def create_app():
     app.register_blueprint(propiedad_blueprint)
     app.register_blueprint(parametricas_blueprint)
     app.register_blueprint(imagen_blueprint)
+    app.register_blueprint(reserva_blueprint)
 
     @app.cli.command(name="resetdb")
     def resetdb():

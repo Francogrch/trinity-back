@@ -1,4 +1,5 @@
-from src.models import users, propiedades, parametricas
+from src.models import users, propiedades, parametricas, reservas
+from datetime import datetime
 
 
 def run():
@@ -22,7 +23,7 @@ def run():
     # Usuarios de ejemplo
     user1 = users.create_usuario(nombre="Juan", id_rol=1)
     user2 = users.create_usuario(nombre="Raul", id_rol=2)
-    user3 = users.create_usuario(nombre="Roberto", id_rol=2)
+    user3 = users.create_usuario(nombre="Roberto", id_rol=3)
 
     # Propiedades de ejemplo
     prop1 = propiedades.create_propiedad(
@@ -84,3 +85,47 @@ def run():
         id_tipo=cabana.id,
         id_ciudad=3,
     )
+
+    # Crear reservas de ejemplo
+    #
+    #
+    #
+    # Crear reservas de ejemplo
+    reserva1 = reservas.create_reserva({
+        "id_propiedad": prop1.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user2.id,
+        "cantidad_personas": 4,
+        "monto_pagado": 150.0,
+        "monto_total": 600.0,
+        "id_chat": None,
+        "id_estado": 1,  # Estado "Pendiente"
+        "fecha_inicio": datetime(2025, 12, 10),
+        "fecha_fin": datetime(2025, 12, 14)
+    })
+
+    reserva2 = reservas.create_reserva({
+        "id_propiedad": prop2.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user1.id,
+        "cantidad_personas": 2,
+        "monto_pagado": 75.0,
+        "monto_total": 150.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 11, 1),
+        "fecha_fin": datetime(2025, 11, 3)
+    })
+
+    reserva3 = reservas.create_reserva({
+        "id_propiedad": prop3.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user2.id,
+        "cantidad_personas": 3,
+        "monto_pagado": 120.0,
+        "monto_total": 360.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 10, 20),
+        "fecha_fin": datetime(2025, 10, 23)
+    })
