@@ -1,1 +1,1 @@
-from .logica import create_usuario, get_usuarios, get_schema_usuario
+from .logica import create_usuario, get_usuarios, get_schema_usuario, get_usuario_by_id, get_usuario_by_nombre, get_usuario_by_correo, delete_usuario_by_id, update_usuario, get_usuarios_by_rol

@@ -1,4 +1,6 @@
 from src.models import parametricas
+from src.web.authorization.roles import rol_requerido
+from src.enums.roles import Rol
 
 from flask import request, Blueprint
 from marshmallow import ValidationError

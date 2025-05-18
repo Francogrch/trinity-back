@@ -2,6 +2,8 @@ from src.models import propiedades
 from flask import request, Blueprint
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
+from src.web.authorization.roles import rol_requerido
+from src.enums.roles import Rol
 
 propiedad_blueprint = Blueprint(
     'propiedades', __name__, url_prefix="/propiedades")
@@ -9,6 +11,7 @@ propiedad_blueprint = Blueprint(
 
 @propiedad_blueprint.get('/')
 @jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedades():
     props = propiedades.get_propiedades()
     return propiedades.get_schema_propiedad().dump(props, many=True)
@@ -28,6 +31,7 @@ def get_propiedad_id_route(prop_id):
 
 @propiedad_blueprint.post('/')
 @jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden crear propiedades
 def create_propiedad():
     data = request.get_json()
     try:

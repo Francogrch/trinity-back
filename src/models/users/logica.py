@@ -1,5 +1,4 @@
 from src.models.database import db
-
 from src.models.users.user import Usuario, UsuarioSchema
 
 
@@ -19,13 +18,39 @@ def create_usuario(nombre, correo, id_rol, password):
         db.session.rollback()
         raise ()
 
-        return None
 
 def get_usuario_by_nombre(nombre):
     return Usuario.query.filter_by(nombre=nombre).first()
 
 def get_usuario_by_correo(correo):
     return Usuario.query.filter_by(correo=correo).first()
+
+def get_usuario_by_id(user_id):
+    return Usuario.query.get(user_id)
+
+def delete_usuario_by_id(user_id):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    db.session.delete(usuario)
+    db.session.commit()
+    return usuario
+
+def update_usuario(user_id, data):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    # Solo actualiza los campos permitidos
+    for campo in ['nombre', 'correo', 'id_rol']:
+        if campo in data:
+            setattr(usuario, campo, data[campo])
+    if 'password' in data and data['password']:
+        usuario.set_password(data['password'])
+    db.session.commit()
+    return usuario
+
+def get_usuarios_by_rol(rol_id):
+    return Usuario.query.filter_by(id_rol=rol_id).all()
 
 def get_schema_usuario():
     return UsuarioSchema()

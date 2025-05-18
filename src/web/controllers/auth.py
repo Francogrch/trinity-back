@@ -5,6 +5,8 @@ from flask_jwt_extended import (
 from datetime import timedelta  # Para definir la duración del token
 from src.models.users.logica import get_usuario_by_correo  # Lógica de acceso a datos del usuario
 from src.extensions.jwt import BLOCKLIST  # Lista negra de tokens revocados
+from src.web.authorization.roles import rol_requerido
+from src.enums.roles import Rol
 
 # Crea un blueprint para agrupar las rutas de autenticación
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
@@ -22,7 +24,7 @@ def login():
         # Define los claims adicionales (datos extras que querés guardar en el token)
         additional_claims = {
             'correo': usuario.correo,
-            'rol': usuario.rol
+            'id_rol': usuario.id_rol  # Usar solo el id, no el objeto Rol
         }
         # Crea un token JWT con identidad del usuario y claims personalizados
         access_token = create_access_token(
