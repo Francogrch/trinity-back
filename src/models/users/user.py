@@ -29,7 +29,11 @@ class Usuario(db.Model):
 
 class RolSchema(ma.Schema):
     id = ma.Integer()
-    nombre = ma.String()
+    nombre = ma.Method("get_nombre")
+
+    def get_nombre(self, obj):
+        # Devuelve label si existe, si no, intenta nombre
+        return getattr(obj, "label", None) or getattr(obj, "nombre", None)
 
 class UsuarioSchema(ma.Schema):
     id = ma.Integer(dump_only=True)

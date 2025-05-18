@@ -50,7 +50,11 @@ def update_usuario(user_id, data):
     return usuario
 
 def get_usuarios_by_rol(rol_id):
-    return Usuario.query.filter_by(id_rol=rol_id).all()
+    # Forzar carga de la relación rol para cada usuario
+    usuarios = Usuario.query.filter_by(id_rol=rol_id).all()
+    for usuario in usuarios:
+        _ = usuario.rol  # Accede a la relación para asegurar que se cargue
+    return usuarios
 
 def get_schema_usuario():
     return UsuarioSchema()
