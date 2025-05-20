@@ -18,12 +18,14 @@ def get_propiedades():
 
 
 @propiedad_blueprint.get('/eliminadas')
+@jwt_required()
 def get_propiedades_eliminadas():
     props = propiedades.get_propiedades_eliminadas()
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 
 @propiedad_blueprint.get('/id/<int:prop_id>')
+@jwt_required()
 def get_propiedad_id_route(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
     return (propiedades.get_schema_propiedad().dump(propiedad), 201)
@@ -45,6 +47,8 @@ def create_propiedad():
 
 
 @propiedad_blueprint.patch('/cambiarEstado/<int:prop_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def cambiar_estado_propiedad(prop_id):
     try:
         propiedad = propiedades.toggle_estado(prop_id)
@@ -59,6 +63,8 @@ def cambiar_estado_propiedad(prop_id):
 
 # Esta logica es de testeo
 @propiedad_blueprint.patch('/eliminar/<int:prop_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def eliminar_propiedad(prop_id):
     try:
         propiedad = propiedades.eliminar_prop(prop_id)

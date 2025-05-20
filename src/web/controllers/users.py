@@ -1,10 +1,13 @@
-from flask import request
-from src.models import users
-from marshmallow import ValidationError
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt
-from functools import wraps
+from marshmallow import ValidationError
+
+#Usa get_jwt_identity() si solo necesitas el identificador principal del usuario autenticado.
+#Usa get_jwt() si necesitas acceder a otros datos o claims personalizados dentro del JWT.
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+
 from src.web.authorization.roles import rol_requerido
+from src.models.users.logica import get_permisos_usuario
+from src.models import users
 from src.enums.roles import Rol
 
 # Crea un blueprint para las rutas relacionadas a usuarios, con prefijo /usuarios
@@ -45,7 +48,6 @@ def get_usuarios():
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden crear usuarios
 # Recibe los datos por JSON, valida permisos y crea el usuario
 def create_usuario():
-    from flask_jwt_extended import get_jwt_identity  # Importa función para obtener el usuario autenticado
     user_id = get_jwt_identity()  # Obtiene el id del usuario autenticado
     usuario_actual = users.get_usuario_by_id(user_id)  # Busca el usuario en la base
     id_rol_actuales = [rol.id for rol in usuario_actual.roles]  # Lista de ids de roles del usuario autenticado
@@ -86,14 +88,12 @@ def get_usuario_by_id(user_id):
 @user_blueprint.get('/me')
 @jwt_required()
 def get_usuario_actual():
-    from flask_jwt_extended import get_jwt_identity  # Importa función para obtener el usuario autenticado
     user_id = get_jwt_identity()  # Obtiene el id del usuario autenticado
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario en la base
     if not usuario:
         return {"error": "Usuario no encontrado"}, 404  # Si no existe, error
     usuario_schema = users.get_schema_usuario()  # Obtiene el schema
     data = usuario_schema.dump(usuario)  # Serializa el usuario
-    from src.models.users.logica import get_permisos_usuario  # Importa función de permisos
     data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
     return data  # Retorna el usuario con permisos
 
