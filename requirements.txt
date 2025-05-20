@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 flask-cors
 flask-marshmallow
 flask-jwt-extended
+marshmallow-sqlalchemy

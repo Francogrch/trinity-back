@@ -2,6 +2,8 @@ from src.models.marshmallow import ma
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import validate, post_load
 from src.models.database import db
+from src.models.schemas import RolSchema, PaisSchema
+from src.models.parametricas.parametricas import Pais
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -20,7 +22,7 @@ class Usuario(db.Model):
     apellido = db.Column(db.String(100), nullable=True)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
     id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
-    pais = db.relationship('Pais', backref='usuarios')
+    pais = db.relationship("Pais", backref="usuarios")
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
 
     def __init__(self, nombre, correo, roles=None, password=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
@@ -57,15 +59,9 @@ class RolSchema(ma.Schema):
     id = ma.Integer()
     nombre = ma.String()
 
-class UsuarioSchema(ma.Schema):
-    id = ma.Integer(dump_only=True)
-    nombre = ma.String(required=True)
-    correo = ma.String(required=True)
-    tipo_identificacion = ma.String()
-    numero_identificacion = ma.String()
-    apellido = ma.String()
-    fecha_nacimiento = ma.Date()
-    id_pais = ma.Integer()
-    pais = ma.Nested('PaisSchema', dump_only=True)
-    roles = ma.Nested(RolSchema, many=True, dump_only=True)
-    # Puedes agregar más campos si es necesario
+class UsuarioSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Usuario
+        include_relationships = True
+        load_instance = True
+    pais = ma.Nested('PaisSchema', only=("id", "nombre"))

@@ -1,7 +1,7 @@
 from src.models.database import db
 from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais, PaisSchema
 from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
-from src.models.users.user import Rol, RolSchema
+from src.models.schemas import RolSchema
 
 
 def get_provincias():
@@ -23,12 +23,14 @@ def get_tipos_propiedad():
 
 
 def get_roles():
+    from src.models.users.user import Rol
     roles = Rol.query.all()
     return roles
 
 
 def create_rol(nombre):
     try:
+        from src.models.users.user import Rol
         rol = Rol()
         rol.nombre = nombre
         db.session.add(rol)
