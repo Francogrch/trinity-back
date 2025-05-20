@@ -21,6 +21,7 @@ class Propiedad(db.Model):
     precioNoche = db.Column(db.Float, nullable=False)
     codigoAcceso = db.Column(db.String, nullable=False, default="0000")
     is_habilitada = db.Column(db.Boolean, nullable=False, default=True)
+    requiere_documentacion = db.Column(db.Boolean, nullable=False, default=True)
     # Relación con Porcentaje del primer pago
     id_pol_reserva = db.Column(
         db.Integer, db.ForeignKey("politicas_reserva.id"))
@@ -41,8 +42,7 @@ class Propiedad(db.Model):
         self, nombre, descripcion, entre_calles, calle,
         numero, piso, depto, huespedes, ambientes, banios,
         cocheras, precioNoche, codigoAcceso, is_habilitada,
-        id_pol_reserva, id_tipo, id_ciudad
-    ):
+        id_pol_reserva, id_tipo, id_ciudad,requiere_documentacion    ):
         self.nombre = nombre
         self.descripcion = descripcion
         self.entre_calles = entre_calles
@@ -60,6 +60,7 @@ class Propiedad(db.Model):
         self.id_pol_reserva = id_pol_reserva
         self.id_tipo = id_tipo
         self.id_ciudad = id_ciudad
+        self.requiere_documentacion = requiere_documentacion
 
     def __repr__(self):
         return f"<Propiedad {self.nombre}>"
@@ -87,7 +88,7 @@ class PropiedadSchema(ma.Schema):
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
     id_ciudad = ma.Integer(required=True)
-
+    requiere_documentacion = ma.Boolean(required=True)
     ciudad = ma.Function(lambda obj: obj.ciudad.nombre)
     id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)

@@ -236,7 +236,8 @@ def run():
         is_habilitada=True,
         id_pol_reserva=1,
         id_tipo=dpto.id,
-        id_ciudad=1
+        id_ciudad=1,
+        requiere_documentacion=True
     )
 
     prop2 = propiedades.create_propiedad(
@@ -257,6 +258,7 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=2,
+        requiere_documentacion=True
     )
 
     prop3 = propiedades.create_propiedad(
@@ -277,5 +279,6 @@ def run():
         id_pol_reserva=2,
         id_tipo=cabana.id,
         id_ciudad=3,
+        requiere_documentacion=True
     )
     print("Propiedades de ejemplo creadas")

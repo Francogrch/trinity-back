@@ -3,30 +3,73 @@
 
 Table usuario {
   id integer [primary key]
-  num_id integer [unique] 
-  nombre varchar
+  nombre varchar [unique]
+  correo varchar [unique, not null]
+  password_hash varchar [not null]
+  id_tipo_identificacion integer
+  tipo_identificacion varchar // Relación, pero también se guarda el id
+  numero_identificacion varchar
   apellido varchar
-  rol integer
-  tarjeta_id integer
+  fecha_nacimiento date
+  id_pais integer
   created_at timestamp
   updated_at timestamp
+  // Relaciones
+  // roles: muchos a muchos con rol (usuario_rol)
+  // tarjetas: uno a muchos con tarjeta
+}
+
+Table usuario_rol {
+  usuario_id integer [not null, ref: > usuario.id]
+  rol_id integer [not null, ref: > rol.id]
+  // PK compuesta
+  primary key (usuario_id, rol_id)
 }
 
 Table rol {
   id integer [primary key]
-  descripcion varchar
+  nombre varchar [unique, not null]
 }
 
 Table tarjeta {
   id integer [primary key]
-  numero varchar
+  numero varchar [not null]
+  nombre_titular varchar [not null]
+  fecha_inicio date
+  fecha_vencimiento date [not null]
+  cvv varchar [not null]
+  usuario_id integer [not null, ref: > usuario.id]
+  anverso_url varchar
+  reverso_url varchar
+  id_marca integer [ref: > marca_tarjeta.id]
+  id_tipo integer [ref: > tipo_tarjeta.id]
+}
+
+Table marca_tarjeta {
+  id integer [primary key]
+  nombre varchar(30) [unique, not null]
+}
+
+Table tipo_tarjeta {
+  id integer [primary key]
+  nombre varchar(20) [unique, not null]
+}
+
+Table paises {
+  id integer [primary key]
+  nombre varchar(100) [unique, not null]
+}
+
+Table tipo_identificacion {
+  id integer [primary key]
+  nombre varchar(50) [unique, not null]
 }
 
 Table reserva {
   id integer [primary key]
-  propiedad_id integer
-  inquilino_id integer
-  chat_id integer
+  propiedad_id integer [ref: > propiedad.id]
+  inquilino_id integer [ref: > usuario.id]
+  chat_id integer [ref: > chat.id]
   estado varchar
   fecha_inicio date
   fecha_fin date
@@ -36,48 +79,54 @@ Table reserva {
 
 Table propiedad {
   id integer [primary key]
-  nombre varchar [unique]
-  descripcion varchar
-  entre_calles varchar
-  calle varchar
-  numero integer
+  nombre varchar [unique, not null]
+  descripcion varchar [not null]
+  entre_calles varchar [not null]
+  calle varchar [not null]
+  numero integer [not null]
   piso varchar
   depto varchar
-  id_ciudad integer
-  huespedes integer
-  ambientes integer
-  banios integer
-  cocheras integer
-  precioNoche real
-  codigoAcceso varchar
-  is_habilitada boolean
-  id_pol_reserva integer
-  id_tipo integer
-  id_ciudad integer
+  huespedes integer [not null]
+  ambientes integer [not null]
+  banios integer [not null]
+  cocheras integer [not null]
+  precioNoche real [not null]
+  codigoAcceso varchar [not null]
+  is_habilitada boolean [not null]
+  id_pol_reserva integer [ref: > politicas_reserva.id]
+  id_tipo integer [ref: > propiedad_tipos.id]
+  id_ciudad integer [ref: > ciudades.id]
   created_at timestamp
   updated_at timestamp
+  delete_at timestamp
 }
 
-Table provincia {
+Table propiedad_tipos {
   id integer [primary key]
-  nombre varchar
-}
-Table ciudad {
-  id integer [primary key]
-  nombre varchar
-  id_provincia integer
+  tipo varchar [unique, not null]
 }
 
-
-Table politica_reserva {
+Table politicas_reserva {
   id integer [primary key]
-  descripcion varchar
+  label varchar [unique, not null]
+  porcentaje real [unique, not null]
+}
+
+Table provincias {
+  id integer [primary key]
+  nombre varchar [unique, not null]
+}
+
+Table ciudades {
+  id integer [primary key]
+  id_provincia integer [ref: > provincias.id]
+  nombre varchar [not null]
 }
 
 Table calificacion_user {
   id integer [primary key]
-  evaluado_id integer [not null]   // el usuario que recibe la calificación
-  evaluador_id integer [not null]  // el usuario que califica (dueño o inquilino)
+  evaluado_id integer [not null, ref: > usuario.id]
+  evaluador_id integer [not null, ref: > usuario.id]
   puntaje integer
   comentario text
   created_at timestamp
@@ -85,9 +134,9 @@ Table calificacion_user {
 
 Table calificacion_prop {
   id integer [primary key]
-  propiedad_id integer [not null] // FK a propiedad
-  usuario_id integer [not null]   // quién califica
-  puntaje integer                 // de 1 a 5, por ejemplo
+  propiedad_id integer [not null, ref: > propiedad.id]
+  usuario_id integer [not null, ref: > usuario.id]
+  puntaje integer
   comentario text
   created_at timestamp
 }
@@ -101,42 +150,32 @@ Table chat {
 
 Table mensaje {
   id integer [primary key]
-  chat_id integer [not null]
-  emisor_id integer
-  receptor_id integer
+  chat_id integer [not null, ref: > chat.id]
+  emisor_id integer [ref: > usuario.id]
+  receptor_id integer [ref: > usuario.id]
   hora timestamp
   texto text
 }
 
-
 Table imagen_propiedad {
   id integer [primary key]
-  propiedad_id integer [not null]
-  url text [note: 'URL de la imagen almacenada']
+  propiedad_id integer [not null, ref: > propiedad.id]
+  url text
 }
 
-// Relaciones
+Table imagen {
+  id integer [primary key]
+  url text [not null]
+}
 
-Ref: usuario.tarjeta_id - tarjeta.id
-
-Ref: reserva.propiedad_id > propiedad.id
-Ref: reserva.inquilino_id > usuario.id
-Ref: reserva.chat_id > chat.id
-
-Ref: propiedad.id_pol_reserva > politica_reserva.id
-
-Ref: imagen_propiedad.propiedad_id > propiedad.id
-
-Ref: mensaje.chat_id > chat.id
-Ref: mensaje.emisor_id > usuario.id
-Ref: mensaje.receptor_id > usuario.id
-
-Ref: calificacion_user.evaluado_id - usuario.id
-Ref: calificacion_user.evaluador_id - usuario.id
-
-Ref: calificacion_prop.usuario_id > usuario.id
-Ref: calificacion_prop.propiedad_id > propiedad.id
-
-Ref: propiedad.id_ciudad > ciudad.id
-Ref: usuario.rol > rol.id
-Ref: ciudad.id_provincia < provincia.id
+// Relaciones adicionales
+// usuario_rol: muchos a muchos entre usuario y rol
+// usuario-tarjeta: uno a muchos (usuario_id en tarjeta)
+// tarjeta-marca_tarjeta: muchos a uno (id_marca)
+// tarjeta-tipo_tarjeta: muchos a uno (id_tipo)
+// propiedad-politicas_reserva: muchos a uno (id_pol_reserva)
+// propiedad-propiedad_tipos: muchos a uno (id_tipo)
+// propiedad-ciudades: muchos a uno (id_ciudad)
+// ciudades-provincias: muchos a uno (id_provincia)
+// usuario-paises: muchos a uno (id_pais)
+// usuario-tipo_identificacion: muchos a uno (id_tipo_identificacion)
