@@ -31,7 +31,7 @@ class PermisosRol:
         # Devuelve los permisos base (todos en False) para un usuario sin rol específico.
         return {
             "ver_panel_admin": False,          # Acceso al panel de administración
-            "gestionar_usuarios": False,       # Permiso para crear, editar o eliminar usuarios
+            "gestionar_empleados": False,       # Permiso para crear, editar o eliminar empleados
             "ver_panel_empleado": False,       # Acceso al panel de empleados
             "gestionar_propiedades": False,    # Permiso para gestionar propiedades
             "reservar": False,                 # Permiso para realizar reservas
@@ -45,7 +45,7 @@ class PermisosAdministrador(PermisosRol):
         p = super().get_permisos()
         p.update({
             "ver_panel_admin": True,
-            "gestionar_usuarios": True,
+            "gestionar_empleados": True,
             "ver_panel_empleado": True,
             "reservar": True,
             "ver_panel_inquilino": True,
