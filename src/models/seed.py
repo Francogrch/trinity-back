@@ -1,4 +1,6 @@
 from src.models import users, propiedades, parametricas
+from src.models.users.user import Tarjeta
+from datetime import date
 
 
 def run():
@@ -64,6 +66,53 @@ def run():
         fecha_nacimiento="2000-12-31"
     )
     print("Usuarios y tipos de identificación de ejemplo creados")
+
+    # Tarjetas de ejemplo para los usuarios
+    tarjeta1 = Tarjeta(
+        numero="4111111111111111",
+        nombre_titular="Juan Pérez",
+        fecha_inicio=date(2022, 1, 1),
+        fecha_vencimiento=date(2026, 1, 1),
+        cvv="123",
+        usuario_id=user1.id,
+        anverso_url="/static/tarjetas/juan_anverso.png",
+        reverso_url="/static/tarjetas/juan_reverso.png"
+    )
+    tarjeta2 = Tarjeta(
+        numero="5500000000000004",
+        nombre_titular="Juan Pérez",
+        fecha_inicio=date(2023, 5, 1),
+        fecha_vencimiento=date(2027, 5, 1),
+        cvv="456",
+        usuario_id=user1.id,
+        anverso_url="/static/tarjetas/juan2_anverso.png",
+        reverso_url="/static/tarjetas/juan2_reverso.png"
+    )
+    tarjeta3 = Tarjeta(
+        numero="4000000000000002",
+        nombre_titular="Raul Gómez",
+        fecha_inicio=date(2021, 6, 1),
+        fecha_vencimiento=date(2025, 6, 1),
+        cvv="789",
+        usuario_id=user2.id,
+        anverso_url="/static/tarjetas/raul_anverso.png",
+        reverso_url="/static/tarjetas/raul_reverso.png"
+    )
+    tarjeta4 = Tarjeta(
+        numero="340000000000009",
+        nombre_titular="Roberto López",
+        fecha_inicio=date(2022, 9, 1),
+        fecha_vencimiento=date(2026, 9, 1),
+        cvv="321",
+        usuario_id=user3.id,
+        anverso_url="/static/tarjetas/roberto_anverso.png",
+        reverso_url="/static/tarjetas/roberto_reverso.png"
+    )
+
+    from src.models.database import db
+    db.session.add_all([tarjeta1, tarjeta2, tarjeta3, tarjeta4])
+    db.session.commit()
+    print("Tarjetas de ejemplo creadas y asociadas a usuarios")
 
     # Propiedades de ejemplo
     prop1 = propiedades.create_propiedad(

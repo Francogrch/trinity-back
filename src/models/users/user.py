@@ -26,6 +26,7 @@ class Usuario(db.Model):
     id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
     pais = db.relationship("Pais", backref="usuarios")
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
+    tarjetas = db.relationship('Tarjeta', backref='usuario', lazy=True)
 
     def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
         self.nombre = nombre
@@ -58,6 +59,31 @@ class Rol(db.Model):
     def __repr__(self):
         return f"<Rol {self.nombre}>"
 
+class Tarjeta(db.Model):
+    __tablename__ = "tarjeta"
+    id = db.Column(db.Integer, primary_key=True)
+    numero = db.Column(db.String(30), nullable=False)
+    nombre_titular = db.Column(db.String(100), nullable=False)
+    fecha_inicio = db.Column(db.Date, nullable=True)
+    fecha_vencimiento = db.Column(db.Date, nullable=False)
+    cvv = db.Column(db.String(10), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    anverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del anverso
+    reverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del reverso
+
+    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None):
+        self.numero = numero
+        self.nombre_titular = nombre_titular
+        self.fecha_inicio = fecha_inicio
+        self.fecha_vencimiento = fecha_vencimiento
+        self.cvv = cvv
+        self.usuario_id = usuario_id
+        self.anverso_url = anverso_url
+        self.reverso_url = reverso_url
+
+    def __repr__(self):
+        return f"<Tarjeta {self.numero[-4:]} - {self.nombre_titular}>"
+
 class RolSchema(ma.Schema):
     id = ma.Integer()
     nombre = ma.String()
@@ -70,3 +96,15 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     pais = ma.Nested(PaisSchema, only=("id", "nombre"))
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
+    tarjetas = ma.Nested(lambda: TarjetaSchema(), many=True)
+
+# --- TarjetaSchema al final para evitar ciclos ---
+class TarjetaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Tarjeta
+        include_fk = True
+        load_instance = True
+    fecha_inicio = ma.Date(allow_none=True)
+    fecha_vencimiento = ma.Date(required=True)
+    anverso_url = ma.String(allow_none=True)
+    reverso_url = ma.String(allow_none=True)
