@@ -1,14 +1,34 @@
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
+from datetime import datetime
 
 
 def get_propiedades():
-    propiedades = Propiedad.query.all()
+    propiedades = Propiedad.query.filter_by(delete_at=None).all()
+    return propiedades
+
+
+def get_propiedades_eliminadas():
+    propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None)).all()
     return propiedades
 
 
 def get_propiedad_id(id):
     return Propiedad.query.get(id)
+
+
+def eliminar_prop(prop_id):
+    propiedad = get_propiedad_id(prop_id)
+    if not propiedad:
+        return None
+
+    propiedad.delete_at = datetime.now()
+    try:
+        db.session.commit()
+        return propiedad
+    except Exception:
+        db.session.rollback()
+        raise
 
 
 def create_propiedad(
@@ -40,7 +60,7 @@ def create_propiedad(
         db.session.add(nueva)
         db.session.commit()
         return nueva
-    except:
+    except Exception as e:
         db.session.rollback()
         raise ()
 

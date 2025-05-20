@@ -3,6 +3,8 @@ from flask import Blueprint, request, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 from src.models import imagenes
+from src.web.authorization.roles import rol_requerido
+from src.enums.roles import Rol
 
 imagen_blueprint = Blueprint('imagenes', __name__, url_prefix="/imagenes")
 

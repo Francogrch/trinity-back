@@ -2,4 +2,5 @@ Flask
 Flask-SQLAlchemy
 flask-cors
 flask-marshmallow
-werkzeug
+flask-jwt-extended
+marshmallow-sqlalchemy

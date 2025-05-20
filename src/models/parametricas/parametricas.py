@@ -16,6 +16,7 @@ class Provincia(db.Model):
     def __repr__(self):
         return self.nombre
 
+
 class Ciudad(db.Model):
     __tablename__ = "ciudades"
     id = db.Column(db.Integer, primary_key=True)
@@ -57,14 +58,40 @@ class PoliticaReserva(db.Model):
         return self.porcentaje
 
 
+class TipoIdentificacion(db.Model):
+    __tablename__ = "tipo_identificacion"
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50), unique=True, nullable=False)
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+    def __repr__(self):
+        return self.nombre
+
+
+class Pais(db.Model):
+    __tablename__ = "paises"
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), unique=True, nullable=False)
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+    def __repr__(self):
+        return self.nombre
+
+
 class ProvinciaSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True, dump_only=True)
+
 
 class CiudadSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     id_provincia = ma.Integer(required=True, dump_only=True)
     nombre = ma.String(required=True, dump_only=True)
+
 
 class PropiedadTipoSchema(ma.Schema):
     class Meta:
@@ -73,7 +100,17 @@ class PropiedadTipoSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     tipo = ma.String(required=True)
 
+
 class PoliticaReservaSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     label = ma.String(required=True)
     porcentaje = ma.Float(required=True)
+
+
+class TipoIdentificacionSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(required=True)
+
+class RolSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    label = ma.String(required=True)
