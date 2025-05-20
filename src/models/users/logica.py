@@ -2,6 +2,7 @@ from src.models.database import db
 from src.models.users.user import Usuario, UsuarioSchema, Rol
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
+from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
 
 def get_usuarios():
     usuarios = Usuario.query.all()
@@ -84,3 +85,30 @@ def get_usuarios_by_rol(rol_id):
 
 def get_schema_usuario():
     return UsuarioSchema()
+
+def get_permisos_usuario(usuario):
+    """
+    Devuelve un diccionario de permisos (clave: permiso, valor: bool) según los roles del usuario.
+    Utiliza las clases polimórficas de permisos definidas en permisos.py.
+    
+    Para cada rol del usuario, obtiene los permisos correspondientes y los combina:
+    - Si un permiso es True en al menos uno de los roles, será True en el resultado final.
+    - Si el usuario no tiene roles, todos los permisos serán False.
+    
+    Args:
+        usuario: Objeto Usuario con la relación 'roles' cargada.
+    Returns:
+        dict: Permisos combinados del usuario, ejemplo:
+            {
+                'ver_panel_admin': True,
+                'gestionar_usuarios': True,
+                ...
+            }
+    """
+    permisos = PermisosRol().get_permisos()
+    for rol in usuario.roles:
+        clase_permiso = PERMISOS_CLASSES.get(rol.nombre, PermisosRol)
+        rol_permisos = clase_permiso().get_permisos()
+        for permiso, valor in rol_permisos.items():
+            permisos[permiso] = permisos[permiso] or valor
+    return permisos
