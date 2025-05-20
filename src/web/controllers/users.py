@@ -47,11 +47,14 @@ def create_usuario():
     try:
         usuario = users.create_usuario(
             nombre=data['nombre'],
+            apellido=data.get('apellido'),
             correo=data['correo'],
             roles_ids=data['roles_ids'],
             password=data.get('password'),
             tipo_identificacion=data.get('tipo_identificacion'),
-            numero_identificacion=data.get('numero_identificacion')
+            numero_identificacion=data.get('numero_identificacion'),
+            id_pais=data.get('id_pais'),
+            fecha_nacimiento=data.get('fecha_nacimiento')
         )
         return (users.get_schema_usuario().dumps(usuario), 201)
     except ValidationError as err:

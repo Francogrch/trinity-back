@@ -24,30 +24,44 @@ def run():
     cien = parametricas.create_pol_reserva(
         "Seña del 100% del valor de la estadía", 1)
 
+    # Paises de ejemplo
+    pais_arg = parametricas.create_pais("Argentina")
+    pais_uru = parametricas.create_pais("Uruguay")
+    pais_chi = parametricas.create_pais("Chile")
+
     # Usuarios de ejemplo con múltiples roles y tipo de identificación
     user1 = users.create_usuario(
         nombre="Juan",
+        apellido="Pérez",
         correo="juan@mail.com",
         roles_ids=[administrador.id, inquilino.id],
         password="1234",
         tipo_identificacion=dni.nombre,
-        numero_identificacion="12345678"
+        numero_identificacion="12345678",
+        id_pais=pais_arg.id,
+        fecha_nacimiento="1990-01-01"
     )
     user2 = users.create_usuario(
         nombre="Raul",
+        apellido="Gómez",
         correo="raul@mail.com",
         roles_ids=[encargado.id, inquilino.id],
         password="1234",
         tipo_identificacion=pasaporte.nombre,
-        numero_identificacion="A1234567"
+        numero_identificacion="A1234567",
+        id_pais=pais_uru.id,
+        fecha_nacimiento="1985-05-10"
     )
     user3 = users.create_usuario(
         nombre="Roberto",
+        apellido="López",
         correo="roberto@mail.com",
         roles_ids=[inquilino.id],
         password="1234",
         tipo_identificacion=cedula.nombre,
-        numero_identificacion="87654321"
+        numero_identificacion="87654321",
+        id_pais=pais_chi.id,
+        fecha_nacimiento="2000-12-31"
     )
     print("Usuarios y tipos de identificación de ejemplo creados")
 

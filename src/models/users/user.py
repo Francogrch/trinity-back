@@ -17,9 +17,13 @@ class Usuario(db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     tipo_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
     numero_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
+    apellido = db.Column(db.String(100), nullable=True)
+    fecha_nacimiento = db.Column(db.Date, nullable=True)
+    id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
+    pais = db.relationship('Pais', backref='usuarios')
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
 
-    def __init__(self, nombre, correo, roles=None, password=None, tipo_identificacion=None, numero_identificacion=None):
+    def __init__(self, nombre, correo, roles=None, password=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
         self.nombre = nombre
         self.correo = correo
         if roles:
@@ -28,6 +32,9 @@ class Usuario(db.Model):
             self.set_password(password)
         self.tipo_identificacion = tipo_identificacion
         self.numero_identificacion = numero_identificacion
+        self.apellido = apellido
+        self.fecha_nacimiento = fecha_nacimiento
+        self.id_pais = id_pais
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -56,5 +63,9 @@ class UsuarioSchema(ma.Schema):
     correo = ma.String(required=True)
     tipo_identificacion = ma.String()
     numero_identificacion = ma.String()
+    apellido = ma.String()
+    fecha_nacimiento = ma.Date()
+    id_pais = ma.Integer()
+    pais = ma.Nested('PaisSchema', dump_only=True)
     roles = ma.Nested(RolSchema, many=True, dump_only=True)
     # Puedes agregar más campos si es necesario

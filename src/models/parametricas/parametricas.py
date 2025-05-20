@@ -70,6 +70,18 @@ class TipoIdentificacion(db.Model):
         return self.nombre
 
 
+class Pais(db.Model):
+    __tablename__ = "paises"
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), unique=True, nullable=False)
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+    def __repr__(self):
+        return self.nombre
+
+
 class ProvinciaSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True, dump_only=True)
@@ -96,6 +108,11 @@ class PoliticaReservaSchema(ma.Schema):
 
 
 class TipoIdentificacionSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(required=True)
+
+
+class PaisSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True)
 

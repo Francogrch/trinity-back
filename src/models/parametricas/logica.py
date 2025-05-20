@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais, PaisSchema
 from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
 from src.models.users.user import Rol, RolSchema
 
@@ -106,3 +106,22 @@ def create_tipo_identificacion(nombre):
     except:
         db.session.rollback()
         raise
+
+
+def get_paises():
+    return Pais.query.all()
+
+
+def create_pais(nombre):
+    try:
+        pais = Pais(nombre)
+        db.session.add(pais)
+        db.session.commit()
+        return pais
+    except:
+        db.session.rollback()
+        raise
+
+
+def get_schema_pais():
+    return PaisSchema()

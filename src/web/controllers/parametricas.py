@@ -8,6 +8,7 @@ from marshmallow import ValidationError
 parametricas_blueprint = Blueprint(
     'parametricas', __name__, url_prefix="/parametricas")
 
+from src.models.parametricas.logica import get_paises, create_pais, get_schema_pais
 
 @parametricas_blueprint.get('/provincias')
 def get_provincias():
@@ -57,3 +58,17 @@ def get_tipos_identificacion():
     from src.models.parametricas.logica import get_tipos_identificacion, get_schema_tipo_identificacion
     tipos = get_tipos_identificacion()
     return get_schema_tipo_identificacion().dump(tipos, many=True)
+
+@parametricas_blueprint.get('/paises')
+def get_paises_route():
+    paises = get_paises()
+    return get_schema_pais().dump(paises, many=True)
+
+@parametricas_blueprint.post('/paises')
+def create_pais_route():
+    data = request.get_json()
+    try:
+        pais = create_pais(data['nombre'])
+        return get_schema_pais().dump(pais), 201
+    except Exception as e:
+        return {"error": str(e)}, 400
