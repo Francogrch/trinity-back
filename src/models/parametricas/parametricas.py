@@ -44,6 +44,18 @@ class PropiedadTipo(db.Model):
         return self.tipo
 
 
+class Rol(db.Model):
+    __tablename__ = "rol"
+    id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String, unique=True, nullable=False)
+
+    def __init__(self, label):
+        self.label = label
+
+    def __repr__(self):
+        return self.label
+
+
 class PoliticaReserva(db.Model):
     __tablename__ = "politicas_reserva"
     id = db.Column(db.Integer, primary_key=True)
