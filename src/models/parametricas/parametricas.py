@@ -111,12 +111,6 @@ class TipoIdentificacionSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True)
 
-
-class PaisSchema(ma.Schema):
-    id = ma.Integer(dump_only=True)
-    nombre = ma.String(required=True)
-
-
 class RolSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     label = ma.String(required=True)

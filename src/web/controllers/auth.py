@@ -24,7 +24,7 @@ def login():
         # Claims personalizados: id, tipo y número de identificación
         additional_claims = {
             'id': usuario.id,
-            'tipo_identificacion': usuario.tipo_identificacion,
+            'tipo_identificacion': usuario.tipo_identificacion.nombre if usuario.tipo_identificacion else None,
             'numero_identificacion': usuario.numero_identificacion
         }
         # Crea un token JWT con identidad del usuario y claims personalizados

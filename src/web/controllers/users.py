@@ -51,7 +51,7 @@ def create_usuario():
             correo=data['correo'],
             roles_ids=data['roles_ids'],
             password=data.get('password'),
-            tipo_identificacion=data.get('tipo_identificacion'),
+            id_tipo_identificacion=data.get('id_tipo_identificacion'),
             numero_identificacion=data.get('numero_identificacion'),
             id_pais=data.get('id_pais'),
             fecha_nacimiento=data.get('fecha_nacimiento')

@@ -4,6 +4,7 @@ from marshmallow import validate, post_load
 from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
+from src.models.parametricas.parametricas import TipoIdentificacionSchema
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -17,7 +18,8 @@ class Usuario(db.Model):
     nombre = db.Column(db.String(100), unique=True)
     correo = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    tipo_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
+    id_tipo_identificacion = db.Column(db.Integer, db.ForeignKey('tipo_identificacion.id'), nullable=True)
+    tipo_identificacion = db.relationship('TipoIdentificacion')
     numero_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
     apellido = db.Column(db.String(100), nullable=True)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
@@ -25,13 +27,14 @@ class Usuario(db.Model):
     pais = db.relationship("Pais", backref="usuarios")
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
 
-    def __init__(self, nombre, correo, roles=None, password=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
+    def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
         self.nombre = nombre
         self.correo = correo
         if roles:
             self.roles = roles
         if password:
             self.set_password(password)
+        self.id_tipo_identificacion = id_tipo_identificacion
         self.tipo_identificacion = tipo_identificacion
         self.numero_identificacion = numero_identificacion
         self.apellido = apellido
@@ -64,4 +67,6 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         model = Usuario
         include_relationships = True
         load_instance = True
-    pais = ma.Nested('PaisSchema', only=("id", "nombre"))
+    pais = ma.Nested(PaisSchema, only=("id", "nombre"))
+    roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
+    tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))

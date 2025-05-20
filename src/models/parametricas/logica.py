@@ -1,7 +1,7 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais, PaisSchema
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais
 from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
-from src.models.schemas import RolSchema
+from src.models.schemas import RolSchema, PaisSchema
 
 
 def get_provincias():

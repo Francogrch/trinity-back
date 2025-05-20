@@ -36,7 +36,7 @@ def run():
         correo="juan@mail.com",
         roles_ids=[administrador.id, inquilino.id],
         password="1234",
-        tipo_identificacion=dni.nombre,
+        id_tipo_identificacion=dni.id,
         numero_identificacion="12345678",
         id_pais=pais_arg.id,
         fecha_nacimiento="1990-01-01"
@@ -47,7 +47,7 @@ def run():
         correo="raul@mail.com",
         roles_ids=[encargado.id, inquilino.id],
         password="1234",
-        tipo_identificacion=pasaporte.nombre,
+        id_tipo_identificacion=pasaporte.id,
         numero_identificacion="A1234567",
         id_pais=pais_uru.id,
         fecha_nacimiento="1985-05-10"
@@ -58,7 +58,7 @@ def run():
         correo="roberto@mail.com",
         roles_ids=[inquilino.id],
         password="1234",
-        tipo_identificacion=cedula.nombre,
+        id_tipo_identificacion=cedula.id,
         numero_identificacion="87654321",
         id_pais=pais_chi.id,
         fecha_nacimiento="2000-12-31"
