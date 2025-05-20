@@ -77,7 +77,7 @@ def create_usuario():
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
 @jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
 def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
