@@ -44,16 +44,16 @@ class PropiedadTipo(db.Model):
         return self.tipo
 
 
-class Rol(db.Model):
-    __tablename__ = "rol"
-    id = db.Column(db.Integer, primary_key=True)
-    label = db.Column(db.String, unique=True, nullable=False)
+# class Rol(db.Model):
+#     __tablename__ = "rol"
+#     id = db.Column(db.Integer, primary_key=True)
+#     label = db.Column(db.String, unique=True, nullable=False)
 
-    def __init__(self, label):
-        self.label = label
+#     def __init__(self, label):
+#         self.label = label
 
-    def __repr__(self):
-        return self.label
+#     def __repr__(self):
+#         return self.label
 
 
 class PoliticaReserva(db.Model):
@@ -123,6 +123,6 @@ class TipoIdentificacionSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True)
 
-class RolSchema(ma.Schema):
-    id = ma.Integer(dump_only=True)
-    label = ma.String(required=True)
+# class RolSchema(ma.Schema):
+#     id = ma.Integer(dump_only=True)
+#     label = ma.String(required=True)
