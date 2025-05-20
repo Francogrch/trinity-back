@@ -13,6 +13,7 @@ usuario_rol = db.Table(
     db.Column('rol_id', db.Integer, db.ForeignKey('rol.id'), primary_key=True)
 )
 
+
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True)

@@ -67,10 +67,14 @@ Table tipo_identificacion {
 
 Table reserva {
   id integer [primary key]
-  propiedad_id integer [ref: > propiedad.id]
-  inquilino_id integer [ref: > usuario.id]
-  chat_id integer [ref: > chat.id]
-  estado varchar
+  id_propiedad integer
+  id_inquilino integer
+  id_usuario_carga integer
+  cantidad_personas integer
+  monto_pagado 
+  monto_total
+  id_chat integer
+  id_estado interger 
   fecha_inicio date
   fecha_fin date
   created_at timestamp
@@ -134,9 +138,13 @@ Table calificacion_user {
 
 Table calificacion_prop {
   id integer [primary key]
-  propiedad_id integer [not null, ref: > propiedad.id]
-  usuario_id integer [not null, ref: > usuario.id]
-  puntaje integer
+  propiedad_id integer [not null] // FK a propiedad
+  usuario_id integer [not null]   // quién califica
+  puntaje integer                 // de 1 a 5, por ejemplo
+  puntaje integer                 // de 1 a 5, por ejemplo
+  puntaje integer                 // de 1 a 5, por ejemplo
+  puntaje integer                 // de 1 a 5, por ejemplo
+  puntaje integer                 // de 1 a 5, por ejemplo
   comentario text
   created_at timestamp
 }
