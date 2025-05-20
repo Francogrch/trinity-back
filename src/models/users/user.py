@@ -70,8 +70,12 @@ class Tarjeta(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     anverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del anverso
     reverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del reverso
+    id_marca = db.Column(db.Integer, db.ForeignKey('marca_tarjeta.id'), nullable=True)
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipo_tarjeta.id'), nullable=True)
+    marca = db.relationship('MarcaTarjeta')
+    tipo = db.relationship('TipoTarjeta')
 
-    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None):
+    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None, id_marca=None, id_tipo=None, marca=None, tipo=None):
         self.numero = numero
         self.nombre_titular = nombre_titular
         self.fecha_inicio = fecha_inicio
@@ -80,9 +84,28 @@ class Tarjeta(db.Model):
         self.usuario_id = usuario_id
         self.anverso_url = anverso_url
         self.reverso_url = reverso_url
+        self.id_marca = id_marca
+        self.id_tipo = id_tipo
+        self.marca = marca
+        self.tipo = tipo
 
     def __repr__(self):
         return f"<Tarjeta {self.numero[-4:]} - {self.nombre_titular}>"
+
+# --- Paramétricas para tarjeta ---
+class MarcaTarjeta(db.Model):
+    __tablename__ = 'marca_tarjeta'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(30), unique=True, nullable=False)
+    def __repr__(self):
+        return f"<MarcaTarjeta {self.nombre}>"
+
+class TipoTarjeta(db.Model):
+    __tablename__ = 'tipo_tarjeta'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(20), unique=True, nullable=False)
+    def __repr__(self):
+        return f"<TipoTarjeta {self.nombre}>"
 
 class RolSchema(ma.Schema):
     id = ma.Integer()
@@ -99,6 +122,16 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     tarjetas = ma.Nested(lambda: TarjetaSchema(), many=True)
 
 # --- TarjetaSchema al final para evitar ciclos ---
+class MarcaTarjetaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = MarcaTarjeta
+        load_instance = True
+
+class TipoTarjetaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = TipoTarjeta
+        load_instance = True
+
 class TarjetaSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Tarjeta
@@ -108,3 +141,5 @@ class TarjetaSchema(ma.SQLAlchemyAutoSchema):
     fecha_vencimiento = ma.Date(required=True)
     anverso_url = ma.String(allow_none=True)
     reverso_url = ma.String(allow_none=True)
+    marca = ma.Nested(MarcaTarjetaSchema, allow_none=True)
+    tipo = ma.Nested(TipoTarjetaSchema, allow_none=True)

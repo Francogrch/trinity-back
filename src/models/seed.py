@@ -67,6 +67,17 @@ def run():
     )
     print("Usuarios y tipos de identificación de ejemplo creados")
 
+    # Paramétricas de tarjetas
+    from src.models.users.user import MarcaTarjeta, TipoTarjeta
+    from src.models.database import db
+    visa = MarcaTarjeta(nombre="Visa")
+    mastercard = MarcaTarjeta(nombre="Mastercard")
+    amex = MarcaTarjeta(nombre="Amex")
+    credito = TipoTarjeta(nombre="crédito")
+    debito = TipoTarjeta(nombre="débito")
+    db.session.add_all([visa, mastercard, amex, credito, debito])
+    db.session.commit()
+
     # Tarjetas de ejemplo para los usuarios
     tarjeta1 = Tarjeta(
         numero="4111111111111111",
@@ -76,7 +87,9 @@ def run():
         cvv="123",
         usuario_id=user1.id,
         anverso_url="/static/tarjetas/juan_anverso.png",
-        reverso_url="/static/tarjetas/juan_reverso.png"
+        reverso_url="/static/tarjetas/juan_reverso.png",
+        id_marca=visa.id,
+        id_tipo=credito.id
     )
     tarjeta2 = Tarjeta(
         numero="5500000000000004",
@@ -86,7 +99,9 @@ def run():
         cvv="456",
         usuario_id=user1.id,
         anverso_url="/static/tarjetas/juan2_anverso.png",
-        reverso_url="/static/tarjetas/juan2_reverso.png"
+        reverso_url="/static/tarjetas/juan2_reverso.png",
+        id_marca=mastercard.id,
+        id_tipo=debito.id
     )
     tarjeta3 = Tarjeta(
         numero="4000000000000002",
@@ -96,7 +111,9 @@ def run():
         cvv="789",
         usuario_id=user2.id,
         anverso_url="/static/tarjetas/raul_anverso.png",
-        reverso_url="/static/tarjetas/raul_reverso.png"
+        reverso_url="/static/tarjetas/raul_reverso.png",
+        id_marca=visa.id,
+        id_tipo=debito.id
     )
     tarjeta4 = Tarjeta(
         numero="340000000000009",
@@ -106,10 +123,10 @@ def run():
         cvv="321",
         usuario_id=user3.id,
         anverso_url="/static/tarjetas/roberto_anverso.png",
-        reverso_url="/static/tarjetas/roberto_reverso.png"
+        reverso_url="/static/tarjetas/roberto_reverso.png",
+        id_marca=amex.id,
+        id_tipo=credito.id
     )
-
-    from src.models.database import db
     db.session.add_all([tarjeta1, tarjeta2, tarjeta3, tarjeta4])
     db.session.commit()
     print("Tarjetas de ejemplo creadas y asociadas a usuarios")
