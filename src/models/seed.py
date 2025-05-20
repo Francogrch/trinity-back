@@ -67,6 +67,54 @@ def run():
     )
     print("Usuarios y tipos de identificación de ejemplo creados")
 
+    # Usuarios adicionales empleados
+    user4 = users.create_usuario(
+        nombre="Emilia",
+        apellido="Martínez",
+        correo="emilia@mail.com",
+        roles_ids=[encargado.id],
+        password="1234",
+        id_tipo_identificacion=dni.id,
+        numero_identificacion="23456789",
+        id_pais=pais_arg.id,
+        fecha_nacimiento="1992-03-15"
+    )
+    user5 = users.create_usuario(
+        nombre="Sofía",
+        apellido="Fernández",
+        correo="sofia@mail.com",
+        roles_ids=[encargado.id],
+        password="1234",
+        id_tipo_identificacion=cedula.id,
+        numero_identificacion="34567890",
+        id_pais=pais_uru.id,
+        fecha_nacimiento="1988-07-22"
+    )
+    # Usuarios adicionales inquilinos
+    user6 = users.create_usuario(
+        nombre="Lucía",
+        apellido="García",
+        correo="lucia@mail.com",
+        roles_ids=[inquilino.id],
+        password="1234",
+        id_tipo_identificacion=pasaporte.id,
+        numero_identificacion="B9876543",
+        id_pais=pais_chi.id,
+        fecha_nacimiento="1995-11-30"
+    )
+    user7 = users.create_usuario(
+        nombre="Martín",
+        apellido="Suárez",
+        correo="martin@mail.com",
+        roles_ids=[inquilino.id],
+        password="1234",
+        id_tipo_identificacion=dni.id,
+        numero_identificacion="45678901",
+        id_pais=pais_arg.id,
+        fecha_nacimiento="1998-04-18"
+    )
+    print("Usuarios empleados e inquilinos adicionales creados")
+
     # Paramétricas de tarjetas
     from src.models.users.user import MarcaTarjeta, TipoTarjeta
     from src.models.database import db
@@ -78,7 +126,7 @@ def run():
     db.session.add_all([visa, mastercard, amex, credito, debito])
     db.session.commit()
 
-    # Tarjetas de ejemplo para los usuarios
+    # Tarjetas de ejemplo solo para usuarios inquilinos
     tarjeta1 = Tarjeta(
         numero="4111111111111111",
         nombre_titular="Juan Pérez",
@@ -129,7 +177,46 @@ def run():
     )
     db.session.add_all([tarjeta1, tarjeta2, tarjeta3, tarjeta4])
     db.session.commit()
-    print("Tarjetas de ejemplo creadas y asociadas a usuarios")
+    print("Tarjetas de ejemplo creadas y asociadas a usuarios inquilinos")
+
+    # Tarjetas para los nuevos inquilinos
+    tarjeta5 = Tarjeta(
+        numero="6011000000000004",
+        nombre_titular="Lucía García",
+        fecha_inicio=date(2023, 2, 1),
+        fecha_vencimiento=date(2027, 2, 1),
+        cvv="654",
+        usuario_id=user6.id,
+        anverso_url="/static/tarjetas/lucia_anverso.png",
+        reverso_url="/static/tarjetas/lucia_reverso.png",
+        id_marca=visa.id,
+        id_tipo=credito.id
+    )
+    tarjeta6 = Tarjeta(
+        numero="3530111333300000",
+        nombre_titular="Martín Suárez",
+        fecha_inicio=date(2024, 1, 1),
+        fecha_vencimiento=date(2028, 1, 1),
+        cvv="852",
+        usuario_id=user7.id,
+        anverso_url="/static/tarjetas/martin_anverso.png",
+        reverso_url="/static/tarjetas/martin_reverso.png",
+        id_marca=mastercard.id,
+        id_tipo=debito.id
+    )
+    db.session.add_all([tarjeta5, tarjeta6])
+    db.session.commit()
+    print("Tarjetas de ejemplo creadas y asociadas a nuevos usuarios inquilinos")
+
+    # Relacionar tarjetas solo con usuarios que sean inquilinos
+    user1.tarjetas.extend([tarjeta1, tarjeta2])
+    user2.tarjetas.append(tarjeta3)
+    user3.tarjetas.append(tarjeta4)
+    user6.tarjetas.append(tarjeta5)
+    user7.tarjetas.append(tarjeta6)
+    db.session.add_all([user1, user2, user3, user6, user7, user4, user5])
+    db.session.commit()
+    print("Tarjetas asociadas a usuarios inquilinos en la relación uno-a-muchos.")
 
     # Propiedades de ejemplo
     prop1 = propiedades.create_propiedad(

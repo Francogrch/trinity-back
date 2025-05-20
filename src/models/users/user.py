@@ -72,10 +72,10 @@ class Tarjeta(db.Model):
     reverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del reverso
     id_marca = db.Column(db.Integer, db.ForeignKey('marca_tarjeta.id'), nullable=True)
     id_tipo = db.Column(db.Integer, db.ForeignKey('tipo_tarjeta.id'), nullable=True)
-    marca = db.relationship('MarcaTarjeta')
-    tipo = db.relationship('TipoTarjeta')
+    marca = db.relationship('MarcaTarjeta', foreign_keys=[id_marca])
+    tipo = db.relationship('TipoTarjeta', foreign_keys=[id_tipo])
 
-    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None, id_marca=None, id_tipo=None, marca=None, tipo=None):
+    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None, id_marca=None, id_tipo=None):
         self.numero = numero
         self.nombre_titular = nombre_titular
         self.fecha_inicio = fecha_inicio
@@ -86,8 +86,6 @@ class Tarjeta(db.Model):
         self.reverso_url = reverso_url
         self.id_marca = id_marca
         self.id_tipo = id_tipo
-        self.marca = marca
-        self.tipo = tipo
 
     def __repr__(self):
         return f"<Tarjeta {self.numero[-4:]} - {self.nombre_titular}>"
