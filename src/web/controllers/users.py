@@ -82,7 +82,10 @@ def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
         return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
-    return users.get_schema_usuario().dumps(usuario)  # Retorna usuario serializado
+    usuario_schema = users.get_schema_usuario()  # Obtiene el schema
+    data = usuario_schema.dump(usuario)  # Serializa el usuario
+    data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
+    return data  # Retorna usuario serializado con permisos
 
 # Endpoint: Obtener el usuario autenticado (perfil propio)
 @user_blueprint.get('/me')

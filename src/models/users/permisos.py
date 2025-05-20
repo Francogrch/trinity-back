@@ -37,6 +37,7 @@ class PermisosRol:
             "reservar": False,                 # Permiso para realizar reservas
             "ver_panel_inquilino": False,      # Acceso al panel de inquilinos
             "gestionar_reservas": False,       # Permiso para gestionar reservas (aprobación, rechazo, etc)
+            "ver_propiedades": False           # Permiso para ver propiedades asociadas (nuevo campo)
         }
 
 class PermisosAdministrador(PermisosRol):
@@ -50,6 +51,8 @@ class PermisosAdministrador(PermisosRol):
             "reservar": True,
             "ver_panel_inquilino": True,
             "gestionar_reservas": True,
+            "ver_propiedades": True,
+            "gestionar_propiedades": True  # Ahora en True para Administrador
         })
         return p
 
@@ -60,7 +63,8 @@ class PermisosEncargado(PermisosRol):
         p.update({
             "ver_panel_empleado": True,
             "gestionar_propiedades": True,
-            "gestionar_reservas": True,
+            "gestionar_reservas": True
+            # No puede ver propiedades asociadas por defecto
         })
         return p
 
@@ -70,7 +74,8 @@ class PermisosInquilino(PermisosRol):
         p = super().get_permisos()
         p.update({
             "reservar": True,
-            "ver_panel_inquilino": True
+            "ver_panel_inquilino": True,
+            "ver_propiedades": True
         })
         return p
 
