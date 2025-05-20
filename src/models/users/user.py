@@ -3,20 +3,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import validate, post_load
 from src.models.database import db
 
+# Tabla de asociación para muchos-a-muchos entre usuarios y roles
+usuario_rol = db.Table(
+    'usuario_rol',
+    db.Column('usuario_id', db.Integer, db.ForeignKey('usuario.id'), primary_key=True),
+    db.Column('rol_id', db.Integer, db.ForeignKey('rol.id'), primary_key=True)
+)
+
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True)
     correo = db.Column(db.String(120), unique=True, nullable=False)
-    id_rol = db.Column(db.Integer, db.ForeignKey("rol.id"))
-    rol = db.relationship("Rol")
     password_hash = db.Column(db.String(128), nullable=False)
+    tipo_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
+    numero_identificacion = db.Column(db.String(50), nullable=True)  # Nuevo campo
+    roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
 
-    def __init__(self, nombre, correo, id_rol, password=None):
+    def __init__(self, nombre, correo, roles=None, password=None, tipo_identificacion=None, numero_identificacion=None):
         self.nombre = nombre
         self.correo = correo
-        self.id_rol = id_rol
+        if roles:
+            self.roles = roles
         if password:
             self.set_password(password)
+        self.tipo_identificacion = tipo_identificacion
+        self.numero_identificacion = numero_identificacion
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -27,18 +38,23 @@ class Usuario(db.Model):
     def __repr__(self):
         return f"<Usuario {self.nombre}>"
 
+class Rol(db.Model):
+    __tablename__ = 'rol'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"<Rol {self.nombre}>"
+
 class RolSchema(ma.Schema):
     id = ma.Integer()
-    nombre = ma.Method("get_nombre")
-
-    def get_nombre(self, obj):
-        # Devuelve label si existe, si no, intenta nombre
-        return getattr(obj, "label", None) or getattr(obj, "nombre", None)
+    nombre = ma.String()
 
 class UsuarioSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(required=True)
-    id_rol = ma.Integer(required=True)
     correo = ma.String(required=True)
-    rol = ma.Nested(RolSchema, dump_only=True)  # Incluye el objeto rol serializado solo al hacer dump
+    tipo_identificacion = ma.String()
+    numero_identificacion = ma.String()
+    roles = ma.Nested(RolSchema, many=True, dump_only=True)
     # Puedes agregar más campos si es necesario

@@ -21,10 +21,11 @@ def login():
     usuario = get_usuario_by_correo(data['correo'])  # Busca el usuario por su correo
 
     if usuario and usuario.check_password(data['password']):  # Si el usuario existe y la contraseña es correcta
-        # Define los claims adicionales (datos extras que querés guardar en el token)
+        # Claims personalizados: id, tipo y número de identificación
         additional_claims = {
-            'correo': usuario.correo,
-            'id_rol': usuario.id_rol  # Usar solo el id, no el objeto Rol
+            'id': usuario.id,
+            'tipo_identificacion': usuario.tipo_identificacion,
+            'numero_identificacion': usuario.numero_identificacion
         }
         # Crea un token JWT con identidad del usuario y claims personalizados
         access_token = create_access_token(

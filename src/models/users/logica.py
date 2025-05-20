@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema
+from src.models.users.user import Usuario, UsuarioSchema, Rol
 
 
 def get_usuarios():
@@ -7,10 +7,18 @@ def get_usuarios():
     return usuarios
 
     
-def create_usuario(nombre, correo, id_rol, password):
-    """Crea un nuevo usuario con los datos recibidos."""
+def create_usuario(nombre, correo, roles_ids, password, tipo_identificacion=None, numero_identificacion=None):
+    """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
-        nuevo = Usuario(nombre, correo, id_rol, password)
+        roles = Rol.query.filter(Rol.id.in_(roles_ids)).all()
+        nuevo = Usuario(
+            nombre=nombre,
+            correo=correo,
+            roles=roles,
+            password=password,
+            tipo_identificacion=tipo_identificacion,
+            numero_identificacion=numero_identificacion
+        )
         db.session.add(nuevo)
         db.session.commit()
         return nuevo
@@ -40,20 +48,21 @@ def update_usuario(user_id, data):
     usuario = Usuario.query.get(user_id)
     if not usuario:
         return None
-    # Solo actualiza los campos permitidos
-    for campo in ['nombre', 'correo', 'id_rol']:
+    for campo in ['nombre', 'correo', 'tipo_identificacion', 'numero_identificacion']:
         if campo in data:
             setattr(usuario, campo, data[campo])
+    if 'roles_ids' in data:
+        roles = Rol.query.filter(Rol.id.in_(data['roles_ids'])).all()
+        usuario.roles = roles
     if 'password' in data and data['password']:
         usuario.set_password(data['password'])
     db.session.commit()
     return usuario
 
 def get_usuarios_by_rol(rol_id):
-    # Forzar carga de la relación rol para cada usuario
-    usuarios = Usuario.query.filter_by(id_rol=rol_id).all()
+    usuarios = Usuario.query.join(Usuario.roles).filter_by(id=rol_id).all()
     for usuario in usuarios:
-        _ = usuario.rol  # Accede a la relación para asegurar que se cargue
+        _ = usuario.roles
     return usuarios
 
 def get_schema_usuario():

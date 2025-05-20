@@ -50,3 +50,10 @@ def get_pol_reserva():
 @parametricas_blueprint.get('/roles')
 def get_roles():
     return parametricas.get_schema_rol().dump(parametricas.get_roles(), many=True)
+
+
+@parametricas_blueprint.get('/tipos-identificacion')
+def get_tipos_identificacion():
+    from src.models.parametricas.logica import get_tipos_identificacion, get_schema_tipo_identificacion
+    tipos = get_tipos_identificacion()
+    return get_schema_tipo_identificacion().dump(tipos, many=True)

@@ -7,6 +7,11 @@ def run():
     encargado = parametricas.create_rol("Encargado")
     inquilino = parametricas.create_rol("Inquilino")
 
+    # Tipos de identificación
+    dni = parametricas.create_tipo_identificacion("DNI")
+    pasaporte = parametricas.create_tipo_identificacion("Pasaporte")
+    cedula = parametricas.create_tipo_identificacion("Cédula")
+
     # Tipos de propiedades
     dpto = parametricas.create_tipos_propiedad("Departamento")
     cabana = parametricas.create_tipos_propiedad("Cabaña")
@@ -19,11 +24,32 @@ def run():
     cien = parametricas.create_pol_reserva(
         "Seña del 100% del valor de la estadía", 1)
 
-    # Usuarios de ejemplo
-    user1 = users.create_usuario(nombre="Juan", correo="juan@mail.com", id_rol=1, password="1234")
-    user2 = users.create_usuario(nombre="Raul", correo="raul@mail.com", id_rol=2, password="1234")
-    user3 = users.create_usuario(nombre="Roberto", correo="roberto@mail.com", id_rol=3, password="1234")
-    print("Usuarios de ejemplo creados")
+    # Usuarios de ejemplo con múltiples roles y tipo de identificación
+    user1 = users.create_usuario(
+        nombre="Juan",
+        correo="juan@mail.com",
+        roles_ids=[administrador.id, inquilino.id],
+        password="1234",
+        tipo_identificacion=dni.nombre,
+        numero_identificacion="12345678"
+    )
+    user2 = users.create_usuario(
+        nombre="Raul",
+        correo="raul@mail.com",
+        roles_ids=[encargado.id, inquilino.id],
+        password="1234",
+        tipo_identificacion=pasaporte.nombre,
+        numero_identificacion="A1234567"
+    )
+    user3 = users.create_usuario(
+        nombre="Roberto",
+        correo="roberto@mail.com",
+        roles_ids=[inquilino.id],
+        password="1234",
+        tipo_identificacion=cedula.nombre,
+        numero_identificacion="87654321"
+    )
+    print("Usuarios y tipos de identificación de ejemplo creados")
 
     # Propiedades de ejemplo
     prop1 = propiedades.create_propiedad(

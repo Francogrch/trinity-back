@@ -1,6 +1,7 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Rol
-from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema, RolSchema
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva
+from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
+from src.models.users.user import Rol, RolSchema
 
 
 def get_provincias():
@@ -26,11 +27,13 @@ def get_roles():
     return roles
 
 
-def create_rol(label):
+def create_rol(nombre):
     try:
-        rol = Rol(label)
+        rol = Rol()
+        rol.nombre = nombre
         db.session.add(rol)
         db.session.commit()
+        return rol
     except:
         db.session.rollback()
         raise
@@ -81,3 +84,25 @@ def get_schema_pol_reserva():
 
 def get_schema_rol():
     return RolSchema()
+
+
+def get_tipos_identificacion():
+    from src.models.parametricas.parametricas import TipoIdentificacion
+    return TipoIdentificacion.query.all()
+
+
+def get_schema_tipo_identificacion():
+    from src.models.parametricas.parametricas import TipoIdentificacionSchema
+    return TipoIdentificacionSchema()
+
+
+def create_tipo_identificacion(nombre):
+    from src.models.parametricas.parametricas import TipoIdentificacion
+    try:
+        tipo = TipoIdentificacion(nombre)
+        db.session.add(tipo)
+        db.session.commit()
+        return tipo
+    except:
+        db.session.rollback()
+        raise

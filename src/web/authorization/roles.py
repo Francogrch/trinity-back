@@ -1,10 +1,12 @@
 from flask import jsonify
-from flask_jwt_extended import get_jwt
+from flask_jwt_extended import get_jwt_identity
 from functools import wraps
+from src.models.users.logica import get_usuario_by_id
 
 def rol_requerido(roles_permitidos):
     """
     Decorador genérico para restringir acceso a rutas según roles permitidos (por id_rol).
+    Ahora consulta los roles del usuario autenticado en la base de datos.
     
     Args:
         roles_permitidos (list): Lista de ids de roles (int) que pueden acceder al endpoint.
@@ -24,9 +26,12 @@ def rol_requerido(roles_permitidos):
     def decorador(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            claims = get_jwt()
-            id_rol_actual = claims.get('id_rol')
-            if id_rol_actual not in roles_permitidos:
+            user_id = get_jwt_identity()
+            usuario = get_usuario_by_id(user_id)
+            if not usuario:
+                return jsonify({'mensaje': 'Usuario no encontrado'}), 404
+            ids_roles_usuario = [rol.id for rol in usuario.roles]
+            if not any(r in roles_permitidos for r in ids_roles_usuario):
                 return jsonify({'mensaje': 'Acceso denegado: rol insuficiente'}), 403
             return f(*args, **kwargs)
         return wrapper

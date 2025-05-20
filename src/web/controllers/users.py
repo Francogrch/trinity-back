@@ -10,20 +10,19 @@ from src.enums.roles import Rol
 # Crea un blueprint para las rutas relacionadas a usuarios, con prefijo /usuarios
 user_blueprint = Blueprint('users', __name__, url_prefix="/usuarios")
 
-def verificar_permiso_creacion_usuario(id_rol_actual, id_rol_nuevo):
+def verificar_permiso_creacion_usuario(id_rol_actuales, id_roles_nuevos):
     """
-    Lógica para validar permisos de creación de usuarios según el id de rol del creador.
-    Retorna (True, None) si está permitido, o (False, mensaje) si no.
+    Lógica para validar permisos de creación de usuarios según los roles actuales del creador.
+    id_rol_actuales: lista de ids de roles del usuario autenticado
+    id_roles_nuevos: lista de ids de roles a asignar al nuevo usuario
     """
     # Ejemplo: solo el rol ADMINISTRADOR puede crear empleados (EMPLEADO)
-    if id_rol_nuevo == Rol.EMPLEADO.value:
-        if id_rol_actual != Rol.ADMINISTRADOR.value:
+    if Rol.EMPLEADO.value in id_roles_nuevos:
+        if Rol.ADMINISTRADOR.value not in id_rol_actuales:
             return False, 'Solo un Administrador puede crear usuarios Empleados'
-    elif id_rol_nuevo == Rol.INQUILINO.value:
-        if id_rol_actual not in [Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value]:
+    if Rol.INQUILINO.value in id_roles_nuevos:
+        if not any(r in id_rol_actuales for r in [Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value]):
             return False, 'Solo Administrador o Empleado pueden crear usuarios Inquilinos'
-    else:
-        return False, 'Rol destino no permitido'
     return True, None
 
 @user_blueprint.get('/')
@@ -37,20 +36,28 @@ def get_usuarios():
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden crear usuarios
 def create_usuario():
-    claims = get_jwt()
-    id_rol_actual = claims.get('id_rol')
+    from flask_jwt_extended import get_jwt_identity
+    user_id = get_jwt_identity()
+    usuario_actual = users.get_usuario_by_id(user_id)
+    id_rol_actuales = [rol.id for rol in usuario_actual.roles]
     data = request.get_json()
-    permitido, mensaje = verificar_permiso_creacion_usuario(id_rol_actual, data['id_rol'])
+    permitido, mensaje = verificar_permiso_creacion_usuario(id_rol_actuales, data['roles_ids'])
     if not permitido:
         return jsonify({'mensaje': mensaje}), 403
     try:
-        data_usuario = users.get_schema_usuario().load(data)
-        usuario = users.create_usuario(**data_usuario)
+        usuario = users.create_usuario(
+            nombre=data['nombre'],
+            correo=data['correo'],
+            roles_ids=data['roles_ids'],
+            password=data.get('password'),
+            tipo_identificacion=data.get('tipo_identificacion'),
+            numero_identificacion=data.get('numero_identificacion')
+        )
         return (users.get_schema_usuario().dumps(usuario), 201)
     except ValidationError as err:
         return (err.messages, 422)
-    except:
-        return ({"error": "Usuario repetido?"}, 400)
+    except Exception as e:
+        return ({"error": str(e)}, 400)
 
 @user_blueprint.get('/<int:user_id>')
 @jwt_required()
