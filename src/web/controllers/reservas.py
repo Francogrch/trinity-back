@@ -13,7 +13,6 @@ reserva_blueprint = Blueprint('reservas', __name__, url_prefix="/reservas")
 
 @reserva_blueprint.get('/')
 @jwt_required()
-#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_reservas_usuario():
     usuario = users.get_usuario_by_id(get_jwt_identity())
     try:
@@ -46,6 +45,8 @@ def get_reservas_propiedad(propiedad_id):
 
 
 @reserva_blueprint.post('/')
+@jwt_required()
+@rol_requerido([Rol.INQUILINO.value])
 def create_reserva():
     data = request.get_json()
     try:
