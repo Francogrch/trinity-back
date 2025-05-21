@@ -18,6 +18,18 @@ def get_reservas_por_usuario(usuario):
     return []
 
 
+def get_reserva(reserva_id, usuario):
+    roles = usuario.get_roles()
+    reserva = Reserva.query.get(reserva_id)
+    if roles['is_admin']:
+        return reserva
+    if roles['is_encargado']:
+        return reserva  # Hay que corregir esto
+    if roles['is_inquilino'] and reserva and reserva.id_inquilino == usuario.id:
+        return reserva
+    return None
+
+
 def create_reserva(data):
     nueva_reserva = Reserva(
         id_propiedad=data["id_propiedad"],

@@ -19,12 +19,24 @@ def get_reservas_usuario():
     try:
         res = reservas.get_reservas_por_usuario(usuario)
         return reservas.get_schema_reserva().dump(res, many=True), 200
-    except Exception as e:
-        print(e)
+    except:
         return {'error': 'Error al obtener las reservas'}, 500
 
 
-@reserva_blueprint.get('/<int:propiedad_id>')
+@reserva_blueprint.get('/<int:reserva_id>')
+@jwt_required()
+def get_reserva(reserva_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        res = reservas.get_reserva(reserva_id, usuario)
+    except:
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res:
+        return {'error': 'Reserva no encontrada'}, 404
+    return reservas.get_schema_reserva().dump(res), 200
+
+
+@reserva_blueprint.get('/propiedad/<int:propiedad_id>')
 def get_reservas_propiedad(propiedad_id):
     try:
         res = reservas.get_reservas_por_propiedad(propiedad_id)
