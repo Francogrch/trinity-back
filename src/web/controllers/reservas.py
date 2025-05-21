@@ -50,6 +50,10 @@ def create_reserva():
     data = request.get_json()
     try:
         data_reserva = reservas.get_schema_reserva().load(data)
+        if reservas.hay_reservas_solapadas(
+                data_reserva['id_propiedad'], data_reserva['fecha_inicio'], data_reserva['fecha_fin']
+                ):
+            return {'error': 'Propiedad no disponible'}, 400
         reserva = reservas.create_reserva(data_reserva)
         return reservas.get_schema_reserva().dump(reserva), 201
     except ValidationError as err:

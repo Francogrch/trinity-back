@@ -46,5 +46,13 @@ def cambiar_estado_reserva(id_reserva, nuevo_id_estado):
     return reserva
 
 
+def hay_reservas_solapadas(id_propiedad, start_date, end_date):
+    return Reserva.query.filter(
+    Reserva.id_propiedad == id_propiedad,
+    Reserva.fecha_inicio <= end_date,
+    Reserva.fecha_fin >= start_date
+    ).first() is not None
+
+
 def get_schema_reserva():
     return ReservaSchema()

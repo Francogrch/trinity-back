@@ -1,6 +1,6 @@
 from src.models.database import db
 from src.models.marshmallow import ma
-from marshmallow import EXCLUDE
+from marshmallow import EXCLUDE, validates_schema, ValidationError
 from datetime import datetime
 
 
@@ -66,3 +66,8 @@ class ReservaSchema(ma.Schema):
     fecha_fin = ma.DateTime(required=True)
     created_at = ma.DateTime(dump_only=True)
     updated_at = ma.DateTime(dump_only=True)
+
+    @validates_schema
+    def validar_fechas(self, data, **kwargs):
+        if data['fecha_inicio'] >= data['fecha_fin']:
+            raise ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.", field_name='fecha_inicio')
