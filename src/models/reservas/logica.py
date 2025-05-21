@@ -1,6 +1,5 @@
 from src.models.database import db
 from src.models.reservas.reserva import Reserva, ReservaSchema
-from src.enums.roles import Rol
 
 
 def get_reservas_por_propiedad(id_propiedad):
@@ -9,12 +8,12 @@ def get_reservas_por_propiedad(id_propiedad):
 
 
 def get_reservas_por_usuario(usuario):
-    ids_roles_usuario = [rol.id for rol in usuario.roles]
-    if any(r == Rol.INQUILINO.value for r in ids_roles_usuario):
+    roles = usuario.get_roles()
+    if roles['is_inquilino']:
         return Reserva.query.filter_by(id_inquilino=usuario.id).all()
-    if any(r == Rol.EMPLEADO.value for r in ids_roles_usuario):
+    if roles['is_encargado']:
         return Reserva.query.all()
-    if any(r == Rol.ADMINISTRADOR.value for r in ids_roles_usuario):
+    if roles['is_admin']:
         return Reserva.query.all()
     return []
 

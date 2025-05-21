@@ -5,6 +5,7 @@ from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
 from src.models.parametricas.parametricas import TipoIdentificacionSchema
+from src.enums.roles import Rol as rol_enum
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -48,6 +49,14 @@ class Usuario(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_roles(self):
+        ids_roles_usuario = [rol.id for rol in self.roles]
+        return {
+                "is_admin": any(r == rol_enum.ADMINISTRADOR.value for r in ids_roles_usuario),
+                "is_encargado": any(r == rol_enum.EMPLEADO.value for r in ids_roles_usuario),
+                "is_inquilino": any(r == rol_enum.INQUILINO.value for r in ids_roles_usuario)
+                }
 
     def __repr__(self):
         return f"<Usuario {self.nombre}>"

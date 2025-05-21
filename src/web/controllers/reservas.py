@@ -20,6 +20,7 @@ def get_reservas_usuario():
         res = reservas.get_reservas_por_usuario(usuario)
         return reservas.get_schema_reserva().dump(res, many=True), 200
     except Exception as e:
+        print(e)
         return {'error': 'Error al obtener las reservas'}, 500
 
 
