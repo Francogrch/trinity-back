@@ -2,7 +2,7 @@ from src.models.database import db
 from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais
 from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
 from src.models.schemas import RolSchema, PaisSchema
-
+from src.models import propiedades
 
 def get_provincias():
     provincias = Provincia.query.all()
@@ -15,6 +15,12 @@ def get_ciudades_by_provincia_id(id):
         return provincia.ciudades
     except:
         return None
+
+def get_ciudades_con_propiedades():
+   prop = propiedades.get_propiedades(); 
+   id_ciudades = list(set([prop.id_ciudad for prop in prop]))
+   ciudades_encontradas = Ciudad.query.filter(Ciudad.id.in_(id_ciudades)).all()
+   return ciudades_encontradas
 
 
 def get_tipos_propiedad():
