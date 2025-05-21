@@ -31,18 +31,7 @@ def get_reserva(reserva_id, usuario):
 
 
 def create_reserva(data):
-    nueva_reserva = Reserva(
-        id_propiedad=data["id_propiedad"],
-        id_inquilino=data["id_inquilino"],
-        id_usuario_carga=data["id_usuario_carga"],
-        cantidad_personas=data["cantidad_personas"],
-        monto_total=data["monto_total"],
-        fecha_inicio=data["fecha_inicio"],
-        fecha_fin=data["fecha_fin"],
-        monto_pagado=data.get("monto_pagado"),
-        id_chat=data.get("id_chat"),
-        id_estado=data.get("id_estado")
-    )
+    nueva_reserva = Reserva(**data)
     db.session.add(nueva_reserva)
     db.session.commit()
     return nueva_reserva

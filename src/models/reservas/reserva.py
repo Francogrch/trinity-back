@@ -31,9 +31,9 @@ class Reserva(db.Model):
     inquilino = db.relationship("Usuario", foreign_keys=[id_inquilino])
     usuario_carga = db.relationship("Usuario", foreign_keys=[id_usuario_carga])
 
-    def __init__(self, id_propiedad, id_inquilino, id_usuario_carga,
-                 cantidad_personas, monto_total, fecha_inicio, fecha_fin,
-                 monto_pagado=None, id_chat=None, id_estado=None):
+    def __init__(self, id_propiedad, id_inquilino, cantidad_personas, monto_total,
+                 fecha_inicio, fecha_fin, monto_pagado=None, 
+                 id_chat=None, id_estado=None, id_usuario_carga=None):
         self.id_propiedad = id_propiedad
         self.id_inquilino = id_inquilino
         self.id_usuario_carga = id_usuario_carga

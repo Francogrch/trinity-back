@@ -50,7 +50,7 @@ def create_reserva():
     data = request.get_json()
     try:
         data_reserva = reservas.get_schema_reserva().load(data)
-        reserva = reservas.create_reserva(**data_reserva)
+        reserva = reservas.create_reserva(data_reserva)
         return reservas.get_schema_reserva().dump(reserva), 201
     except ValidationError as err:
         return err.messages, 422
