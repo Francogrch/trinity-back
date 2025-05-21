@@ -104,3 +104,24 @@ def update_codigo_acceso():
         return (err.messages, 422)
     except:
         return ({"error": "Propiedad repetida?"}, 400)
+    
+
+@propiedad_blueprint.get('/search')
+#@jwt_required()
+def get_propiedades_search():
+    id = request.args.get('id', default=None, type=int)
+    checkin = request.args.get('checkin')
+    checkout = request.args.get('checkout')
+    huespedes = request.args.get('huespedes', type=int)
+    
+    if id:
+        props = propiedades.get_propiedades_search_id(id,checkin, checkout,huespedes)
+    else:
+        props = propiedades.get_propiedades_search(checkin, checkout,huespedes)
+    # ...
+    print(props)
+    if not props:
+        return {'error': 'No se encontraron propiedades'}, 404
+
+    return propiedades.get_schema_propiedad().dump(props, many=True)
+
