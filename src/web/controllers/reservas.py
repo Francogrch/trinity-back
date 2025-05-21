@@ -1,9 +1,26 @@
-from src.models import reservas
-
 from flask import request, Blueprint
 from marshmallow import ValidationError
+from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funciones para manejo de JWT (autenticación y claims)
+
+from src.models import reservas
+from src.models import users
+
+from src.web.authorization.roles import rol_requerido
+from src.enums.roles import Rol
 
 reserva_blueprint = Blueprint('reservas', __name__, url_prefix="/reservas")
+
+
+@reserva_blueprint.get('/')
+@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
+def get_reservas_usuario():
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        res = reservas.get_reservas_por_usuario(usuario)
+        return reservas.get_schema_reserva().dump(res, many=True), 200
+    except Exception as e:
+        return {'error': 'Error al obtener las reservas'}, 500
 
 
 @reserva_blueprint.get('/<int:propiedad_id>')

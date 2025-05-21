@@ -316,8 +316,8 @@ def run():
 
     reserva3 = reservas.create_reserva({
         "id_propiedad": prop3.id,
-        "id_inquilino": user3.id,
-        "id_usuario_carga": user2.id,
+        "id_inquilino": user7.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 3,
         "monto_pagado": 120.0,
         "monto_total": 360.0,

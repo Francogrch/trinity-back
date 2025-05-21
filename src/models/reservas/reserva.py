@@ -11,7 +11,7 @@ class Reserva(db.Model):
     id_propiedad = db.Column(db.Integer, db.ForeignKey("propiedad.id"))
     id_inquilino = db.Column(db.Integer, db.ForeignKey("usuario.id"))
     id_usuario_carga = db.Column(
-        db.Integer, db.ForeignKey("usuario.id"), nullable=False)
+        db.Integer, db.ForeignKey("usuario.id"), nullable=True)
     cantidad_personas = db.Column(db.Integer, nullable=False)
     monto_pagado = db.Column(db.Float)
     monto_total = db.Column(db.Float, nullable=False)
@@ -56,7 +56,7 @@ class ReservaSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     id_propiedad = ma.Integer(required=True)
     id_inquilino = ma.Integer(required=True)
-    id_usuario_carga = ma.Integer(required=True)
+    id_usuario_carga = ma.Integer(allow_none=True)
     cantidad_personas = ma.Integer(required=True)
     monto_pagado = ma.Float(allow_none=True)
     monto_total = ma.Float(required=True)
@@ -66,11 +66,3 @@ class ReservaSchema(ma.Schema):
     fecha_fin = ma.DateTime(required=True)
     created_at = ma.DateTime(dump_only=True)
     updated_at = ma.DateTime(dump_only=True)
-
-    # Datos relacionados
-    propiedad = ma.Function(
-        lambda obj: obj.propiedad.id if obj.propiedad else None)
-    inquilino = ma.Function(
-        lambda obj: obj.inquilino.id if obj.inquilino else None)
-    usuario_carga = ma.Function(
-        lambda obj: obj.usuario_carga.id if obj.usuario_carga else None)
