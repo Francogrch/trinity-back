@@ -1,4 +1,5 @@
 from src.models import propiedades
+from src.models import users
 from flask import request, Blueprint
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
@@ -13,7 +14,8 @@ propiedad_blueprint = Blueprint(
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedades():
-    props = propiedades.get_propiedades()
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    props = propiedades.get_propiedades(usuario)
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 

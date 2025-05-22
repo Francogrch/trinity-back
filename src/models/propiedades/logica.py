@@ -3,9 +3,11 @@ from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoA
 from datetime import datetime
 
 
-def get_propiedades():
-    propiedades = Propiedad.query.filter_by(delete_at=None).all()
-    return propiedades
+def get_propiedades(usuario):
+    if usuario.get_roles()['is_encargado']:
+        return Propiedad.query.filter_by(
+                delete_at=None, id_encargado=usuario.id).all()
+    return Propiedad.query.filter_by(delete_at=None).all()
 
 
 def get_propiedades_eliminadas():
