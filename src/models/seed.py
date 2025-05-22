@@ -293,7 +293,7 @@ def run():
     # Crear reservas de ejemplo
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop1.id,
-        "id_inquilino": user3.id,
+        "id_inquilino": user6.id,
         "id_usuario_carga": user2.id,
         "cantidad_personas": 4,
         "monto_pagado": 150.0,

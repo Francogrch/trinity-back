@@ -1,5 +1,6 @@
 from src.models.database import db
 from src.models.reservas.reserva import Reserva, ReservaSchema
+from src.models.propiedades.propiedad import Propiedad
 
 
 def get_reservas_por_propiedad(id_propiedad):
@@ -12,7 +13,11 @@ def get_reservas_por_usuario(usuario):
     if roles['is_inquilino']:
         return Reserva.query.filter_by(id_inquilino=usuario.id).all()
     if roles['is_encargado']:
-        return Reserva.query.all()
+        reservas = db.session.query(Reserva).\
+        join(Propiedad).\
+        filter(Propiedad.id_encargado == usuario.id).\
+        all()
+        return reservas
     if roles['is_admin']:
         return Reserva.query.all()
     return []
