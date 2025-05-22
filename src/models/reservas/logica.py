@@ -25,13 +25,19 @@ def get_reservas_por_usuario(usuario):
 
 def get_reserva(reserva_id, usuario):
     roles = usuario.get_roles()
-    reserva = Reserva.query.get(reserva_id)
     if roles['is_admin']:
-        return reserva
+        return Reserva.query.get(reserva_id)
     if roles['is_encargado']:
-        return reserva  # Hay que corregir esto
-    if roles['is_inquilino'] and reserva and reserva.id_inquilino == usuario.id:
-        return reserva
+        return db.session.query(Reserva).\
+        join(Propiedad).\
+        filter(Propiedad.id_encargado == usuario.id,
+               Reserva.id == reserva_id).\
+        one_or_none()
+    if roles['is_inquilino']:
+        return db.session.query(Reserva).\
+        filter(Reserva.id_inquilino == usuario.id,
+               Reserva.id == reserva_id).\
+        one_or_none()
     return None
 
 
