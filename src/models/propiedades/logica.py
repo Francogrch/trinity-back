@@ -10,6 +10,10 @@ def get_propiedades(usuario):
                 delete_at=None, id_encargado=usuario.id).all()
     return Propiedad.query.filter_by(delete_at=None).all()
 
+def get_propiedades():
+    return Propiedad.query.filter_by(delete_at=None).all()
+
+
 
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None)).all()
