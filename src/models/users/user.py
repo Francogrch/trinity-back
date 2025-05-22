@@ -1,10 +1,11 @@
 from src.models.marshmallow import ma
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import validate, post_load
+from marshmallow import validate, post_load, EXCLUDE
 from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
 from src.models.parametricas.parametricas import TipoIdentificacionSchema
+from src.enums.roles import Rol as rol_enum
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -15,6 +16,7 @@ usuario_rol = db.Table(
 
 
 class Usuario(db.Model):
+    __tablename__ = "usuario"
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True)
     correo = db.Column(db.String(120), unique=True, nullable=False)
@@ -25,9 +27,10 @@ class Usuario(db.Model):
     apellido = db.Column(db.String(100), nullable=True)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
     id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
-    pais = db.relationship("Pais", backref="usuarios")
-    roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
+    pais = db.relationship("Pais", backref="usuario")
+    roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuario', lazy='dynamic'))
     tarjetas = db.relationship('Tarjeta', backref='usuario', lazy=True)
+    propiedades = db.relationship("Propiedad", back_populates="encargado")
 
     def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
         self.nombre = nombre
@@ -48,6 +51,14 @@ class Usuario(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_roles(self):
+        ids_roles_usuario = [rol.id for rol in self.roles]
+        return {
+                "is_admin": any(r == rol_enum.ADMINISTRADOR.value for r in ids_roles_usuario),
+                "is_encargado": any(r == rol_enum.EMPLEADO.value for r in ids_roles_usuario),
+                "is_inquilino": any(r == rol_enum.INQUILINO.value for r in ids_roles_usuario)
+                }
 
     def __repr__(self):
         return f"<Usuario {self.nombre}>"
@@ -119,6 +130,14 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
     tarjetas = ma.Nested(lambda: TarjetaSchema(), many=True)
+
+class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(dump_only=True)
+    correo = ma.String(dump_only=True)
 
 # --- TarjetaSchema al final para evitar ciclos ---
 class MarcaTarjetaSchema(ma.SQLAlchemyAutoSchema):
