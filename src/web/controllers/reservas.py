@@ -46,9 +46,12 @@ def get_reservas_propiedad(propiedad_id):
 
 @reserva_blueprint.post('/')
 @jwt_required()
-@rol_requerido([Rol.INQUILINO.value])
 def create_reserva():
     data = request.get_json()
+    if "id_inquilino" not in data or data['id_inquilino'] == None:
+        data['id_inquilino'] = get_jwt_identity()
+    else:
+        data['id_usuario_carga'] = get_jwt_identity()
     try:
         data_reserva = reservas.get_schema_reserva().load(data)
         if reservas.hay_reservas_solapadas(
