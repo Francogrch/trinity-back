@@ -49,7 +49,7 @@ def get_usuarios():
 # Devuelve la lista de empleados serializada
 def get_empleados():
     usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
-    return users.get_schema_usuario().dumps(usuarios, many=True)  # Serializa y retorna
+    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')

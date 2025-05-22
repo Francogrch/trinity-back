@@ -1,6 +1,6 @@
 from src.models.marshmallow import ma
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import validate, post_load
+from marshmallow import validate, post_load, EXCLUDE
 from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
@@ -130,6 +130,14 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
     tarjetas = ma.Nested(lambda: TarjetaSchema(), many=True)
+
+class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(dump_only=True)
+    correo = ma.String(dump_only=True)
 
 # --- TarjetaSchema al final para evitar ciclos ---
 class MarcaTarjetaSchema(ma.SQLAlchemyAutoSchema):

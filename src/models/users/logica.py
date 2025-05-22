@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, Rol
+from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -150,3 +150,6 @@ def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
 
 def get_schema_usuario():
     return UsuarioSchema()
+
+def get_schema_empleado():
+    return EmpleadoSchema()
