@@ -1,6 +1,6 @@
 from src.models.database import db
 from src.models.marshmallow import ma
-from marshmallow import EXCLUDE
+from marshmallow import EXCLUDE, validates_schema, ValidationError
 from datetime import datetime
 
 
@@ -11,7 +11,7 @@ class Reserva(db.Model):
     id_propiedad = db.Column(db.Integer, db.ForeignKey("propiedad.id"))
     id_inquilino = db.Column(db.Integer, db.ForeignKey("usuario.id"))
     id_usuario_carga = db.Column(
-        db.Integer, db.ForeignKey("usuario.id"), nullable=False)
+        db.Integer, db.ForeignKey("usuario.id"), nullable=True)
     cantidad_personas = db.Column(db.Integer, nullable=False)
     monto_pagado = db.Column(db.Float)
     monto_total = db.Column(db.Float, nullable=False)
@@ -31,9 +31,9 @@ class Reserva(db.Model):
     inquilino = db.relationship("Usuario", foreign_keys=[id_inquilino])
     usuario_carga = db.relationship("Usuario", foreign_keys=[id_usuario_carga])
 
-    def __init__(self, id_propiedad, id_inquilino, id_usuario_carga,
-                 cantidad_personas, monto_total, fecha_inicio, fecha_fin,
-                 monto_pagado=None, id_chat=None, id_estado=None):
+    def __init__(self, id_propiedad, id_inquilino, cantidad_personas, monto_total,
+                 fecha_inicio, fecha_fin, monto_pagado=None, 
+                 id_chat=None, id_estado=None, id_usuario_carga=None):
         self.id_propiedad = id_propiedad
         self.id_inquilino = id_inquilino
         self.id_usuario_carga = id_usuario_carga
@@ -56,7 +56,7 @@ class ReservaSchema(ma.Schema):
     id = ma.Integer(dump_only=True)
     id_propiedad = ma.Integer(required=True)
     id_inquilino = ma.Integer(required=True)
-    id_usuario_carga = ma.Integer(required=True)
+    id_usuario_carga = ma.Integer(allow_none=True)
     cantidad_personas = ma.Integer(required=True)
     monto_pagado = ma.Float(allow_none=True)
     monto_total = ma.Float(required=True)
@@ -67,10 +67,7 @@ class ReservaSchema(ma.Schema):
     created_at = ma.DateTime(dump_only=True)
     updated_at = ma.DateTime(dump_only=True)
 
-    # Datos relacionados
-    propiedad = ma.Function(
-        lambda obj: obj.propiedad.id if obj.propiedad else None)
-    inquilino = ma.Function(
-        lambda obj: obj.inquilino.id if obj.inquilino else None)
-    usuario_carga = ma.Function(
-        lambda obj: obj.usuario_carga.id if obj.usuario_carga else None)
+    @validates_schema
+    def validar_fechas(self, data, **kwargs):
+        if data['fecha_inicio'] >= data['fecha_fin']:
+            raise ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.", field_name='fecha_inicio')

@@ -36,7 +36,7 @@ def run():
         nombre="Juan",
         apellido="Pérez",
         correo="juan@mail.com",
-        roles_ids=[administrador.id, inquilino.id],
+        roles_ids=[administrador.id],
         password="1234",
         id_tipo_identificacion=dni.id,
         numero_identificacion="12345678",
@@ -47,7 +47,7 @@ def run():
         nombre="Raul",
         apellido="Gómez",
         correo="raul@mail.com",
-        roles_ids=[encargado.id, inquilino.id],
+        roles_ids=[encargado.id],
         password="1234",
         id_tipo_identificacion=pasaporte.id,
         numero_identificacion="A1234567",
@@ -237,6 +237,7 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=1,
+        id_encargado=1,
         requiere_documentacion=True
     )
 
@@ -258,6 +259,7 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=2,
+        id_encargado=2,
         requiere_documentacion=True
     )
 
@@ -279,6 +281,7 @@ def run():
         id_pol_reserva=2,
         id_tipo=cabana.id,
         id_ciudad=3,
+        id_encargado=2,
         requiere_documentacion=True
     )
     print("Propiedades de ejemplo creadas")
@@ -290,7 +293,7 @@ def run():
     # Crear reservas de ejemplo
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop1.id,
-        "id_inquilino": user3.id,
+        "id_inquilino": user6.id,
         "id_usuario_carga": user2.id,
         "cantidad_personas": 4,
         "monto_pagado": 150.0,
@@ -316,8 +319,8 @@ def run():
 
     reserva3 = reservas.create_reserva({
         "id_propiedad": prop3.id,
-        "id_inquilino": user3.id,
-        "id_usuario_carga": user2.id,
+        "id_inquilino": user7.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 3,
         "monto_pagado": 120.0,
         "monto_total": 360.0,

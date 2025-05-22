@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, Rol
+from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -9,6 +9,12 @@ def get_usuarios():
     usuarios = Usuario.query.all()
     return usuarios
 
+def get_empleados():
+    empleados = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id != EnumRol.INQUILINO.value).\
+    all()
+    return empleados
     
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
@@ -84,9 +90,6 @@ def get_usuarios_by_rol(rol_id):
         _ = usuario.roles
     return usuarios
 
-def get_schema_usuario():
-    return UsuarioSchema()
-
 def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
     """
     Devuelve un diccionario de permisos del usuario, donde las claves son los nombres de los permisos y los valores son booleanos.
@@ -144,3 +147,9 @@ def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
             for permiso, valor in rol_permisos.items():
                 permisos[permiso] = permisos[permiso] or valor
         return permisos
+
+def get_schema_usuario():
+    return UsuarioSchema()
+
+def get_schema_empleado():
+    return EmpleadoSchema()

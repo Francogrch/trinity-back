@@ -4,9 +4,11 @@ from src.models.reservas.reserva import Reserva
 from datetime import datetime
 
 
-def get_propiedades():
-    propiedades = Propiedad.query.filter_by(delete_at=None).all()
-    return propiedades
+def get_propiedades(usuario):
+    if usuario.get_roles()['is_encargado']:
+        return Propiedad.query.filter_by(
+                delete_at=None, id_encargado=usuario.id).all()
+    return Propiedad.query.filter_by(delete_at=None).all()
 
 
 def get_propiedades_eliminadas():
@@ -36,7 +38,8 @@ def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,
     huespedes, ambientes, banios, cocheras,
     precioNoche, codigoAcceso, is_habilitada,
-    id_pol_reserva, id_tipo, id_ciudad, piso=None, depto=None,requiere_documentacion=False
+    id_pol_reserva, id_tipo, id_ciudad, id_encargado,
+    piso=None, depto=None,requiere_documentacion=False
 ):
     try:
         nueva = Propiedad(
@@ -57,6 +60,7 @@ def create_propiedad(
             id_pol_reserva=id_pol_reserva,
             id_tipo=id_tipo,
             id_ciudad=id_ciudad,
+            id_encargado = id_encargado,
             requiere_documentacion=requiere_documentacion
         )
         db.session.add(nueva)
@@ -118,7 +122,8 @@ def update_propiedad(
     prop_id, nombre, descripcion, entre_calles, calle, numero,
     huespedes, ambientes, banios, cocheras,
     precioNoche, codigoAcceso, is_habilitada,
-    id_pol_reserva, id_tipo, id_ciudad, requiere_documentacion, piso=None, depto=None
+    id_pol_reserva, id_tipo, id_ciudad, id_encargado,
+    requiere_documentacion, piso=None, depto=None
 ):
     try:
         propiedad = get_propiedad_id(prop_id)
@@ -140,6 +145,7 @@ def update_propiedad(
         propiedad.id_pol_reserva=id_pol_reserva
         propiedad.id_tipo=id_tipo
         propiedad.id_ciudad=id_ciudad
+        propiedad.id_encargado=id_encargado
         propiedad.requiere_documentacion=requiere_documentacion
         db.session.commit()
         return propiedad
