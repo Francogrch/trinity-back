@@ -38,6 +38,8 @@ def get_propiedad_id_route(prop_id):
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden crear propiedades
 def create_propiedad():
     data = request.get_json()
+    if "id_encargado" not in data or data['id_encargado'] == None:
+        data['id_encargado'] = get_jwt_identity()
     try:
         data_propiedad = propiedades.get_schema_propiedad().load(data)
         propiedad = propiedades.create_propiedad(**data_propiedad)

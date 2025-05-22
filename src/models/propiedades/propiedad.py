@@ -1,7 +1,7 @@
 from src.models.database import db
 from src.models.marshmallow import ma
 
-from marshmallow import validate, EXCLUDE
+from marshmallow import validate, EXCLUDE, validates, validates_schema, ValidationError
 from datetime import datetime
 
 
@@ -101,6 +101,20 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+
+    @validates_schema
+    def validar_id_encargado(self, data, **kwargs):
+        from src.models.users.user import Usuario
+        usuario = db.session.get(Usuario, data['id_encargado'])
+
+        if not usuario:
+            raise ValidationError("El usuario con ese ID no existe.")
+
+        roles = usuario.get_roles()
+
+        # Comprobar que su rol sea 'encargado'
+        if not (roles['is_encargado'] or roles['is_admin']):
+            raise ValidationError("El usuario no es Encargado o Administrador.", field_name='id_encargado')
 
 class CodigoAccesoSchema(ma.Schema):
     class Meta:
