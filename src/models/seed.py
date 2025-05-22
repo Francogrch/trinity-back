@@ -237,6 +237,7 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=1,
+        id_encargado=1,
         requiere_documentacion=True
     )
 
@@ -258,6 +259,7 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=2,
+        id_encargado=2,
         requiere_documentacion=True
     )
 
@@ -279,6 +281,7 @@ def run():
         id_pol_reserva=2,
         id_tipo=cabana.id,
         id_ciudad=3,
+        id_encargado=2,
         requiere_documentacion=True
     )
     print("Propiedades de ejemplo creadas")

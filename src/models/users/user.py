@@ -16,6 +16,7 @@ usuario_rol = db.Table(
 
 
 class Usuario(db.Model):
+    __tablename__ = "usuario"
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True)
     correo = db.Column(db.String(120), unique=True, nullable=False)
@@ -26,9 +27,10 @@ class Usuario(db.Model):
     apellido = db.Column(db.String(100), nullable=True)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
     id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
-    pais = db.relationship("Pais", backref="usuarios")
-    roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuarios', lazy='dynamic'))
+    pais = db.relationship("Pais", backref="usuario")
+    roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuario', lazy='dynamic'))
     tarjetas = db.relationship('Tarjeta', backref='usuario', lazy=True)
+    propiedades = db.relationship("Propiedad", back_populates="encargado")
 
     def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
         self.nombre = nombre
