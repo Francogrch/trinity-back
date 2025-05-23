@@ -329,3 +329,9 @@ def run():
         "fecha_inicio": datetime(2025, 10, 20),
         "fecha_fin": datetime(2025, 10, 23)
     })
+
+    estadoConfirmado = parametricas.create_estado("Confirmada")
+    estadoPendiente = parametricas.create_estado("Pendiente")
+    estadoCancelada = parametricas.create_estado("Cancelada")
+    estadoFinalizada = parametricas.create_estado("Finalizada")
+    print("Reservas de ejemplo creadas")

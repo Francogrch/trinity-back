@@ -1,12 +1,17 @@
 from src.models.database import db
-from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais
-from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema
+from src.models.parametricas.parametricas import Provincia, Ciudad, PropiedadTipo, PoliticaReserva, Pais,Estado
+from src.models.parametricas.parametricas import ProvinciaSchema, CiudadSchema, PropiedadTipoSchema, PoliticaReservaSchema,EstadoSchema
 from src.models.schemas import RolSchema, PaisSchema
 from src.models import propiedades
 
 def get_provincias():
     provincias = Provincia.query.all()
     return provincias
+
+def get_estados():
+    estados = Estado.query.all()
+    return estados 
+
 
 
 def get_ciudades_by_provincia_id(id):
@@ -46,6 +51,15 @@ def create_rol(nombre):
         db.session.rollback()
         raise
 
+def create_estado(label):
+    try:
+        estado = Estado(label)
+        db.session.add(estado)
+        db.session.commit()
+        return estado
+    except:
+        db.session.rollback()
+        raise ()
 
 def create_tipos_propiedad(tipo):
     try:
@@ -133,3 +147,6 @@ def create_pais(nombre):
 
 def get_schema_pais():
     return PaisSchema()
+
+def get_schema_estado():
+    return EstadoSchema()
