@@ -15,7 +15,7 @@ propiedad_blueprint = Blueprint(
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedades():
     usuario = users.get_usuario_by_id(get_jwt_identity())
-    props = propiedades.get_propiedades(usuario)
+    props = propiedades.get_propiedades_usuario(usuario)
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 
@@ -122,10 +122,9 @@ def get_propiedades_search():
         props = propiedades.get_propiedades_search_id(id,checkin, checkout,huespedes)
     else:
         props = propiedades.get_propiedades_search(checkin, checkout,huespedes)
-    # ...
-    print(props)
-    if not props:
-        return {'error': 'No se encontraron propiedades'}, 404
+
+    if not props or len(props) == 0:
+        return {'error': 'No se encontraron propiedades'}, 204
 
     return propiedades.get_schema_propiedad().dump(props, many=True)
 

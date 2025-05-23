@@ -238,7 +238,7 @@ def run():
         id_tipo=dpto.id,
         id_ciudad=1,
         id_encargado=1,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     prop2 = propiedades.create_propiedad(
@@ -260,7 +260,7 @@ def run():
         id_tipo=dpto.id,
         id_ciudad=2,
         id_encargado=2,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     prop3 = propiedades.create_propiedad(
@@ -282,7 +282,7 @@ def run():
         id_tipo=cabana.id,
         id_ciudad=3,
         id_encargado=2,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
     print("Propiedades de ejemplo creadas")
 
@@ -299,9 +299,9 @@ def run():
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": None,
-        "id_estado": 1,  # Estado "Pendiente"
-        "fecha_inicio": datetime(2025, 12, 10),
-        "fecha_fin": datetime(2025, 12, 14)
+        "id_estado": 4,  
+        "fecha_inicio": datetime(2024, 12, 10),
+        "fecha_fin": datetime(2024, 12, 14)
     })
 
     reserva2 = reservas.create_reserva({
@@ -325,7 +325,13 @@ def run():
         "monto_pagado": 120.0,
         "monto_total": 360.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": 2,
         "fecha_inicio": datetime(2025, 10, 20),
         "fecha_fin": datetime(2025, 10, 23)
     })
+
+    estadoConfirmado = parametricas.create_estado("Confirmada")
+    estadoPendiente = parametricas.create_estado("Pendiente")
+    estadoCancelada = parametricas.create_estado("Cancelada")
+    estadoFinalizada = parametricas.create_estado("Finalizada")
+    print("Reservas de ejemplo creadas")

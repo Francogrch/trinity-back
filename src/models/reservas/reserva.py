@@ -17,7 +17,7 @@ class Reserva(db.Model):
     monto_total = db.Column(db.Float, nullable=False)
     # Falta tabla chat y tabla estado
     id_chat = db.Column(db.Integer)
-    id_estado = db.Column(db.Integer)
+    id_estado = db.Column(db.Integer,db.ForeignKey("estado.id"))
     fecha_inicio = db.Column(db.DateTime, nullable=False)
     fecha_fin = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(
@@ -30,6 +30,8 @@ class Reserva(db.Model):
         "Propiedad", backref="reservas", foreign_keys=[id_propiedad])
     inquilino = db.relationship("Usuario", foreign_keys=[id_inquilino])
     usuario_carga = db.relationship("Usuario", foreign_keys=[id_usuario_carga])
+
+    estado = db.relationship("Estado", foreign_keys=[id_estado])
 
     def __init__(self, id_propiedad, id_inquilino, cantidad_personas, monto_total,
                  fecha_inicio, fecha_fin, monto_pagado=None, 
@@ -66,6 +68,8 @@ class ReservaSchema(ma.Schema):
     fecha_fin = ma.DateTime(required=True)
     created_at = ma.DateTime(dump_only=True)
     updated_at = ma.DateTime(dump_only=True)
+
+    estado = ma.Function(lambda obj: obj.estado.label)
 
     @validates_schema
     def validar_fechas(self, data, **kwargs):
