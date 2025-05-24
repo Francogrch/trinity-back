@@ -1,3 +1,4 @@
+from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad 
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
 from src.models.reservas.reserva import Reserva 
@@ -64,7 +65,7 @@ def get_propiedades():
 
 
 def get_propiedades_eliminadas():
-    propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None)).all()
+    propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()
     return propiedades
 
 
@@ -72,10 +73,35 @@ def get_propiedad_id(id):
     return Propiedad.query.get(id)
 
 
-def eliminar_prop(prop_id):
+def eliminar_prop_hasta_fecha(prop_id):
     propiedad = get_propiedad_id(prop_id)
     if not propiedad:
         return None
+
+    reservas_propiedad= Reserva.query.filter_by(id_propiedad=prop_id).filter(Reserva.id_estado == 1).all()
+    print(reservas_propiedad)
+    #reservas_propiedad = get_reservas_por_propiedad(prop_id).filter(Reserva.id_estado == 1).all()
+    if reservas_propiedad:
+        fecha_max = max(reservas_propiedad, key=lambda reserva: reserva.fecha_fin)
+        propiedad.delete_at = fecha_max.fecha_fin 
+    else: 
+        propiedad.delete_at = datetime.now()
+    try:
+        db.session.commit()
+        return propiedad
+    except Exception:
+        db.session.rollback()
+        raise
+
+def eliminar_prop_con_reservas(prop_id):
+    propiedad = get_propiedad_id(prop_id)
+    if not propiedad:
+        return None
+
+    # Eliminar todas las reservas asociadas a la propiedad
+    reservas_propiedad = get_reservas_por_propiedad(prop_id) 
+    for reserva in reservas_propiedad:
+        cambiar_estado_reserva(reserva.id, 3)  # Cambiar el estado a "Cancelada"
 
     propiedad.delete_at = datetime.now()
     try:
@@ -84,7 +110,6 @@ def eliminar_prop(prop_id):
     except Exception:
         db.session.rollback()
         raise
-
 
 def create_propiedad(
     nombre, descripcion, entre_calles, calle, numero,

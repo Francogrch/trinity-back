@@ -73,7 +73,21 @@ def cambiar_estado_propiedad(prop_id):
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def eliminar_propiedad(prop_id):
     try:
-        propiedad = propiedades.eliminar_prop(prop_id)
+        propiedad = propiedades.eliminar_prop_hasta_fecha(prop_id)
+    except:
+        return {'error': 'Error al actualizar la propiedad'}, 500
+
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada'}, 404
+
+    return propiedades.get_schema_propiedad().dump(propiedad), 200
+
+@propiedad_blueprint.patch('/eliminarConReservas/<int:prop_id>')
+#@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def eliminar_propiedad_reservas(prop_id):
+    try:
+        propiedad = propiedades.eliminar_prop_con_reservas(prop_id)
     except:
         return {'error': 'Error al actualizar la propiedad'}, 500
 
