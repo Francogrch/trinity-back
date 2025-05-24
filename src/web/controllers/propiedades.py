@@ -1,6 +1,8 @@
+import os
+from src.models.imagenes.logica import delete_image, get_filename, get_schema_imagen, upload_image
 from src.models import propiedades
 from src.models import users
-from flask import request, Blueprint
+from flask import current_app, request, Blueprint, send_from_directory
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt  # Importa funciones para manejo de JWT (autenticación y claims)
 from src.web.authorization.roles import rol_requerido
@@ -27,7 +29,7 @@ def get_propiedades_eliminadas():
 
 
 @propiedad_blueprint.get('/id/<int:prop_id>')
-@jwt_required()
+#@jwt_required()
 def get_propiedad_id_route(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
     return (propiedades.get_schema_propiedad().dump(propiedad), 201)
@@ -127,4 +129,64 @@ def get_propiedades_search():
         return {'error': 'No se encontraron propiedades'}, 204
 
     return propiedades.get_schema_propiedad().dump(props, many=True)
+
+
+@propiedad_blueprint.get('/imagen/<int:imagen_id>')
+def get_imagen(imagen_id):
+    # Ruta absoluta a la carpeta de imágenes de usuarios
+    base_upload_directory = os.path.abspath(
+        os.path.join(current_app.root_path, "..", "..", "imagenes", "propiedad")
+    )
+
+    filename = get_filename(imagen_id)
+
+    return send_from_directory(
+        directory=base_upload_directory,
+        path=filename,
+        as_attachment=False
+    )
+
+@propiedad_blueprint.get('/imagenes')
+def get_imagenes_id():
+    id_propiedad = request.args.get('id_propiedad')
+    if not id_propiedad:
+        return {'error': 'ID de propiedad es requerido.'}, 400
+    
+    try:
+        id_propiedad = int(id_propiedad)
+    except ValueError:
+        return {'error': 'ID de propiedad inválido.'}, 400
+
+    propiedad = propiedades.get_propiedad_id(id_propiedad)
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada.'}, 404
+
+    imagenes_de_propiedad = propiedad.imagenes
+    return [imagen.id for imagen in imagenes_de_propiedad], 200
+
+
+
+@propiedad_blueprint.post('/imagen')
+#@jwt_required()
+def upload_imagen():
+    id_propiedad = request.args.get('id_propiedad')
+    image = upload_image('propiedad',request,id_propiedad=id_propiedad)
+    print(f"Imagen subida: {image[1]}")
+    return image
+
+@propiedad_blueprint.delete('/deleteImagen')
+#@jwt_required() 
+def delete_imagen():
+    id_imagen = request.args.get('id_imagen')
+
+    success, message = delete_image(id_imagen, 'propiedad')
+
+    if success:
+        return {"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}, 200
+    else:
+        return {"message": message}, 500
+
+
+
+
 

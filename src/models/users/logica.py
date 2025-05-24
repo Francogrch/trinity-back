@@ -84,6 +84,14 @@ def update_usuario(user_id, data):
     db.session.commit()
     return usuario
 
+def set_imagen_usuario(user_id, id_imagen):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    usuario.id_imagen = id_imagen
+    db.session.commit()
+    return usuario
+
 def get_usuarios_by_rol(rol_id):
     usuarios = Usuario.query.join(Usuario.roles).filter_by(id=rol_id).all()
     for usuario in usuarios:

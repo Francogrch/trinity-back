@@ -8,7 +8,24 @@ from src.web.controllers.parametricas import parametricas_blueprint
 from src.web.controllers.imagenes import imagen_blueprint 
 from src.web.controllers.reservas import reserva_blueprint
 from src.extensions import jwt  # Importa la instancia desde extensions
+import os
 
+
+def initialize_upload_folders(app: Flask):
+    app.config['UPLOAD_BASE_FOLDER'] = 'imagenes'
+    app.config['UPLOAD_FOLDER_PROPIEDADES'] = os.path.join(app.config['UPLOAD_BASE_FOLDER'], 'propiedad')
+    app.config['UPLOAD_FOLDER_USUARIOS'] = os.path.join(app.config['UPLOAD_BASE_FOLDER'], 'usuario')
+
+    app_root_path = os.path.abspath(os.path.dirname(__file__))
+
+    propiedades_upload_path = os.path.join(app_root_path, app.config['UPLOAD_FOLDER_PROPIEDADES'])
+    usuarios_upload_path = os.path.join(app_root_path, app.config['UPLOAD_FOLDER_USUARIOS'])
+
+    os.makedirs(propiedades_upload_path, exist_ok=True)
+    os.makedirs(usuarios_upload_path, exist_ok=True)
+
+    print(f"Carpeta de propiedades asegurada: {propiedades_upload_path}")
+    print(f"Carpeta de usuarios asegurada: {usuarios_upload_path}")
 
 def create_app():
     app = Flask(__name__)
@@ -27,7 +44,8 @@ def create_app():
     def home():
         return "<h1>Holas</h1>"
     # Carpeta de subidas
-    app.config['UPLOAD_FOLDER'] = 'uploads'
+
+    #initialize_upload_folders(app)
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(user_blueprint)

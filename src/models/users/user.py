@@ -31,8 +31,11 @@ class Usuario(db.Model):
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuario', lazy='dynamic'))
     tarjetas = db.relationship('Tarjeta', backref='usuario', lazy=True)
     propiedades = db.relationship("Propiedad", back_populates="encargado")
+    id_imagen = db.Column(db.Integer, db.ForeignKey('imagen.id'), nullable=True)
+    imagen = db.relationship('Imagen', back_populates='usuario', uselist=False, lazy=True,foreign_keys='[Imagen.id_usuario]')
+   
 
-    def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
+    def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None, id_imagen=None):
         self.nombre = nombre
         self.correo = correo
         if roles:
@@ -45,6 +48,7 @@ class Usuario(db.Model):
         self.apellido = apellido
         self.fecha_nacimiento = fecha_nacimiento
         self.id_pais = id_pais
+        self.id_imagen = id_imagen
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -126,6 +130,9 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         model = Usuario
         include_relationships = True
         load_instance = True
+        exclude = ["imagen"]
+
+
     pais = ma.Nested(PaisSchema, only=("id", "nombre"))
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
