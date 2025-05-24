@@ -19,3 +19,6 @@ venv/
 # Ignore OS files
 .DS_Store
 Thumbs.db
+
+# imagenes
+# imagenes/

@@ -17,6 +17,15 @@ def run():
     # Tipos de propiedades
     dpto = parametricas.create_tipos_propiedad("Departamento")
     cabana = parametricas.create_tipos_propiedad("Cabaña")
+    casa = parametricas.create_tipos_propiedad("Casa")
+    casa_de_campo = parametricas.create_tipos_propiedad("Casa de Campo") # O "Finca", "Chacra" en algunos contextos (ej. Argentina)
+    casa_en_la_playa = parametricas.create_tipos_propiedad("Casa en la Playa") # O "Casa de Veraneo"
+    chalet = parametricas.create_tipos_propiedad("Chalet") # Común en zonas de montaña o residenciales
+    cabaña = parametricas.create_tipos_propiedad("Cabania")
+    estudio = parametricas.create_tipos_propiedad("Estudio") # Un solo ambiente con dormitorio, sala y cocina integrados
+    loft = parametricas.create_tipos_propiedad("Loft") # Espacio abierto, a menudo industrial-chic, con techos altos y a veces entrepiso
+    duplex = parametricas.create_tipos_propiedad("Dúplex") # Dos unidades de vivienda en un mismo edificio, a menudo una encima de la otra o adosadas
+    condominio = parametricas.create_tipos_propiedad("Condominio") # Una unidad de propiedad individual dentro de un complejo grande (ej. con áreas comunes)
 
     # Porcentajes del primer pago
     cero = parametricas.create_pol_reserva(
@@ -36,7 +45,7 @@ def run():
         nombre="Juan",
         apellido="Pérez",
         correo="juan@mail.com",
-        roles_ids=[administrador.id, inquilino.id],
+        roles_ids=[administrador.id],
         password="1234",
         id_tipo_identificacion=dni.id,
         numero_identificacion="12345678",
@@ -47,7 +56,7 @@ def run():
         nombre="Raul",
         apellido="Gómez",
         correo="raul@mail.com",
-        roles_ids=[encargado.id, inquilino.id],
+        roles_ids=[encargado.id],
         password="1234",
         id_tipo_identificacion=pasaporte.id,
         numero_identificacion="A1234567",
@@ -237,7 +246,8 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=1,
-        requiere_documentacion=True
+        id_encargado=1,
+        requiere_documentacion=False
     )
 
     prop2 = propiedades.create_propiedad(
@@ -258,7 +268,8 @@ def run():
         id_pol_reserva=1,
         id_tipo=dpto.id,
         id_ciudad=2,
-        requiere_documentacion=True
+        id_encargado=2,
+        requiere_documentacion=False
     )
 
     prop3 = propiedades.create_propiedad(
@@ -279,8 +290,283 @@ def run():
         id_pol_reserva=2,
         id_tipo=cabana.id,
         id_ciudad=3,
+        id_encargado=2,
+        requiere_documentacion=False
+    )
+    # --- Ejemplos de Departamentos ---
+    prop4 = propiedades.create_propiedad(
+        nombre="Departamento Moderno en Microcentro",
+        descripcion="Acogedor departamento con balcón, ideal para viajes de negocios o turismo, a pasos del Obelisco.",
+        calle="Av. Corrientes",
+        numero="1234",
+        piso="5",
+        depto="A",
+        entre_calles="9 de Julio y Lavalle",
+        id_ciudad=1, # Reemplaza con un ID de ciudad válido
+        id_tipo=dpto.id,
+        huespedes=3,
+        ambientes=2,
+        banios=1,
+        cocheras=0,
+        precioNoche=50.00,
+        codigoAcceso="100101", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=1,
         requiere_documentacion=True
     )
+
+    prop5 = propiedades.create_propiedad(
+        nombre="Departamento con estilo en Palermo Soho",
+        descripcion="Luminoso y espacioso, cerca de restaurantes y tiendas de diseño. Ideal para parejas o grupos pequeños.",
+        calle="Gorriti",
+        numero="5678",
+        piso="3",
+        depto="B",
+        entre_calles="Malabia y Armenia",
+        id_ciudad=1, # Reemplaza con un ID de ciudad válido
+        id_tipo=dpto.id,
+        huespedes=4,
+        ambientes=3,
+        banios=1,
+        cocheras=0,
+        precioNoche=75.00,
+        codigoAcceso="100102", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=2,
+        requiere_documentacion=False
+    )
+
+    # --- Ejemplos de Casas ---
+    prop6 = propiedades.create_propiedad(
+        nombre="Casa Familiar con Jardín en Belgrano",
+        descripcion="Amplia casa con 3 habitaciones, patio y parrilla. Perfecta para familias que buscan tranquilidad.",
+        calle="Conesa",
+        numero="3000",
+        piso=None,
+        depto=None,
+        entre_calles="Juramento y Echeverría",
+        id_ciudad=1, # Reemplaza con un ID de ciudad válido
+        id_tipo=casa.id,
+        huespedes=6,
+        ambientes=5,
+        banios=2,
+        cocheras=1,
+        precioNoche=120.00,
+        codigoAcceso="200201", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_encargado=1,
+        requiere_documentacion=True
+    )
+
+    prop7 = propiedades.create_propiedad(
+        nombre="Espléndida Casa de Lujo en Nordelta",
+        descripcion="Diseño moderno, piscina climatizada y vistas a la laguna. Una experiencia de confort inigualable.",
+        calle="Los Sauces",
+        numero="100",
+        piso=None,
+        depto=None,
+        entre_calles="El Golf y El Agua",
+        id_ciudad=2, # Reemplaza con un ID de ciudad válida (ej. Tigre)
+        id_tipo=casa.id,
+        huespedes=8,
+        ambientes=7,
+        banios=3.5,
+        cocheras=2,
+        precioNoche=300.00,
+        codigoAcceso="200202", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_encargado=2,
+        requiere_documentacion=True
+    )
+
+    # --- Ejemplos de Casas de Campo ---
+    prop8 = propiedades.create_propiedad(
+        nombre="Casona Colonial en las Sierras de Córdoba",
+        descripcion="Paz y naturaleza en una estancia histórica. Ideal para escapadas rurales y desconexión.",
+        calle="Ruta E-53",
+        numero="50",
+        piso=None,
+        depto=None,
+        entre_calles="Camino al Dique y Los Nogales",
+        id_ciudad=3, # Reemplaza con un ID de ciudad válida (ej. La Cumbre, Córdoba)
+        id_tipo=casa_de_campo.id,
+        huespedes=10,
+        ambientes=7,
+        banios=3,
+        cocheras=3,
+        precioNoche=180.00,
+        codigoAcceso="300301", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=1,
+        requiere_documentacion=False
+    )
+
+    # --- Ejemplos de Casas en la Playa ---
+    prop9 = propiedades.create_propiedad(
+        nombre="Chalet Playero a pasos del mar en Pinamar",
+        descripcion="Comodidad y ubicación privilegiada para disfrutar de la costa atlántica en familia.",
+        calle="Av. Libertador",
+        numero="800",
+        piso=None,
+        depto=None,
+        entre_calles="Shaw y Júpiter",
+        id_ciudad=4, # Reemplaza con un ID de ciudad válida (ej. Pinamar)
+        id_tipo=casa_en_la_playa.id,
+        huespedes=7,
+        ambientes=4,
+        banios=2,
+        cocheras=1,
+        precioNoche=150.00,
+        codigoAcceso="400401", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_encargado=2,
+        requiere_documentacion=True
+    )
+
+    # --- Ejemplos de Chalets ---
+    prop10 = propiedades.create_propiedad(
+        nombre="Chalet Alpino con vistas al Nahuel Huapi",
+        descripcion="Acogedor y cálido, ideal para esquiar en invierno o hacer senderismo en verano. Chimenea y vistas espectaculares.",
+        calle="Av. Bustillo",
+        numero="2500",
+        piso=None,
+        depto=None,
+        entre_calles="Km 2.5 y Km 3.0",
+        id_ciudad=5, # Reemplaza con un ID de ciudad válida (ej. Bariloche)
+        id_tipo=chalet.id,
+        huespedes=6,
+        ambientes=4,
+        banios=2.5,
+        cocheras=1,
+        precioNoche=160.00,
+        codigoAcceso="500501", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=1,
+        requiere_documentacion=False
+    )
+
+    # --- Ejemplos de Cabañas ---
+    prop11 = propiedades.create_propiedad(
+        nombre="Cabaña rústica junto al río en El Bolsón",
+        descripcion="Inmersión en la naturaleza, perfecta para la pesca y el descanso. Equipada con todo lo necesario.",
+        calle="Acceso Ruta 40 Sur",
+        numero="10",
+        piso=None,
+        depto=None,
+        entre_calles="Río Azul y Lago Puelo",
+        id_ciudad=6, # Reemplaza con un ID de ciudad válida (ej. El Bolsón)
+        id_tipo=cabaña.id,
+        huespedes=4,
+        ambientes=3,
+        banios=1,
+        cocheras=1,
+        precioNoche=90.00,
+        codigoAcceso="600601", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=2,
+        requiere_documentacion=False
+    )
+
+    # --- Ejemplos de Estudios ---
+    prop12 = propiedades.create_propiedad(
+        nombre="Estudio Chic en Recoleta",
+        descripcion="Funcional y elegante, ideal para viajeros solos o parejas. Cerca de museos y atracciones.",
+        calle="Ayacucho",
+        numero="1500",
+        piso="8",
+        depto="C",
+        entre_calles="Av. Santa Fe y Marcelo T. de Alvear",
+        id_ciudad=1, # Reemplaza con un ID de ciudad válida
+        id_tipo=estudio.id,
+        huespedes=2,
+        ambientes=1,
+        banios=1,
+        cocheras=0,
+        precioNoche=60.00,
+        codigoAcceso="700701", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=1,
+        requiere_documentacion=True
+    )
+
+    # --- Ejemplos de Lofts ---
+    prop13 = propiedades.create_propiedad(
+        nombre="Loft Industrial en San Telmo",
+        descripcion="Diseño vanguardista en el corazón del barrio histórico. Techos altos y ambiente bohemio.",
+        calle="Defensa",
+        numero="500",
+        piso="PB",
+        depto="Loft",
+        entre_calles="México y Chile",
+        id_ciudad=1, # Reemplaza con un ID de ciudad válida
+        id_tipo=loft.id,
+        huespedes=2,
+        ambientes=2,
+        banios=1,
+        cocheras=0,
+        precioNoche=85.00,
+        codigoAcceso="800801", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_encargado=2,
+        requiere_documentacion=False
+    )
+
+    # --- Ejemplos de Dúplex ---
+    prop14 = propiedades.create_propiedad(
+        nombre="Dúplex con Vista al Mar en Mar del Plata",
+        descripcion="Amplio y luminoso, con dos plantas y balcón. Cerca de la playa y el centro.",
+        calle="Av. Patricio Peralta Ramos",
+        numero="2000",
+        piso="1",
+        depto="A",
+        entre_calles="Peatonal San Martín y Rivadavia",
+        id_ciudad=7, # Reemplaza con un ID de ciudad válida (ej. Mar del Plata)
+        id_tipo=duplex.id,
+        huespedes=5,
+        ambientes=3,
+        banios=1.5,
+        cocheras=1,
+        precioNoche=110.00,
+        codigoAcceso="900901", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=1,
+        id_encargado=1,
+        requiere_documentacion=True
+    )
+
+    # --- Ejemplos de Condominios ---
+    prop15 = propiedades.create_propiedad(
+        nombre="Condominio Exclusivo con Amenities en Colonia del Sacramento",
+        descripcion="Unidad de lujo en un complejo con piscina, gimnasio y seguridad. Cerca del casco histórico.",
+        calle="Ruta 1",
+        numero="10",
+        piso="2",
+        depto="B",
+        entre_calles="Acceso a Colonia y Río de la Plata",
+        id_ciudad=8, # Reemplaza con un ID de ciudad válida (ej. Colonia del Sacramento, Uruguay)
+        id_tipo=condominio.id,
+        huespedes=4,
+        ambientes=3,
+        banios=2,
+        cocheras=1,
+        precioNoche=130.00,
+        codigoAcceso="910910", # Código estático de 6 dígitos
+        is_habilitada=True,
+        id_pol_reserva=2,
+        id_encargado=2,
+        requiere_documentacion=False
+    )
+
     print("Propiedades de ejemplo creadas")
 
     # Crear reservas de ejemplo
@@ -290,15 +576,15 @@ def run():
     # Crear reservas de ejemplo
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop1.id,
-        "id_inquilino": user3.id,
+        "id_inquilino": user6.id,
         "id_usuario_carga": user2.id,
         "cantidad_personas": 4,
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": None,
-        "id_estado": 1,  # Estado "Pendiente"
-        "fecha_inicio": datetime(2025, 12, 10),
-        "fecha_fin": datetime(2025, 12, 14)
+        "id_estado": 4,  
+        "fecha_inicio": datetime(2024, 12, 10),
+        "fecha_fin": datetime(2024, 12, 14)
     })
 
     reserva2 = reservas.create_reserva({
@@ -316,13 +602,240 @@ def run():
 
     reserva3 = reservas.create_reserva({
         "id_propiedad": prop3.id,
-        "id_inquilino": user3.id,
-        "id_usuario_carga": user2.id,
+        "id_inquilino": user7.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 3,
         "monto_pagado": 120.0,
         "monto_total": 360.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": 2,
         "fecha_inicio": datetime(2025, 10, 20),
         "fecha_fin": datetime(2025, 10, 23)
     })
+
+    reserva4 = reservas.create_reserva({
+        "id_propiedad": prop4.id,
+        "id_inquilino": user1.id,
+        "id_usuario_carga": user4.id,
+        "cantidad_personas": 5,
+        "monto_pagado": 200.0,
+        "monto_total": 800.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 12, 5),
+        "fecha_fin": datetime(2025, 12, 10)
+    })
+
+    reserva5 = reservas.create_reserva({
+        "id_propiedad": prop5.id,
+        "id_inquilino": user2.id,
+        "id_usuario_carga": user5.id,
+        "cantidad_personas": 2,
+        "monto_pagado": 90.0,
+        "monto_total": 180.0,
+        "id_chat": None,
+        "id_estado": 3,
+        "fecha_inicio": datetime(2024, 9, 15),
+        "fecha_fin": datetime(2024, 9, 17)
+    })
+
+    reserva6 = reservas.create_reserva({
+        "id_propiedad": prop6.id,
+        "id_inquilino": user4.id,
+        "id_usuario_carga": user6.id,
+        "cantidad_personas": 6,
+        "monto_pagado": 250.0,
+        "monto_total": 1000.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2026, 1, 10),
+        "fecha_fin": datetime(2026, 1, 15)
+    })
+
+    reserva7 = reservas.create_reserva({
+        "id_propiedad": prop7.id,
+        "id_inquilino": user5.id,
+        "id_usuario_carga": user7.id,
+        "cantidad_personas": 3,
+        "monto_pagado": 100.0,
+        "monto_total": 300.0,
+        "id_chat": None,
+        "id_estado": 2,
+        "fecha_inicio": datetime(2025, 9, 1),
+        "fecha_fin": datetime(2025, 9, 4)
+    })
+
+    reserva8 = reservas.create_reserva({
+        "id_propiedad": prop8.id,
+        "id_inquilino": user6.id,
+        "id_usuario_carga": user1.id,
+        "cantidad_personas": 2,
+        "monto_pagado": 60.0,
+        "monto_total": 120.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 10, 1),
+        "fecha_fin": datetime(2025, 10, 3)
+    })
+
+    reserva9 = reservas.create_reserva({
+        "id_propiedad": prop9.id,
+        "id_inquilino": user7.id,
+        "id_usuario_carga": user2.id,
+        "cantidad_personas": 1,
+        "monto_pagado": 40.0,
+        "monto_total": 80.0,
+        "id_chat": None,
+        "id_estado": 4,
+        "fecha_inicio": datetime(2024, 10, 25),
+        "fecha_fin": datetime(2024, 10, 27)
+    })
+
+    reserva10 = reservas.create_reserva({
+        "id_propiedad": prop10.id,
+        "id_inquilino": user1.id,
+        "id_usuario_carga": user3.id,
+        "cantidad_personas": 2,
+        "monto_pagado": 80.0,
+        "monto_total": 240.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 11, 20),
+        "fecha_fin": datetime(2025, 11, 23)
+    })
+
+    reserva11 = reservas.create_reserva({
+        "id_propiedad": prop11.id,
+        "id_inquilino": user2.id,
+        "id_usuario_carga": user4.id,
+        "cantidad_personas": 5,
+        "monto_pagado": 180.0,
+        "monto_total": 720.0,
+        "id_chat": None,
+        "id_estado": 2,
+        "fecha_inicio": datetime(2025, 9, 5),
+        "fecha_fin": datetime(2025, 9, 9)
+    })
+
+    reserva12 = reservas.create_reserva({
+        "id_propiedad": prop12.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user5.id,
+        "cantidad_personas": 4,
+        "monto_pagado": 130.0,
+        "monto_total": 520.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2026, 2, 1),
+        "fecha_fin": datetime(2026, 2, 5)
+    })
+
+    reserva13 = reservas.create_reserva({
+        "id_propiedad": prop13.id,
+        "id_inquilino": user4.id,
+        "id_usuario_carga": user6.id,
+        "cantidad_personas": 3,
+        "monto_pagado": 110.0,
+        "monto_total": 330.0,
+        "id_chat": None,
+        "id_estado": 3,
+        "fecha_inicio": datetime(2024, 11, 10),
+        "fecha_fin": datetime(2024, 11, 13)
+    })
+
+    reserva14 = reservas.create_reserva({
+        "id_propiedad": prop14.id,
+        "id_inquilino": user5.id,
+        "id_usuario_carga": user7.id,
+        "cantidad_personas": 2,
+        "monto_pagado": 95.0,
+        "monto_total": 190.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2025, 12, 1),
+        "fecha_fin": datetime(2025, 12, 3)
+    })
+
+    reserva15 = reservas.create_reserva({
+        "id_propiedad": prop15.id,
+        "id_inquilino": user1.id,
+        "id_usuario_carga": user2.id,
+        "cantidad_personas": 4,
+        "monto_pagado": 160.0,
+        "monto_total": 640.0,
+        "id_chat": None,
+        "id_estado": 1,
+        "fecha_inicio": datetime(2026, 3, 1),
+        "fecha_fin": datetime(2026, 3, 5)
+    }) 
+    estadoConfirmado = parametricas.create_estado("Confirmada")
+    estadoPendiente = parametricas.create_estado("Pendiente")
+    estadoCancelada = parametricas.create_estado("Cancelada")
+    estadoFinalizada = parametricas.create_estado("Finalizada")
+    print("Reservas de ejemplo creadas")
+
+
+    # Agregar imagenes a las propiedades
+
+    from src.models import imagenes
+    img1 = imagenes.create_imagen(
+        url="/imagenes/propiedad/1.png",
+        id_propiedad=prop1.id,
+    )
+    img2 = imagenes.create_imagen(
+        url="/imagenes/propiedad/2.png",
+        id_propiedad=prop2.id,
+    )
+    img3 = imagenes.create_imagen(
+        url="/imagenes/propiedad/3.png",
+        id_propiedad=prop3.id,
+    )
+    img4 = imagenes.create_imagen(
+        url="/imagenes/propiedad/4.png",
+        id_propiedad=prop4.id,
+    )
+    img5 = imagenes.create_imagen(
+        url="/imagenes/propiedad/5.png",
+        id_propiedad=prop5.id,
+    )
+    img6 = imagenes.create_imagen(
+        url="/imagenes/propiedad/6.png",
+        id_propiedad=prop6.id,
+    )
+    img7 = imagenes.create_imagen(
+        url="/imagenes/propiedad/7.png",
+        id_propiedad=prop7.id,
+    )
+    img8 = imagenes.create_imagen(
+        url="/imagenes/propiedad/8.png",
+        id_propiedad=prop8.id,
+    )
+    img9 = imagenes.create_imagen(
+        url="/imagenes/propiedad/9.png",
+        id_propiedad=prop9.id,
+    )
+    img10 = imagenes.create_imagen(
+        url="/imagenes/propiedad/10.png",
+        id_propiedad=prop10.id,
+    )
+    img11 = imagenes.create_imagen(
+        url="/imagenes/propiedad/11.png",
+        id_propiedad=prop11.id,
+    )
+    img12 = imagenes.create_imagen(
+        url="/imagenes/propiedad/12.png",
+        id_propiedad=prop12.id,
+    )
+    img13 = imagenes.create_imagen(
+        url="/imagenes/propiedad/13.png",
+        id_propiedad=prop13.id,
+    )
+    img14 = imagenes.create_imagen(
+        url="/imagenes/propiedad/14.png",
+        id_propiedad=prop14.id,
+    )
+    img15 = imagenes.create_imagen(
+        url="/imagenes/propiedad/15.png",
+        id_propiedad=prop15.id,
+    )
+

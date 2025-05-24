@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, Rol
+from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -9,6 +9,12 @@ def get_usuarios():
     usuarios = Usuario.query.all()
     return usuarios
 
+def get_empleados():
+    empleados = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id != EnumRol.INQUILINO.value).\
+    all()
+    return empleados
     
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
@@ -78,14 +84,19 @@ def update_usuario(user_id, data):
     db.session.commit()
     return usuario
 
+def set_imagen_usuario(user_id, id_imagen):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    usuario.id_imagen = id_imagen
+    db.session.commit()
+    return usuario
+
 def get_usuarios_by_rol(rol_id):
     usuarios = Usuario.query.join(Usuario.roles).filter_by(id=rol_id).all()
     for usuario in usuarios:
         _ = usuario.roles
     return usuarios
-
-def get_schema_usuario():
-    return UsuarioSchema()
 
 def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
     """
@@ -144,3 +155,9 @@ def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
             for permiso, valor in rol_permisos.items():
                 permisos[permiso] = permisos[permiso] or valor
         return permisos
+
+def get_schema_usuario():
+    return UsuarioSchema()
+
+def get_schema_empleado():
+    return EmpleadoSchema()

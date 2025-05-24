@@ -23,6 +23,14 @@ def get_ciudades_by_provincia():
     return parametricas.get_schema_ciudad().dump(ciudades, many=True)
 
 
+@parametricas_blueprint.get('/ciudadesConPropiedades')
+def get_ciudades_con_propiedades():
+    ciudades = parametricas.get_ciudades_con_propiedades()
+    if not ciudades:
+        return {"error": "No se encontraron ciudades con propiedades."}, 404
+    return parametricas.get_schema_ciudad().dump(ciudades, many=True)
+
+
 @parametricas_blueprint.get('/tipos')
 def get_tipos_propiedad():
     tipos = parametricas.get_tipos_propiedad()

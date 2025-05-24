@@ -1,11 +1,12 @@
 from src.models.database import db
 from src.models.marshmallow import ma
-
-from marshmallow import validate, EXCLUDE
+from src.models.imagenes.imagen import ImagenSchema
+from marshmallow import validate, EXCLUDE, validates, validates_schema, ValidationError
 from datetime import datetime
 
 
 class Propiedad(db.Model):
+    __tablename__ = "propiedad"
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String, unique=True, nullable=False)
     descripcion = db.Column(db.String, nullable=False)
@@ -32,17 +33,24 @@ class Propiedad(db.Model):
     # Relación con Ciudad
     id_ciudad = db.Column(db.Integer, db.ForeignKey("ciudades.id"))
     ciudad = db.relationship("Ciudad")
+    # Relación con User
+    id_encargado = db.Column(db.Integer, db.ForeignKey("usuario.id"))
+    encargado = db.relationship("Usuario", back_populates="propiedades")
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow, nullable=False)
     delete_at = db.Column(db.DateTime)
 
+    imagenes = db.relationship('Imagen', back_populates='propiedad', lazy=True, foreign_keys='[Imagen.id_propiedad]')
+
+
     def __init__(
         self, nombre, descripcion, entre_calles, calle,
         numero, piso, depto, huespedes, ambientes, banios,
         cocheras, precioNoche, codigoAcceso, is_habilitada,
-        id_pol_reserva, id_tipo, id_ciudad,requiere_documentacion    ):
+        id_pol_reserva, id_tipo, id_ciudad, id_encargado,
+        requiere_documentacion):
         self.nombre = nombre
         self.descripcion = descripcion
         self.entre_calles = entre_calles
@@ -60,6 +68,7 @@ class Propiedad(db.Model):
         self.id_pol_reserva = id_pol_reserva
         self.id_tipo = id_tipo
         self.id_ciudad = id_ciudad
+        self.id_encargado= id_encargado
         self.requiere_documentacion = requiere_documentacion
 
     def __repr__(self):
@@ -88,12 +97,41 @@ class PropiedadSchema(ma.Schema):
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
     id_ciudad = ma.Integer(required=True)
+    id_encargado = ma.Integer(required=True)
     requiere_documentacion = ma.Boolean(required=True)
     ciudad = ma.Function(lambda obj: obj.ciudad.nombre)
     id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+    imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+
+    id_imagenes = ma.Method("get_image_ids", dump_only=True)
+
+    # Define el método que será llamado por el campo 'id_imagenes'
+    def get_image_ids(self, obj):
+        # 'obj' es la instancia de Propiedad que se está serializando.
+        # Accede a la relación 'imagenes' y extrae los IDs.
+        if obj.imagenes: # Asegúrate de que la relación no esté vacía o None
+            return [img.id for img in obj.imagenes]
+        return [] # Retorna una lista vacía si no hay imágenes
+
+
+
+
+    @validates_schema
+    def validar_id_encargado(self, data, **kwargs):
+        from src.models.users.user import Usuario
+        usuario = db.session.get(Usuario, data['id_encargado'])
+
+        if not usuario:
+            raise ValidationError("El usuario con ese ID no existe.")
+
+        roles = usuario.get_roles()
+
+        # Comprobar que su rol sea 'encargado'
+        if not (roles['is_encargado'] or roles['is_admin']):
+            raise ValidationError("El usuario no es Encargado o Administrador.", field_name='id_encargado')
 
 class CodigoAccesoSchema(ma.Schema):
     class Meta:

@@ -1,10 +1,13 @@
-from flask import Blueprint, request, jsonify
+from logging import exception
+import os
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from marshmallow import ValidationError
 
 #Usa get_jwt_identity() si solo necesitas el identificador principal del usuario autenticado.
 #Usa get_jwt() si necesitas acceder a otros datos o claims personalizados dentro del JWT.
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
+from src.models.imagenes import get_filename, upload_image, delete_image
 from src.web.authorization.roles import rol_requerido
 from src.models.users.logica import get_permisos_usuario
 from src.models import users
@@ -41,6 +44,15 @@ def verificar_permiso_creacion_usuario(id_rol_actuales, id_roles_nuevos):
 def get_usuarios():
     usuarios = users.get_usuarios()  # Obtiene todos los usuarios de la base
     return users.get_schema_usuario().dumps(usuarios, many=True)  # Serializa y retorna
+
+# Endpoint: Obtener todos los empleados (solo para admin)
+@user_blueprint.get('/empleados')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+# Devuelve la lista de empleados serializada
+def get_empleados():
+    usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
+    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')
@@ -136,3 +148,50 @@ def update_usuario(user_id):
         return (err.messages, 422)  # Error de validación
     except Exception as e:
         return jsonify({'error': str(e)}), 400  # Otro error
+
+@user_blueprint.post('/imagenPerfil')
+#@jwt_required()
+def upload_imagen():
+    id_usuario = request.args.get('id_usuario')
+    image = upload_image('usuario',request,id_usuario=id_usuario)
+    if image[1] == 201:
+       users.set_imagen_usuario(id_usuario, str(image[0]['id']))
+    return image
+
+@user_blueprint.get('/imagenPerfil/<int:user_id>')
+def get_imagen(user_id):
+    user = users.get_usuario_by_id(user_id)
+    if not user.id_imagen:
+        return {"error": "El usuario no tiene una imagen asociada"}, 404
+    imagen_id = str(user.id_imagen)
+
+    base_upload_directory = os.path.abspath(
+        os.path.join(current_app.root_path, "..", "..", "imagenes", "usuario")
+    )
+
+    filename = get_filename(imagen_id)
+
+    return send_from_directory(
+        directory=base_upload_directory,
+        path=filename,
+        as_attachment=False
+    )
+
+@user_blueprint.delete('/imagenPerfil')
+#@jwt_required() 
+def delete_imagen():
+    id_usuario = request.args.get('id_usuario')
+    user = users.get_usuario_by_id(id_usuario)
+    if not user.id_imagen:
+        return {"error": "El usuario no tiene una imagen asociada"}, 404
+    id_imagen = str(user.id_imagen)
+
+    success, message = delete_image(id_imagen, 'usuario')
+    users.set_imagen_usuario(id_usuario,None) 
+
+    if success:
+        return jsonify({"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}), 200
+    else:
+        return jsonify({"message": message}), 500
+
+
