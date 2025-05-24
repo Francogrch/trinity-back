@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
-from src.models import database, marshmallow, seed, seed_ciudades
+from flask_mail import Mail, Message
+
+from src.models import database, marshmallow, email, seed, seed_ciudades
+from src.models.email import mail
+
 from src.web.controllers.auth import auth_blueprint
 from src.web.controllers.users import user_blueprint
 from src.web.controllers.propiedades import propiedad_blueprint
@@ -22,9 +26,13 @@ def create_app():
     with app.app_context():
         database.init_db(app)
         marshmallow.init_ma(app)
+        email.init_mail(app)
 
     @app.get("/")
     def home():
+        msg = Message("Correo de prueba", recipients=["mcingolani28@gmail.com"])
+        msg.html = "<h1>Este es un test usando aiosmtpd</h1>"
+        mail.send(msg)
         return "<h1>Holas</h1>"
     # Carpeta de subidas
     app.config['UPLOAD_FOLDER'] = 'uploads'
