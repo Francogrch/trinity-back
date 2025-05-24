@@ -79,8 +79,7 @@ def eliminar_prop_hasta_fecha(prop_id):
         return None
 
     reservas_propiedad= Reserva.query.filter_by(id_propiedad=prop_id).filter(Reserva.id_estado == 1).all()
-    print(reservas_propiedad)
-    #reservas_propiedad = get_reservas_por_propiedad(prop_id).filter(Reserva.id_estado == 1).all()
+
     if reservas_propiedad:
         fecha_max = max(reservas_propiedad, key=lambda reserva: reserva.fecha_fin)
         propiedad.delete_at = fecha_max.fecha_fin 

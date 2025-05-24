@@ -24,8 +24,6 @@ def initialize_upload_folders(app: Flask):
     os.makedirs(propiedades_upload_path, exist_ok=True)
     os.makedirs(usuarios_upload_path, exist_ok=True)
 
-    print(f"Carpeta de propiedades asegurada: {propiedades_upload_path}")
-    print(f"Carpeta de usuarios asegurada: {usuarios_upload_path}")
 
 def create_app():
     app = Flask(__name__)

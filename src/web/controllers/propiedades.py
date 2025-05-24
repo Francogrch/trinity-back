@@ -185,7 +185,6 @@ def get_imagenes_id():
 def upload_imagen():
     id_propiedad = request.args.get('id_propiedad')
     image = upload_image('propiedad',request,id_propiedad=id_propiedad)
-    print(f"Imagen subida: {image[1]}")
     return image
 
 @propiedad_blueprint.delete('/deleteImagen')
