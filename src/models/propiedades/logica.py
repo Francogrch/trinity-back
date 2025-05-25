@@ -68,7 +68,7 @@ def update_encargado(id_propiedad,id_encargado):
         return None
     propiedad.id_encargado = id_encargado
     db.session.commit()
-    return propiedad
+    return propiedad 
 
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()

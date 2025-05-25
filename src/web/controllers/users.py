@@ -48,7 +48,7 @@ def get_usuarios():
 # Endpoint: Obtener todos los empleados (solo para admin)
 @user_blueprint.get('/empleados')
 @jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo rol Administrador puede acceder
 # Devuelve la lista de empleados serializada
 def get_empleados():
     usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
