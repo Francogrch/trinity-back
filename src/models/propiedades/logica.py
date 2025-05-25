@@ -67,6 +67,7 @@ def update_encargado(id_propiedad,id_encargado):
     if not propiedad:
         return None
     propiedad.id_encargado = id_encargado
+    db.session.commit()
     return propiedad
 
 def get_propiedades_eliminadas():
