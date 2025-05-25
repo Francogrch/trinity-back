@@ -199,7 +199,18 @@ def delete_imagen():
     else:
         return {"message": message}, 500
 
-
+@propiedad_blueprint.patch('/setEncargado')
+def update_encargado():
+    id_propiedad = request.args.get('id_propiedad')
+    id_encargado = request.args.get('id_encargado')
+    try:
+        propiedad = propiedades.update_encargado(id_propiedad,id_encargado)
+        if propiedad:
+            return (propiedades.get_schema_propiedad().dump(propiedad), 201)
+        return {'error': 'Propiedad no encontrada'}, 404
+    except ValidationError as err:
+        return (err.messages, 422)
+ 
 
 
 

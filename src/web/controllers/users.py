@@ -194,4 +194,11 @@ def delete_imagen():
     else:
         return jsonify({"message": message}), 500
 
+@user_blueprint.get('/encargados')
+# @jwt_required()
+# @rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+def get_encargados():
+    usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
+    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
+
 
