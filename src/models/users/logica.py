@@ -15,6 +15,13 @@ def get_empleados():
     filter(Rol.id != EnumRol.INQUILINO.value).\
     all()
     return empleados
+
+def get_encargados():
+    empleados = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id == EnumRol.EMPLEADO.value).\
+    all()
+    return empleados
     
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
@@ -81,6 +88,14 @@ def update_usuario(user_id, data):
         usuario.roles = roles
     if 'password' in data and data['password']:
         usuario.set_password(data['password'])
+    db.session.commit()
+    return usuario
+
+def set_imagen_usuario(user_id, id_imagen):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    usuario.id_imagen = id_imagen
     db.session.commit()
     return usuario
 

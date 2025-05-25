@@ -1,6 +1,6 @@
 from src.models.database import db
 from src.models.marshmallow import ma
-
+from src.models.imagenes.imagen import ImagenSchema
 from marshmallow import validate, EXCLUDE, validates, validates_schema, ValidationError
 from datetime import datetime
 
@@ -41,6 +41,9 @@ class Propiedad(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow, nullable=False)
     delete_at = db.Column(db.DateTime)
+
+    imagenes = db.relationship('Imagen', back_populates='propiedad', lazy=True, foreign_keys='[Imagen.id_propiedad]')
+
 
     def __init__(
         self, nombre, descripcion, entre_calles, calle,
@@ -101,6 +104,20 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+    imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+
+    id_imagenes = ma.Method("get_image_ids", dump_only=True)
+
+    # Define el método que será llamado por el campo 'id_imagenes'
+    def get_image_ids(self, obj):
+        # 'obj' es la instancia de Propiedad que se está serializando.
+        # Accede a la relación 'imagenes' y extrae los IDs.
+        if obj.imagenes: # Asegúrate de que la relación no esté vacía o None
+            return [img.id for img in obj.imagenes]
+        return [] # Retorna una lista vacía si no hay imágenes
+
+
+
 
     @validates_schema
     def validar_id_encargado(self, data, **kwargs):
