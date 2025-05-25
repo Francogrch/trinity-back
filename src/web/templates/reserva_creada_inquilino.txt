@@ -1,0 +1,15 @@
+Asunto: ¡Tu reserva está confirmada!
+
+Hola {{ user_name }},
+
+¡Gracias por reservar con Alquiloando!
+
+Tu alquiler está confirmado para las siguientes fechas:
+
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+Podés ver los detalles de tu reserva acá:
+{{ cta_url }}
+
+© {{ current_year }} Alquiloando · Todos los derechos reservados
