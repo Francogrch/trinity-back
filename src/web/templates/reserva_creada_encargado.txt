@@ -1,0 +1,13 @@
+Asunto: Nueva reserva
+
+Hola {{ user_name }},
+
+Hay una nueva reserva en {{ propiedad_nombre }} para las siguientes fechas:
+
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+Podés ver los detalles de la reserva acá:
+{{ cta_url }}
+
+© {{ current_year }} Alquiloando · Todos los derechos reservados

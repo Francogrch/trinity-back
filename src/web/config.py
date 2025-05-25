@@ -17,7 +17,7 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_SUPPRESS_SEND = False
-    MAIL_DEFAULT_SENDER = ('Alquiloando SA', 'alquiloando@mail.com')
     MAIL_USERNAME = 'alquiloando1@gmail.com'
     MAIL_PASSWORD = 'uioermbleomvetkj' # APP Password para integrar con flask, password real=?J3:m~Jk2}w6Z&H
+    MAIL_SUPPRESS_SEND = True # Esto bloquea el envio del msg.
+    MAIL_DEFAULT_SENDER = ('Alquiloando SA', 'alquiloando1@gmail.com')
