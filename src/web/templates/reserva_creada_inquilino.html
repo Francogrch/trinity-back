@@ -6,7 +6,7 @@
 
 {% block content %}
 <p>Hola {{ user_name }},</p>
-<p>Tu alquiler está confirmado para las siguientes fechas:</p>
+<p>Tu alquiler de {{ propiedad_nombre }} fue realizada para las siguientes fechas:</p>
 <ul>
   <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
   <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>

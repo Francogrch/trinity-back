@@ -15,6 +15,7 @@ def send_reserva_creada_inquilino(reserva):
     html_body = render_template(
         'reserva_creada_inquilino.html',
         user_name=reserva.inquilino.nombre,
+        propiedad_nombre=reserva.propiedad.nombre,
         fecha_inicio=reserva.fecha_inicio,
         fecha_fin=reserva.fecha_fin,
         logo_url=logo_url,
