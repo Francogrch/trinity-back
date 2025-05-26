@@ -309,7 +309,7 @@ def run():
         banios=1,
         cocheras=0,
         precioNoche=50.00,
-        codigoAcceso="100101", # Código estático de 6 dígitos
+        codigoAcceso="1001", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
@@ -331,7 +331,7 @@ def run():
         banios=1,
         cocheras=0,
         precioNoche=75.00,
-        codigoAcceso="100102", # Código estático de 6 dígitos
+        codigoAcceso="1001", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=2,
@@ -354,7 +354,7 @@ def run():
         banios=2,
         cocheras=1,
         precioNoche=120.00,
-        codigoAcceso="200201", # Código estático de 6 dígitos
+        codigoAcceso="2201", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=1,
@@ -376,7 +376,7 @@ def run():
         banios=3.5,
         cocheras=2,
         precioNoche=300.00,
-        codigoAcceso="200202", # Código estático de 6 dígitos
+        codigoAcceso="0202", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,
@@ -399,7 +399,7 @@ def run():
         banios=3,
         cocheras=3,
         precioNoche=180.00,
-        codigoAcceso="300301", # Código estático de 6 dígitos
+        codigoAcceso="3301", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
@@ -422,7 +422,7 @@ def run():
         banios=2,
         cocheras=1,
         precioNoche=150.00,
-        codigoAcceso="400401", # Código estático de 6 dígitos
+        codigoAcceso="4401", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,
@@ -445,7 +445,7 @@ def run():
         banios=2.5,
         cocheras=1,
         precioNoche=160.00,
-        codigoAcceso="500501", # Código estático de 6 dígitos
+        codigoAcceso="5501", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
@@ -468,7 +468,7 @@ def run():
         banios=1,
         cocheras=1,
         precioNoche=90.00,
-        codigoAcceso="600601", # Código estático de 6 dígitos
+        codigoAcceso="6001", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=2,
@@ -491,7 +491,7 @@ def run():
         banios=1,
         cocheras=0,
         precioNoche=60.00,
-        codigoAcceso="700701", # Código estático de 6 dígitos
+        codigoAcceso="7701", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
@@ -514,7 +514,7 @@ def run():
         banios=1,
         cocheras=0,
         precioNoche=85.00,
-        codigoAcceso="800801", # Código estático de 6 dígitos
+        codigoAcceso="8801", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,
@@ -537,7 +537,7 @@ def run():
         banios=1.5,
         cocheras=1,
         precioNoche=110.00,
-        codigoAcceso="900901", # Código estático de 6 dígitos
+        codigoAcceso="9901", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
@@ -560,7 +560,7 @@ def run():
         banios=2,
         cocheras=1,
         precioNoche=130.00,
-        codigoAcceso="910910", # Código estático de 6 dígitos
+        codigoAcceso="9910", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,

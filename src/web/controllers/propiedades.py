@@ -212,5 +212,16 @@ def update_encargado():
         return (err.messages, 422)
  
 
+@propiedad_blueprint.get('/imagenPerfil/<int:id_propiedad>')
+def get_imagen_perfil(id_propiedad):
+    propiedad = propiedades.get_propiedad_id(id_propiedad)
 
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada.'}, 404
+    
+    imagen = propiedad.imagenes[0] if propiedad.imagenes else None
+    if not imagen:
+        return {'error': 'No hay imagenes para esta propiedad.'}, 404
+
+    return get_imagen(imagen.id)
 
