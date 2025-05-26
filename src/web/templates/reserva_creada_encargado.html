@@ -1,0 +1,15 @@
+<!-- templates/reserva_creada_encargado.html -->
+{% extends "email_base.html" %}
+
+{% block subject %}Nueva reserva{% endblock %}
+{% block heading %}Se ha registrado una nueva reserva{% endblock %}
+
+{% block content %}
+<p>Hola {{ user_name }},</p>
+<p>Hay una nueva reserva en {{ propiedad_nombre }} para las siguientes fechas:</p>
+<ul>
+  <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
+  <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
+</ul>
+{% endblock %}
+

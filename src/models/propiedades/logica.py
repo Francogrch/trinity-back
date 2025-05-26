@@ -62,7 +62,13 @@ def get_propiedades_usuario(usuario):
 def get_propiedades():
     return Propiedad.query.filter_by(delete_at=None).all()
 
-
+def update_encargado(id_propiedad,id_encargado):
+    propiedad = get_propiedad_id(id_propiedad)
+    if not propiedad:
+        return None
+    propiedad.id_encargado = id_encargado
+    db.session.commit()
+    return propiedad 
 
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()

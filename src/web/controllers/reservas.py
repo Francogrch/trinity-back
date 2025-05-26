@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funcion
 
 from src.models import reservas
 from src.models import users
+from src.models import email
 
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
@@ -59,6 +60,9 @@ def create_reserva():
                 ):
             return {'error': 'Propiedad no disponible'}, 400
         reserva = reservas.create_reserva(data_reserva)
+        # Notificaciones por email
+        email.send_reserva_creada_inquilino(reserva)
+        email.send_reserva_creada_encargado(reserva)
         return reservas.get_schema_reserva().dump(reserva), 201
     except ValidationError as err:
         return err.messages, 422

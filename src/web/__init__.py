@@ -1,6 +1,10 @@
+from datetime import datetime
 from flask import Flask
 from flask_cors import CORS
-from src.models import database, marshmallow, seed, seed_ciudades
+from flask_mail import Mail, Message
+
+from src.models import database, marshmallow, email, seed, seed_ciudades
+
 from src.web.controllers.auth import auth_blueprint
 from src.web.controllers.users import user_blueprint
 from src.web.controllers.propiedades import propiedad_blueprint
@@ -37,10 +41,12 @@ def create_app():
     with app.app_context():
         database.init_db(app)
         marshmallow.init_ma(app)
+        email.init_mail(app)
 
     @app.get("/")
     def home():
-        return "<h1>Holas</h1>"
+        return "<h1>Hola</h1>"
+
     # Carpeta de subidas
 
     #initialize_upload_folders(app)
@@ -51,6 +57,12 @@ def create_app():
     app.register_blueprint(parametricas_blueprint)
     app.register_blueprint(imagen_blueprint)
     app.register_blueprint(reserva_blueprint)
+
+    @app.template_filter('datetimeformat')
+    def datetimeformat(value, format='%d/%m/%Y'):
+        if isinstance(value, datetime):
+            return value.strftime(format)
+        return value
 
     @app.cli.command(name="resetdb")
     def resetdb():

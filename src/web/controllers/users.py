@@ -48,7 +48,7 @@ def get_usuarios():
 # Endpoint: Obtener todos los empleados (solo para admin)
 @user_blueprint.get('/empleados')
 @jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo rol Administrador puede acceder
 # Devuelve la lista de empleados serializada
 def get_empleados():
     usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
@@ -193,5 +193,12 @@ def delete_imagen():
         return jsonify({"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}), 200
     else:
         return jsonify({"message": message}), 500
+
+@user_blueprint.get('/encargados')
+# @jwt_required()
+# @rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+def get_encargados():
+    usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
+    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 
