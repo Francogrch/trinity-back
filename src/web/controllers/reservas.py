@@ -70,6 +70,19 @@ def create_reserva():
         return {'error': 'Error al crear la reserva'}, 400
 
 
+@reserva_blueprint.patch('/cancelar/<int:reserva_id>')
+@jwt_required()
+def cancel_reserva(reserva_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        res = reservas.cancel_reserva(reserva_id, usuario)
+    except:
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res:
+        return {'error': 'Reserva no encontrada'}, 404
+    return reservas.get_schema_reserva().dump(res), 200
+
+
 @reserva_blueprint.patch('/cambiarEstado/<int:reserva_id>')
 def cambiar_estado_reserva(reserva_id):
     try:

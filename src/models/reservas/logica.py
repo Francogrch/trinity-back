@@ -48,6 +48,21 @@ def create_reserva(data):
     return nueva_reserva
 
 
+def cancel_reserva(reserva_id, usuario):
+    roles = usuario.get_roles()
+    reserva = get_reserva(reserva_id, usuario)
+    if not reserva or reserva.id_estado == 3 or reserva.id_estado == 4:
+        # Si no existe o está finalizada o cancelada devuelve 404
+        return None
+    reserva.id_estado = 3 # Cambia a estado "Cancelada"
+    db.session.commit()
+    if roles['is_inquilino']:
+        print("envio mail al encargado")
+    else:
+        print("Enviar mail al inquilino")
+    return reserva
+
+
 def cambiar_estado_reserva(id_reserva, nuevo_id_estado):
     reserva = Reserva.query.get(id_reserva)
     if not reserva:
