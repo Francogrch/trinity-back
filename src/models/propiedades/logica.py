@@ -83,7 +83,7 @@ def eliminar_prop_hasta_fecha(prop_id):
     propiedad = get_propiedad_id(prop_id)
     if not propiedad:
         return None
-    propiedad.is_habilitada = false
+    propiedad.is_habilitada = False
     reservas_propiedad= Reserva.query.filter_by(id_propiedad=prop_id).filter(Reserva.id_estado == 1).all()
 
     if reservas_propiedad:
@@ -102,7 +102,7 @@ def eliminar_prop_con_reservas(prop_id):
     propiedad = get_propiedad_id(prop_id)
     if not propiedad:
         return None
-    propiedad.is_habilitada = false
+    propiedad.is_habilitada = False
     # Eliminar todas las reservas asociadas a la propiedad
     reservas_propiedad = get_reservas_por_propiedad(prop_id) 
     for reserva in reservas_propiedad:
