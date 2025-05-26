@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 #Usa get_jwt() si necesitas acceder a otros datos o claims personalizados dentro del JWT.
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
-from src.models.imagenes import get_filename, upload_image, delete_image
+from src.models.imagenes import get_filename, upload_image, delete_image, upload_image_usuario,set_id_usuario
 from src.web.authorization.roles import rol_requerido
 from src.models.users.logica import get_permisos_usuario
 from src.models import users
@@ -88,8 +88,8 @@ def create_usuario():
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
-@jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
+#@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
 def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
@@ -168,6 +168,7 @@ def get_imagen(user_id):
         as_attachment=False
     )
 
+# SIn uso
 @user_blueprint.delete('/imagenPerfil')
 #@jwt_required() 
 def delete_imagen():
@@ -193,7 +194,7 @@ def get_encargados():
     return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 
-# Endpoints imagenes Documentos
+# sin uso
 @user_blueprint.post('/imagenDocumento')
 #@jwt_required()
 def upload_imagen():
@@ -223,12 +224,19 @@ def get_imagenes_id():
     imagenes_de_usuario = usuario.imagenes_doc
     return [imagen.id for imagen in imagenes_de_usuario], 200
 
-@user_blueprint.post('/imagenDoc')
+# Subir una imagen sin id_usuario
+@user_blueprint.post('/imagen')
 #@jwt_required()
-def upload_imagen_doc():
-    id_usuario = request.args.get('id_usuario')
-    image = upload_image('usuario',request,id_usuario=id_usuario)
+def upload_imagen_user():
+    image = upload_image_usuario(request)
     return image
+
+@user_blueprint.patch('imagen/set_id')
+def set_id():
+    id_usuario = request.args.get('id_usuario')
+    id_imagen = request.args.get('id_usuario')
+    return set_id_usuario(id_image,id_usuario)
+
 
 @user_blueprint.delete('/imagenDoc')
 #@jwt_required() 
@@ -242,4 +250,24 @@ def delete_imagen_doc():
     else:
         return {"message": message}, 500
 
+@user_blueprint.post('/registrar')
+def registrar():
+    data = request.get_json()  # Obtiene los datos del nuevo usuario
+    imagenes = data['imagenes_id']
+    usuario = users.create_usuario(
+            nombre=data['nombre'],
+            apellido=data.get('apellido'),
+            correo=data['correo'],
+            roles_ids=data['id_rol'],
+            password=data.get('password'),
+            id_tipo_identificacion=data.get('id_tipo_identificacion'),
+            numero_identificacion=data.get('numero_identificacion'),
+            id_pais=data.get('id_pais'),
+            fecha_nacimiento=data.get('fecha_nacimiento')
+        )  # Crea el usuario
+    for id_imagen in imagenes:
+        set_id_usuario(id_imagen,usuario.id)
+    return users.get_schema_usuario().dump(usuario)
+
+    
 
