@@ -14,6 +14,10 @@ ha sido cancelada por motivos de fuerza mayor ajenos a nuestro control.
 Entendemos que esta situación puede causarle molestias y ofrecemos nuestras disculpas
 por los inconvenientes ocasionados.
 
+El importe que haya abonado por esta reserva será reembolsado en su totalidad
+a la misma forma de pago utilizada originalmente. La devolución se procesará en un plazo
+aproximado de 5 a 10 días hábiles, dependiendo de su entidad bancaria.
+
 Puede consultar los detalles de su reserva aquí:
 {{ cta_url }}
 

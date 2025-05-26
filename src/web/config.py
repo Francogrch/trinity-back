@@ -20,4 +20,5 @@ class Config:
     MAIL_USERNAME = 'alquiloando1@gmail.com'
     MAIL_PASSWORD = 'uioermbleomvetkj' # APP Password para integrar con flask, password real=?J3:m~Jk2}w6Z&H
     MAIL_SUPPRESS_SEND = True # Esto bloquea el envio del msg.
+    #MAIL_SUPPRESS_SEND = False # Descomentar esto para que mande realmente el email.
     MAIL_DEFAULT_SENDER = ('Alquiloando SA', 'alquiloando1@gmail.com')
