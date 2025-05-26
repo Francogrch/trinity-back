@@ -314,7 +314,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     prop5 = propiedades.create_propiedad(
@@ -359,7 +359,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=1,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     prop7 = propiedades.create_propiedad(
@@ -381,7 +381,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     # --- Ejemplos de Casas de Campo ---
@@ -427,7 +427,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=2,
         id_encargado=2,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     # --- Ejemplos de Chalets ---
@@ -496,7 +496,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     # --- Ejemplos de Lofts ---
@@ -542,7 +542,7 @@ def run():
         is_habilitada=True,
         id_pol_reserva=1,
         id_encargado=1,
-        requiere_documentacion=True
+        requiere_documentacion=False
     )
 
     # --- Ejemplos de Condominios ---
