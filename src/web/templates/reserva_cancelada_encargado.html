@@ -1,0 +1,14 @@
+<!-- templates/reserva_cancelada_encargado.html -->
+{% extends "email_base.html" %}
+
+{% block subject %}Reserva cancelada{% endblock %}
+{% block heading %}Se ha cancelado una reserva{% endblock %}
+
+{% block content %}
+<p>La reserva #{{ reserva_id }} en {{ propiedad_nombre }} para las siguientes fechas:</p>
+<ul>
+  <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
+  <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
+</ul>
+<p>fue cancelada por el inquilino.</p>
+{% endblock %}

@@ -1,0 +1,28 @@
+Notificación de cancelación de reserva
+======================================
+
+Estimado/a cliente,
+
+Lamentamos informarle que la reserva #{{ reserva_id }} en "{{ propiedad_nombre }}",
+programada para las siguientes fechas:
+
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+ha sido cancelada por motivos de fuerza mayor ajenos a nuestro control.
+
+Entendemos que esta situación puede causarle molestias y ofrecemos nuestras disculpas
+por los inconvenientes ocasionados.
+
+El importe que haya abonado por esta reserva será reembolsado en su totalidad
+a la misma forma de pago utilizada originalmente. La devolución se procesará en un plazo
+aproximado de 5 a 10 días hábiles, dependiendo de su entidad bancaria.
+
+Puede consultar los detalles de su reserva aquí:
+{{ cta_url }}
+
+Atentamente,  
+El equipo de atención al cliente  
+Alquiloando
+
+© {{ current_year }} Alquiloando · Todos los derechos reservados
