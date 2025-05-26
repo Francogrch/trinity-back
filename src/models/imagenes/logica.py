@@ -26,8 +26,27 @@ def create_imagen(url=None,id_usuario=None, id_propiedad=None):
     db.session.commit()
     return imagen
 
+def create_imagen_sin_Id(url=None):
+    imagen = Imagen(url=url)
+    db.session.add(imagen)
+    db.session.commit()
+    return imagen
+
+
 def set_url(imagen,url):
     imagen.url = url
+    db.session.commit()
+    return imagen
+
+def set_id_propiedad(id_imagen,id_propiedad):
+    imagen = Imagen.query.get(id_imagen)
+    imagen.id_propiedad = id_propiedad 
+    db.session.commit()
+    return imagen
+
+def set_id_usuario(id_imagen,id_usuario):
+    imagen = Imagen.query.get(id_imagen)
+    imagen.id_usuario = id_usuario
     db.session.commit()
     return imagen
 
@@ -60,6 +79,40 @@ def upload_image(tipo_imagen,request,id_usuario=None, id_propiedad=None):
         new_filename = f"{imagen.id}{file_extension}"
         filepath = os.path.join(upload_folder, new_filename)
         
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        file.save(filepath)
+
+        image_url = f"/imagenes/{tipo_imagen}/{new_filename}"
+        imagen = set_url(imagen,image_url)
+        db.session.commit()
+
+        return get_schema_imagen().dump(imagen), 201
+
+    return {'error': 'Tipo invalido de archivo'}, 400
+
+def upload_image_usuario(request):
+    tipo_imagen = "usuario"
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', f"imagenes/{tipo_imagen}")
+
+    if 'image' not in request.files:
+        return {'error': 'No hay imagen'}, 400
+
+    file = request.files['image']
+    if file.filename == '':
+        return {'error': 'No se selecciono un archivo'}, 400
+
+    if file and allowed_file(file.filename):
+        imagen = create_imagen_sinId()
+
+        original_filename_secure = secure_filename(file.filename)
+
+        file_extension = os.path.splitext(original_filename_secure)[1]
+       
+        new_filename = f"{imagen.id}{file_extension}"
+        filepath = os.path.join(upload_folder, new_filename)
+
+        # Creacion de carpetas
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
         file.save(filepath)

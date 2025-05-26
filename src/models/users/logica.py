@@ -27,6 +27,7 @@ def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=N
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
         roles = Rol.query.filter(Rol.id.in_(roles_ids)).all()
+        # roles = roles_ids
         # Conversión robusta de fecha_nacimiento a date si es string
         if fecha_nacimiento and isinstance(fecha_nacimiento, str):
             try:
