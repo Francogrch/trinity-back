@@ -56,10 +56,6 @@ def cancel_reserva(reserva_id, usuario):
         return None
     reserva.id_estado = 3 # Cambia a estado "Cancelada"
     db.session.commit()
-    if roles['is_inquilino']:
-        print("envio mail al encargado")
-    else:
-        print("Enviar mail al inquilino")
     return reserva
 
 

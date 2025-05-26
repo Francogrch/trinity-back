@@ -75,3 +75,46 @@ def send_reserva_creada_encargado(reserva):
     )
 
     mail.send(msg)
+
+
+def send_reserva_cancelada(reserva, sender):
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    if sender.get_roles()['is_inquilino']:
+        template_html = 'reserva_cancelada_encargado.html'
+        template_txt = 'reserva_cancelada_encargado.txt'
+        recipient = reserva.propiedad.encargado.correo
+    else:
+        template_html = 'reserva_cancelada_inquilino.html'
+        template_txt = 'reserva_cancelada_inquilino.txt'
+        recipient = reserva.inquilino.correo
+
+    html_body = render_template(
+        template_html,
+        reserva_id=reserva.id,
+        propiedad_nombre=reserva.propiedad.nombre,
+        fecha_inicio=reserva.fecha_inicio,
+        fecha_fin=reserva.fecha_fin,
+        logo_url=logo_url,
+        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        cta_text="Ver reserva",
+        current_year=2025,
+    )
+
+    text_body = render_template(
+        template_txt,
+        reserva_id=reserva.id,
+        propiedad_nombre=reserva.propiedad.nombre,
+        fecha_inicio=reserva.fecha_inicio,
+        fecha_fin=reserva.fecha_fin,
+        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        current_year=2025,
+    )
+
+    msg = Message(
+        subject="¡La reserva fue cancelada!",
+        recipients=[recipient],
+        body=text_body,
+        html=html_body
+    )
+
+    mail.send(msg)

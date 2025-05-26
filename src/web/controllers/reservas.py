@@ -80,6 +80,7 @@ def cancel_reserva(reserva_id):
         return {'error': 'Error al obtener las reservas'}, 500
     if not res:
         return {'error': 'Reserva no encontrada'}, 404
+    email.send_reserva_cancelada(res, usuario)
     return reservas.get_schema_reserva().dump(res), 200
 
 

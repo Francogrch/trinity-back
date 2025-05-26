@@ -1,0 +1,21 @@
+<!-- templates/reserva_cancelada_inquilino.html -->
+{% extends "email_base.html" %}
+
+{% block subject %}Notificación de cancelación de reserva{% endblock %}
+{% block heading %}Cancelación de su reserva en {{ propiedad_nombre }}{% endblock %}
+
+{% block content %}
+<p>Lamentamos informarle que la reserva <strong>#{{ reserva_id }}</strong> en <strong>{{ propiedad_nombre }}</strong>, programada para las siguientes fechas:</p>
+
+<ul>
+  <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
+  <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
+</ul>
+
+<p>ha sido cancelada por motivos de fuerza mayor ajenos a nuestro control.</p>
+
+<p>Entendemos que esta situación puede causar molestias y ofrecemos nuestras disculpas por los inconvenientes ocasionados.</p>
+
+<p>Atentamente,<br>
+El equipo de atención al cliente</p>
+{% endblock %}
