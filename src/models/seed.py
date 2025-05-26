@@ -784,35 +784,35 @@ def run():
     )
     img2 = imagenes.create_imagen(
         url="/imagenes/propiedad/2.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop2.id,
     )
     img3 = imagenes.create_imagen(
         url="/imagenes/propiedad/3.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop3.id,
     )
     img4 = imagenes.create_imagen(
         url="/imagenes/propiedad/4.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop4.id,
     )
     img5 = imagenes.create_imagen(
         url="/imagenes/propiedad/5.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop5.id,
     )
     img6 = imagenes.create_imagen(
         url="/imagenes/propiedad/6.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop6.id,
     )
     img7 = imagenes.create_imagen(
         url="/imagenes/propiedad/7.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop7.id,
     )
     img8 = imagenes.create_imagen(
         url="/imagenes/propiedad/8.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop8.id,
     )
     img9 = imagenes.create_imagen(
         url="/imagenes/propiedad/9.png",
-        id_propiedad=prop1.id,
+        id_propiedad=prop9.id,
     )
     img10 = imagenes.create_imagen(
         url="/imagenes/propiedad/10.png",

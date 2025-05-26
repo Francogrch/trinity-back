@@ -1,0 +1,15 @@
+Notificación de cancelación de reserva
+======================================
+
+Le informamos que la reserva #{{ reserva_id }} en "{{ propiedad_nombre }}",
+correspondiente a las siguientes fechas:
+
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+fue cancelada por el inquilino.
+
+Si desea consultar los detalles de esta reserva, puede hacerlo en el siguiente enlace:
+{{ cta_url }}
+
+© {{ current_year }} Alquiloando · Todos los derechos reservados

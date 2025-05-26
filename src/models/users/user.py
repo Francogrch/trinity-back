@@ -6,6 +6,7 @@ from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
 from src.models.parametricas.parametricas import TipoIdentificacionSchema
 from src.enums.roles import Rol as rol_enum
+from src.models.imagenes.imagen import ImagenSchema,Imagen
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -33,7 +34,7 @@ class Usuario(db.Model):
     propiedades = db.relationship("Propiedad", back_populates="encargado")
     id_imagen = db.Column(db.Integer, db.ForeignKey('imagen.id'), nullable=True)
     imagen = db.relationship('Imagen', back_populates='usuario', uselist=False, lazy=True,foreign_keys='[Imagen.id_usuario]')
-   
+    imagenes_doc = db.relationship('Imagen', back_populates='usuario', lazy=True, foreign_keys='[Imagen.id_usuario]')
 
     def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None, id_imagen=None):
         self.nombre = nombre
@@ -132,11 +133,23 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         exclude = ["imagen"]
 
-
     pais = ma.Nested(PaisSchema, only=("id", "nombre"))
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
     tarjetas = ma.Nested(lambda: TarjetaSchema(), many=True)
+    imagenes_doc = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+
+    id_imagenes = ma.Method("get_image_ids", dump_only=True)
+
+    # Define el método que será llamado por el campo 'id_imagenes'
+    def get_image_ids(self, obj):
+        # 'obj' es la instancia de Propiedad que se está serializando.
+        # Accede a la relación 'imagenes' y extrae los IDs.
+        if obj.imagenes_doc: # Asegúrate de que la relación no esté vacía o None
+            return [img.id for img in obj.imagenes_doc]
+        return [] # Retorna una lista vacía si no hay imágenes
+
+
 
 class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
