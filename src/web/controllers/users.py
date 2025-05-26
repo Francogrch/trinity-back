@@ -149,15 +149,6 @@ def update_usuario(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400  # Otro error
 
-@user_blueprint.post('/imagenPerfil')
-#@jwt_required()
-def upload_imagen():
-    id_usuario = request.args.get('id_usuario')
-    image = upload_image('usuario',request,id_usuario=id_usuario)
-    if image[1] == 201:
-       users.set_imagen_usuario(id_usuario, str(image[0]['id']))
-    return image
-
 @user_blueprint.get('/imagenPerfil/<int:user_id>')
 def get_imagen(user_id):
     user = users.get_usuario_by_id(user_id)
@@ -200,5 +191,55 @@ def delete_imagen():
 def get_encargados():
     usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
     return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
+
+
+# Endpoints imagenes Documentos
+@user_blueprint.post('/imagenDocumento')
+#@jwt_required()
+def upload_imagen():
+    id_usuario = request.args.get('id_usuario')
+    image = upload_image('usuario',request,id_usuario=id_usuario)
+    if image[1] == 201:
+        return image
+       # users.set_imagen_usuario(id_usuario, str(image[0]['id']))
+    return image[1]
+
+
+@user_blueprint.get('/imagenesDoc')
+def get_imagenes_id():
+    id_usuario = request.args.get('id_usuario')
+    if not id_usuario:
+        return {'error': 'ID de usuario es requerido.'}, 400
+    
+    try:
+        id_usuario = int(id_usuario)
+    except ValueError:
+        return {'error': 'ID de usuairo inválido.'}, 400
+
+    usuario = users.get_usuario_by_id(id_usuario)
+    if not usuario:
+        return {'error': 'Usuario no encontrada.'}, 404
+
+    imagenes_de_usuario = usuario.imagenes_doc
+    return [imagen.id for imagen in imagenes_de_usuario], 200
+
+@user_blueprint.post('/imagenDoc')
+#@jwt_required()
+def upload_imagen_doc():
+    id_usuario = request.args.get('id_usuario')
+    image = upload_image('usuario',request,id_usuario=id_usuario)
+    return image
+
+@user_blueprint.delete('/imagenDoc')
+#@jwt_required() 
+def delete_imagen_doc():
+    id_imagen = request.args.get('id_imagen')
+
+    success, message = delete_image(id_imagen, 'usuario')
+
+    if success:
+        return {"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}, 200
+    else:
+        return {"message": message}, 500
 
 
