@@ -73,17 +73,21 @@ def upload_image(tipo_imagen,request,id_usuario=None, id_propiedad=None):
     return {'error': 'Tipo invalido de archivo'}, 400
 
 
-def delete_image(imagen_id,tipo_imagen):
+def delete_image(imagen_id, tipo_imagen):
+    """
+    Elimina una imagen/documento de la base de datos y del sistema de archivos.
+    Asegura el cierre de sesión de SQLAlchemy para evitar bloqueos de la base de datos (sqlite3.OperationalError).
+    """
+    from src.models.database import db
     image_to_delete = Imagen.query.get(imagen_id)
 
     if not image_to_delete:
         return False, "Imagen no encontrada en la base de datos."
 
     file_to_delete_name = os.path.basename(image_to_delete.url)
-        
     upload_folder_base = os.path.abspath(
-            os.path.join(current_app.root_path, "..", "..", "imagenes", f"{tipo_imagen}") # Asumo 'usuario' como tipo aquí
-        )
+        os.path.join(current_app.root_path, "..", "..", "imagenes", f"{tipo_imagen}")
+    )
     file_path = os.path.join(upload_folder_base, file_to_delete_name)
 
     try:
@@ -96,11 +100,38 @@ def delete_image(imagen_id,tipo_imagen):
             print(f"Archivo eliminado: {file_path}")
         else:
             print(f"Advertencia: El archivo {file_path} no existe en el disco, pero se eliminó de la DB.")
-
-    except:
-        return False, "Error al eliminar la imagen de la base de datos o del sistema de archivos."
-
-    return True, None # Éxito
+        return True, None
+    except Exception as e:
+        print(f"[ERROR] Error al eliminar imagen: {e}")
+        db.session.rollback()
+        import time
+        # Retry automático si la base está bloqueada
+        if 'database is locked' in str(e):
+            for intento in range(3):
+                print(f"[RETRY] Intento {intento+1} tras database is locked...")
+                time.sleep(0.5)
+                try:
+                    db.session.close()
+                    image_to_delete = Imagen.query.get(imagen_id)
+                    if image_to_delete:
+                        db.session.delete(image_to_delete)
+                        db.session.commit()
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+                        return True, None
+                except Exception as retry_e:
+                    print(f"[RETRY ERROR] {retry_e}")
+                    db.session.rollback()
+        try:
+            db.session.close()
+        except Exception as ex:
+            print(f"[ERROR] Error al cerrar la sesión tras rollback: {ex}")
+        return False, f"Error al eliminar la imagen: {e}"
+    finally:
+        try:
+            db.session.close()
+        except Exception as ex:
+            print(f"[ERROR] Error al cerrar la sesión de la base de datos: {ex}")
     
 
 def get_filename(imagen_id):
