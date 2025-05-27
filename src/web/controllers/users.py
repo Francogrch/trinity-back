@@ -295,21 +295,49 @@ def get_encargados():
     return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 
-# sin uso
+# --- ENDPOINTS DE IMÁGENES Y DOCUMENTOS DE USUARIO ---
+
 @user_blueprint.post('/imagenDocumento')
 @jwt_required()
 def upload_imagen():
-    id_usuario = request.args.get('id_usuario')
-    image = upload_image('usuario',request,id_usuario=id_usuario)
-    if image[1] == 201:
-        return image
-       # users.set_imagen_usuario(id_usuario, str(image[0]['id']))
-    return image[1]
-
+    """
+    Sube la imagen principal (documento o foto de perfil) de un usuario.
+    - Método: POST
+    - URL: /usuarios/imagenDocumento?id_usuario=<id>
+    - Parámetros:
+        - id_usuario (query string): ID del usuario al que se asocia la imagen.
+    - Body: multipart/form-data con el archivo bajo la clave 'file'.
+    - Respuesta: JSON con información de la imagen subida o error.
+    """
+    try:
+        id_usuario = request.args.get('id_usuario')
+        if not id_usuario:
+            return jsonify({'error': 'El parámetro id_usuario es requerido.'}), 400
+        image = upload_image('usuario', request, id_usuario=id_usuario)
+        if isinstance(image, tuple) and len(image) == 2 and image[1] == 201:
+            return image
+        # Si image es un dict de error
+        if isinstance(image, dict) and 'error' in image:
+            return jsonify(image), 400
+        # Si image es una tupla con error
+        if isinstance(image, tuple) and len(image) == 2 and image[1] != 201:
+            return jsonify(image[0]), image[1]
+        return jsonify({'error': 'Error desconocido al subir la imagen.'}), 500
+    except Exception as e:
+        print(f"[ERROR] Excepción en upload_imagen: {e}")
+        return jsonify({'error': f'Error interno al subir la imagen: {str(e)}'}), 500
 
 @user_blueprint.get('/imagenesDoc')
 @jwt_required()
 def get_imagenes_id():
+    """
+    Obtiene los IDs de los documentos/imágenes adicionales asociados a un usuario.
+    - Método: GET
+    - URL: /usuarios/imagenesDoc?id_usuario=<id>
+    - Parámetros:
+        - id_usuario (query string): ID del usuario.
+    - Respuesta: Lista de IDs de imágenes/documentos o error.
+    """
     id_usuario = request.args.get('id_usuario')
     if not id_usuario:
         return {'error': 'ID de usuario es requerido.'}, 400
@@ -326,53 +354,62 @@ def get_imagenes_id():
     imagenes_de_usuario = usuario.imagenes_doc
     return [imagen.id for imagen in imagenes_de_usuario], 200
 
-# Subir una imagen sin id_usuario
-@user_blueprint.post('/imagen')
-@jwt_required()
-def upload_imagen_user():
-    image = upload_image_usuario(request)
-    return image
-
-@user_blueprint.patch('imagen/set_id')
-@jwt_required()
-def set_id():
+@user_blueprint.post('/imagenDoc')
+#@jwt_required()
+def upload_imagen_doc():
+    """
+    Sube un documento o imagen adicional asociado a un usuario (puede haber varios por usuario).
+    - Método: POST
+    - URL: /usuarios/imagenDoc?id_usuario=<id>
+    - Parámetros:
+        - id_usuario (query string): ID del usuario.
+    - Body: multipart/form-data con el archivo bajo la clave 'file'.
+    - Respuesta: JSON con información de la imagen/documento subido o error.
+    """
     id_usuario = request.args.get('id_usuario')
-    id_imagen = request.args.get('id_usuario')
-    return set_id_usuario(id_image,id_usuario)
+    image = upload_image('usuario',request,id_usuario=id_usuario)
+    return image
 
 
 @user_blueprint.delete('/imagenDoc')
 @jwt_required() 
 def delete_imagen_doc():
+    """
+    Elimina un documento o imagen adicional de un usuario.
+    - Método: DELETE
+    - URL: /usuarios/imagenDoc?id_imagen=<id>
+    - Parámetros:
+        - id_imagen (query string): ID de la imagen/documento a eliminar.
+    - Respuesta: Mensaje de éxito o error.
+    """
     id_imagen = request.args.get('id_imagen')
+    print(f"[DEBUG] Eliminar imagen con ID: {id_imagen}")
+    if not id_imagen:
+        return jsonify({'error': 'El parámetro id_imagen es requerido.'}), 400
+    try:
+        success, message = delete_image(id_imagen, 'usuario')
+        if success:
+            return jsonify({"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}), 200
+        else:
+            return jsonify({"error": message if message else f"No se pudo eliminar la imagen con ID {id_imagen}"}), 500
+    except Exception as e:
+        print(f"[ERROR] Excepción al eliminar imagen: {e}")
+        return jsonify({"error": f"Error al eliminar la imagen: {str(e)}"}), 500
 
-    success, message = delete_image(id_imagen, 'usuario')
-
-    if success:
-        return {"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}, 200
-    else:
-        return {"message": message}, 500
-
-@user_blueprint.post('/registrar')
-def registrar():
-    data = request.get_json()  # Obtiene los datos del nuevo usuario
-    imagenes = data['imagenes_id']
-    usuario = users.create_usuario(
-            nombre=data['nombre'],
-            apellido=data.get('apellido'),
-            correo=data['correo'],
-            roles_ids=data['id_rol'],
-            password=data.get('password'),
-            id_tipo_identificacion=data.get('id_tipo_identificacion'),
-            numero_identificacion=data.get('numero_identificacion'),
-            id_pais=data.get('id_pais'),
-            fecha_nacimiento=data.get('fecha_nacimiento')
-        )  # Crea el usuario
-    if not usuario:
-        return {"error": "Error al crear el usuario"}, 400
-    for id_imagen in imagenes:
-        set_id_usuario(id_imagen,usuario.id)
-    return users.get_schema_usuario().dump(usuario)
-
-    
-
+@user_blueprint.get('/imagenDoc/<int:imagen_id>')
+def get_imagen_doc(imagen_id):
+    """
+    Devuelve la imagen/documento de usuario por su ID.
+    - Método: GET
+    - URL: /usuarios/imagenDoc/<imagen_id>
+    - Respuesta: Archivo de imagen o error.
+    """
+    base_upload_directory = os.path.abspath(
+        os.path.join(current_app.root_path, "..", "..", "imagenes", "usuario")
+    )
+    filename = get_filename(str(imagen_id))
+    return send_from_directory(
+        directory=base_upload_directory,
+        path=filename,
+        as_attachment=False
+    )
