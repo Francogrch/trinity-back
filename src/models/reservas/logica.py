@@ -32,12 +32,12 @@ def get_reserva(reserva_id, usuario):
         join(Propiedad).\
         filter(Propiedad.id_encargado == usuario.id,
                Reserva.id == reserva_id).\
-        one_or_none()
+        one()
     if roles['is_inquilino']:
         return db.session.query(Reserva).\
         filter(Reserva.id_inquilino == usuario.id,
                Reserva.id == reserva_id).\
-        one_or_none()
+        one()
     return None
 
 

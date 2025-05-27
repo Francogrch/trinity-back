@@ -1,7 +1,7 @@
 from flask import request, Blueprint
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funciones para manejo de JWT (autenticación y claims)
-
+from sqlalchemy.orm.exc import NoResultFound
 from src.models import reservas
 from src.models import users
 from src.models import email
@@ -29,6 +29,8 @@ def get_reserva(reserva_id):
     usuario = users.get_usuario_by_id(get_jwt_identity())
     try:
         res = reservas.get_reserva(reserva_id, usuario)
+    except NoResultFound:
+        return {'error': 'Reserva no disponible'}, 403
     except:
         return {'error': 'Error al obtener las reservas'}, 500
     if not res:
