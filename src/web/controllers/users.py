@@ -56,6 +56,7 @@ def get_empleados():
 
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')
+@jwt_required(optional=True)
 def create_usuario():
     from flask_jwt_extended import get_jwt_identity
     # Intentar obtener el user_id si hay JWT, si no, será None
@@ -122,23 +123,31 @@ def create_usuario():
 
     # --- CASO ADMINISTRADOR O EMPLEADO (con JWT) ---
     usuario_actual = users.get_usuario_by_id(user_id)
-    id_rol_actuales = [rol.id for rol in usuario_actual.roles]
+    id_rol_actuales = [int(r.id) for r in usuario_actual.roles]
+    try:
+        roles_ids_int = [int(r) for r in data['roles_ids']]
+    except Exception:
+        return jsonify({'mensaje': 'roles_ids debe ser una lista de enteros o strings numéricos.'}), 400
+    
     # Solo admin puede crear empleados
-    if Rol.EMPLEADO.value in data['roles_ids']:
-        if Rol.ADMINISTRADOR.value not in id_rol_actuales:
-            return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados'}), 403
+    if any(r == int(Rol.EMPLEADO.value) for r in roles_ids_int):
+        print(f"[DEBUG] Check admin for empleado: {int(Rol.ADMINISTRADOR.value)} in {id_rol_actuales}")
+        if int(Rol.ADMINISTRADOR.value) not in id_rol_actuales:
+            return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados', 'debug': {'id_rol_actuales': id_rol_actuales, 'roles_ids_int': roles_ids_int}}), 403
     # Solo admin o empleado pueden crear inquilinos
-    if Rol.INQUILINO.value in data['roles_ids']:
-        if not any(r in id_rol_actuales for r in [Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value]):
-            return jsonify({'mensaje': 'Solo Administrador o Empleado pueden crear usuarios Inquilinos'}), 403
+    if any(r == int(Rol.INQUILINO.value) for r in roles_ids_int):
+        print(f"[DEBUG] Check admin/empleado for inquilino: {[int(Rol.ADMINISTRADOR.value), int(Rol.EMPLEADO.value)]} in {id_rol_actuales}")
+        if not any(r in id_rol_actuales for r in [int(Rol.ADMINISTRADOR.value), int(Rol.EMPLEADO.value)]):
+            return jsonify({'mensaje': 'Solo Administrador o Empleado pueden crear usuarios Inquilinos', 'debug': {'id_rol_actuales': id_rol_actuales, 'roles_ids_int': roles_ids_int}}), 403
     # No permitir que empleados creen empleados
-    if Rol.EMPLEADO.value in data['roles_ids'] and Rol.ADMINISTRADOR.value not in id_rol_actuales:
-        return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados'}), 403
+    if any(r == int(Rol.EMPLEADO.value) for r in roles_ids_int) and int(Rol.ADMINISTRADOR.value) not in id_rol_actuales:
+        print(f"[DEBUG] Empleado intentando crear empleado: {id_rol_actuales}")
+        return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados', 'debug': {'id_rol_actuales': id_rol_actuales, 'roles_ids_int': roles_ids_int}}), 403
     try:
         usuario = users.create_usuario(
             nombre=data['nombre'],
             correo=data['correo'],
-            roles_ids=data['roles_ids'],
+            roles_ids=roles_ids_int,  # Usar la lista normalizada a int
             password=data['password'],
             id_tipo_identificacion=data.get('id_tipo_identificacion'),
             numero_identificacion=data.get('numero_identificacion'),
@@ -167,7 +176,15 @@ def create_usuario():
     except ValidationError as err:
         return (err.messages, 422)
     except Exception as e:
-        return ({"error": str(e)}, 400)
+        # Manejo de errores específicos de integridad
+        error_msg = str(e)
+        if 'UNIQUE constraint failed: usuario.correo' in error_msg:
+            return jsonify({'error': 'El correo electrónico ya está registrado. Usa otro correo.'}), 400
+        if 'UNIQUE constraint failed: usuario.id_tipo_identificacion, usuario.numero_identificacion' in error_msg or \
+           'UNIQUE constraint failed: usuario.numero_identificacion' in error_msg:
+            return jsonify({'error': 'Ya existe un usuario con ese tipo y número de identificación. Verifica los datos.'}), 400
+        print(f"[ERROR] Error al crear usuario: {error_msg}")
+        return ({"error": error_msg}, 400)
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
