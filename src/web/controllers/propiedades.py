@@ -29,7 +29,7 @@ def get_propiedades_eliminadas():
 
 
 @propiedad_blueprint.get('/id/<int:prop_id>')
-#@jwt_required()
+@jwt_required()
 def get_propiedad_id_route(prop_id):
     propiedad = propiedades.get_propiedad_id(prop_id)
     return (propiedades.get_schema_propiedad().dump(propiedad), 201)
@@ -70,7 +70,7 @@ def cambiar_estado_propiedad(prop_id):
 # Esta logica es de testeo
 @propiedad_blueprint.patch('/eliminar/<int:prop_id>')
 @jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+@rol_requerido([Rol.ADMINISTRADOR.value])
 def eliminar_propiedad(prop_id):
     try:
         propiedad = propiedades.eliminar_prop_hasta_fecha(prop_id)
@@ -83,8 +83,8 @@ def eliminar_propiedad(prop_id):
     return propiedades.get_schema_propiedad().dump(propiedad), 200
 
 @propiedad_blueprint.patch('/eliminarConReservas/<int:prop_id>')
-#@jwt_required()
-#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])
 def eliminar_propiedad_reservas(prop_id):
     try:
         propiedad = propiedades.eliminar_prop_con_reservas(prop_id)
@@ -97,6 +97,8 @@ def eliminar_propiedad_reservas(prop_id):
     return propiedades.get_schema_propiedad().dump(propiedad), 200
 
 
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
 @propiedad_blueprint.patch('/editar')
 def update_propiedad():
     data = request.get_json()
@@ -110,7 +112,8 @@ def update_propiedad():
     except:
         return ({"error": "Propiedad repetida?"}, 400)
 
-
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
 @propiedad_blueprint.patch('/editarCodigo')
 def update_codigo_acceso():
     data = request.get_json()
@@ -127,7 +130,6 @@ def update_codigo_acceso():
     
 
 @propiedad_blueprint.get('/search')
-#@jwt_required()
 def get_propiedades_search():
     id = request.args.get('id', default=None, type=int)
     checkin = request.args.get('checkin')
@@ -181,14 +183,16 @@ def get_imagenes_id():
 
 
 @propiedad_blueprint.post('/imagen')
-#@jwt_required()
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
 def upload_imagen():
     id_propiedad = request.args.get('id_propiedad')
     image = upload_image('propiedad',request,id_propiedad=id_propiedad)
     return image
 
 @propiedad_blueprint.delete('/deleteImagen')
-#@jwt_required() 
+@jwt_required() 
+@rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
 def delete_imagen():
     id_imagen = request.args.get('id_imagen')
 
@@ -200,6 +204,8 @@ def delete_imagen():
         return {"message": message}, 500
 
 @propiedad_blueprint.patch('/setEncargado')
+@jwt_required() 
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo roles Administrador y Empleado pueden editar propiedades
 def update_encargado():
     id_propiedad = request.args.get('id_propiedad')
     id_encargado = request.args.get('id_encargado')

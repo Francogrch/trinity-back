@@ -37,6 +37,7 @@ def get_reserva(reserva_id):
 
 
 @reserva_blueprint.get('/propiedad/<int:propiedad_id>')
+@jwt_required()
 def get_reservas_propiedad(propiedad_id):
     try:
         res = reservas.get_reservas_por_propiedad(propiedad_id)
@@ -85,6 +86,7 @@ def cancel_reserva(reserva_id):
 
 
 @reserva_blueprint.patch('/cambiarEstado/<int:reserva_id>')
+@jwt_required()
 def cambiar_estado_reserva(reserva_id):
     try:
         data = request.get_json()

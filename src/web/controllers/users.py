@@ -188,8 +188,8 @@ def create_usuario():
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
-#@jwt_required()
-#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
 def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
@@ -250,6 +250,7 @@ def update_usuario(user_id):
         return jsonify({'error': str(e)}), 400  # Otro error
 
 @user_blueprint.get('/imagenPerfil/<int:user_id>')
+@jwt_required()
 def get_imagen(user_id):
     user = users.get_usuario_by_id(user_id)
     if not user.id_imagen:
@@ -270,7 +271,7 @@ def get_imagen(user_id):
 
 # SIn uso
 @user_blueprint.delete('/imagenPerfil')
-#@jwt_required() 
+@jwt_required() 
 def delete_imagen():
     id_usuario = request.args.get('id_usuario')
     user = users.get_usuario_by_id(id_usuario)
@@ -287,8 +288,8 @@ def delete_imagen():
         return jsonify({"message": message}), 500
 
 @user_blueprint.get('/encargados')
-# @jwt_required()
-# @rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
 def get_encargados():
     usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
     return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
@@ -296,7 +297,7 @@ def get_encargados():
 
 # sin uso
 @user_blueprint.post('/imagenDocumento')
-#@jwt_required()
+@jwt_required()
 def upload_imagen():
     id_usuario = request.args.get('id_usuario')
     image = upload_image('usuario',request,id_usuario=id_usuario)
@@ -307,6 +308,7 @@ def upload_imagen():
 
 
 @user_blueprint.get('/imagenesDoc')
+@jwt_required()
 def get_imagenes_id():
     id_usuario = request.args.get('id_usuario')
     if not id_usuario:
@@ -326,12 +328,13 @@ def get_imagenes_id():
 
 # Subir una imagen sin id_usuario
 @user_blueprint.post('/imagen')
-#@jwt_required()
+@jwt_required()
 def upload_imagen_user():
     image = upload_image_usuario(request)
     return image
 
 @user_blueprint.patch('imagen/set_id')
+@jwt_required()
 def set_id():
     id_usuario = request.args.get('id_usuario')
     id_imagen = request.args.get('id_usuario')
@@ -339,7 +342,7 @@ def set_id():
 
 
 @user_blueprint.delete('/imagenDoc')
-#@jwt_required() 
+@jwt_required() 
 def delete_imagen_doc():
     id_imagen = request.args.get('id_imagen')
 

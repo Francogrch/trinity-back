@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required
 from src.models import parametricas
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
@@ -36,8 +37,11 @@ def get_tipos_propiedad():
     tipos = parametricas.get_tipos_propiedad()
     return parametricas.get_schema_tipo_propiedad().dump(tipos, many=True)
 
+# Sin uso
 
 @parametricas_blueprint.post('/tipos')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def create_tipos_propiedad():
     data = request.get_json()
     try:
@@ -72,6 +76,8 @@ def get_paises_route():
     paises = get_paises()
     return get_schema_pais().dump(paises, many=True)
 
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 @parametricas_blueprint.post('/paises')
 def create_pais_route():
     data = request.get_json()
