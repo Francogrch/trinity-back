@@ -119,7 +119,7 @@ def create_usuario():
         except ValidationError as err:
             return jsonify(err.messages), 422
         except Exception as e:
-            return jsonify({"error": str(e)}), 400
+            return jsonify({"error": "Mail ya registrado"}), 400
 
     # --- CASO ADMINISTRADOR O EMPLEADO (con JWT) ---
     usuario_actual = users.get_usuario_by_id(user_id)
@@ -368,6 +368,8 @@ def registrar():
             id_pais=data.get('id_pais'),
             fecha_nacimiento=data.get('fecha_nacimiento')
         )  # Crea el usuario
+    if not usuario:
+        return {"error": "Error al crear el usuario"}, 400
     for id_imagen in imagenes:
         set_id_usuario(id_imagen,usuario.id)
     return users.get_schema_usuario().dump(usuario)

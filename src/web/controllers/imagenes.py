@@ -1,3 +1,5 @@
+#! Deprecated: This module is deprecated and will be removed in future versions.
+from flask_jwt_extended import jwt_required
 from src.models.imagenes.imagen import ImagenSchema, Imagen
 from flask import Blueprint, request, current_app, send_from_directory
 from werkzeug.utils import secure_filename
@@ -10,6 +12,8 @@ imagen_blueprint = Blueprint('imagenes', __name__, url_prefix="/imagenes")
 
 
 @imagen_blueprint.post('/')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo roles Administrador y Empleado pueden acceder
 def upload_image():
     if 'image' not in request.files:
         return {'error': 'No hay imagen'}, 400
@@ -33,18 +37,24 @@ def upload_image():
 
 
 @imagen_blueprint.get('/')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_imagenes():
     imgs = imagenes.get_imagenes()
     return imagenes.get_schema_imagen().dump(imgs, many=True)
 
 
 @imagen_blueprint.get('/<filename>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_uploaded_file(filename):
     upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
     return send_from_directory(upload_folder, filename)
 
 
 @imagen_blueprint.get('/id/<int:imagen_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_uploaded_file_by_id(imagen_id):
     imagen = imagenes.get_imagen_id(imagen_id)
     if not imagen:
