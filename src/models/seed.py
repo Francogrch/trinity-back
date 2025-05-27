@@ -139,48 +139,40 @@ def run():
     tarjeta1 = Tarjeta(
         numero="4111111111111111",
         nombre_titular="Juan Pérez",
-        fecha_inicio=date(2022, 1, 1),
-        fecha_vencimiento=date(2026, 1, 1),
+        fecha_inicio="01/2022",
+        fecha_vencimiento="01/2026",
         cvv="123",
         usuario_id=user1.id,
-        anverso_url="/static/tarjetas/juan_anverso.png",
-        reverso_url="/static/tarjetas/juan_reverso.png",
         id_marca=visa.id,
         id_tipo=credito.id
     )
     tarjeta2 = Tarjeta(
         numero="5500000000000004",
         nombre_titular="Juan Pérez",
-        fecha_inicio=date(2023, 5, 1),
-        fecha_vencimiento=date(2027, 5, 1),
+        fecha_inicio="05/2023",
+        fecha_vencimiento="05/2027",
         cvv="456",
         usuario_id=user1.id,
-        anverso_url="/static/tarjetas/juan2_anverso.png",
-        reverso_url="/static/tarjetas/juan2_reverso.png",
         id_marca=mastercard.id,
         id_tipo=debito.id
     )
     tarjeta3 = Tarjeta(
         numero="4000000000000002",
         nombre_titular="Raul Gómez",
-        fecha_inicio=date(2021, 6, 1),
-        fecha_vencimiento=date(2025, 6, 1),
+        fecha_inicio="06/2021",
+        fecha_vencimiento="06/2025",
         cvv="789",
         usuario_id=user2.id,
-        anverso_url="/static/tarjetas/raul_anverso.png",
-        reverso_url="/static/tarjetas/raul_reverso.png",
         id_marca=visa.id,
         id_tipo=debito.id
     )
     tarjeta4 = Tarjeta(
         numero="340000000000009",
         nombre_titular="Roberto López",
-        fecha_inicio=date(2022, 9, 1),
-        fecha_vencimiento=date(2026, 9, 1),
+        fecha_inicio="09/2022",
+        fecha_vencimiento="09/2026",
         cvv="321",
         usuario_id=user3.id,
-        anverso_url="/static/tarjetas/roberto_anverso.png",
-        reverso_url="/static/tarjetas/roberto_reverso.png",
         id_marca=amex.id,
         id_tipo=credito.id
     )
@@ -192,24 +184,20 @@ def run():
     tarjeta5 = Tarjeta(
         numero="6011000000000004",
         nombre_titular="Lucía García",
-        fecha_inicio=date(2023, 2, 1),
-        fecha_vencimiento=date(2027, 2, 1),
+        fecha_inicio="02/2023",
+        fecha_vencimiento="02/2027",
         cvv="654",
         usuario_id=user6.id,
-        anverso_url="/static/tarjetas/lucia_anverso.png",
-        reverso_url="/static/tarjetas/lucia_reverso.png",
         id_marca=visa.id,
         id_tipo=credito.id
     )
     tarjeta6 = Tarjeta(
         numero="3530111333300000",
         nombre_titular="Martín Suárez",
-        fecha_inicio=date(2024, 1, 1),
-        fecha_vencimiento=date(2028, 1, 1),
+        fecha_inicio="01/2024",
+        fecha_vencimiento="01/2028",
         cvv="852",
         usuario_id=user7.id,
-        anverso_url="/static/tarjetas/martin_anverso.png",
-        reverso_url="/static/tarjetas/martin_reverso.png",
         id_marca=mastercard.id,
         id_tipo=debito.id
     )

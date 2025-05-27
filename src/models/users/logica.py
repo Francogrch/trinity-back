@@ -26,7 +26,12 @@ def get_encargados():
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
+        # Asegura que roles_ids sea una lista de enteros
+        if not isinstance(roles_ids, list):
+            raise ValueError("roles_ids debe ser una lista de IDs de roles")
         roles = Rol.query.filter(Rol.id.in_(roles_ids)).all()
+        if not roles or len(roles) != len(roles_ids):
+            raise ValueError("Uno o más roles no existen")
         # Conversión robusta de fecha_nacimiento a date si es string
         if fecha_nacimiento and isinstance(fecha_nacimiento, str):
             try:
@@ -50,6 +55,8 @@ def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=N
         )
         db.session.add(nuevo)
         db.session.commit()
+        # Refresca la instancia para que los roles y relaciones estén actualizados
+        db.session.refresh(nuevo)
         return nuevo
     except Exception as e:
         db.session.rollback()
@@ -104,6 +111,11 @@ def get_usuarios_by_rol(rol_id):
     for usuario in usuarios:
         _ = usuario.roles
     return usuarios
+
+def get_roles_by_ids(roles_ids):
+    from src.models.users.user import Rol
+    return Rol.query.filter(Rol.id.in_(roles_ids)).all()
+
 
 def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
     """

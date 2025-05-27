@@ -81,26 +81,22 @@ class Tarjeta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     numero = db.Column(db.String(30), nullable=False)
     nombre_titular = db.Column(db.String(100), nullable=False)
-    fecha_inicio = db.Column(db.Date, nullable=True)
-    fecha_vencimiento = db.Column(db.Date, nullable=False)
+    fecha_inicio = db.Column(db.String, nullable=True)  # Cambiado a String
+    fecha_vencimiento = db.Column(db.String, nullable=False)  # Cambiado a String
     cvv = db.Column(db.String(10), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-    anverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del anverso
-    reverso_url = db.Column(db.String, nullable=True)  # URL o path de la imagen del reverso
     id_marca = db.Column(db.Integer, db.ForeignKey('marca_tarjeta.id'), nullable=True)
     id_tipo = db.Column(db.Integer, db.ForeignKey('tipo_tarjeta.id'), nullable=True)
     marca = db.relationship('MarcaTarjeta', foreign_keys=[id_marca])
     tipo = db.relationship('TipoTarjeta', foreign_keys=[id_tipo])
 
-    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, anverso_url=None, reverso_url=None, id_marca=None, id_tipo=None):
+    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, id_marca=None, id_tipo=None):
         self.numero = numero
         self.nombre_titular = nombre_titular
         self.fecha_inicio = fecha_inicio
         self.fecha_vencimiento = fecha_vencimiento
         self.cvv = cvv
         self.usuario_id = usuario_id
-        self.anverso_url = anverso_url
-        self.reverso_url = reverso_url
         self.id_marca = id_marca
         self.id_tipo = id_tipo
 
@@ -133,6 +129,11 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         exclude = ["imagen"]
 
+    # IDs explícitos para facilitar consumo en frontend
+    id_pais = ma.Integer(attribute="id_pais")
+    id_tipo_identificacion = ma.Integer(attribute="id_tipo_identificacion")
+    roles_ids = ma.Method("get_roles_ids")
+
     pais = ma.Nested(PaisSchema, only=("id", "nombre"))
     roles = ma.Nested(RolSchema, many=True, only=("id", "nombre"))
     tipo_identificacion = ma.Nested(TipoIdentificacionSchema, only=("id", "nombre"))
@@ -141,14 +142,13 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
 
     id_imagenes = ma.Method("get_image_ids", dump_only=True)
 
-    # Define el método que será llamado por el campo 'id_imagenes'
-    def get_image_ids(self, obj):
-        # 'obj' es la instancia de Propiedad que se está serializando.
-        # Accede a la relación 'imagenes' y extrae los IDs.
-        if obj.imagenes_doc: # Asegúrate de que la relación no esté vacía o None
-            return [img.id for img in obj.imagenes_doc]
-        return [] # Retorna una lista vacía si no hay imágenes
+    def get_roles_ids(self, obj):
+        return [rol.id for rol in obj.roles] if obj.roles else []
 
+    def get_image_ids(self, obj):
+        if obj.imagenes_doc:
+            return [img.id for img in obj.imagenes_doc]
+        return []
 
 
 class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
@@ -175,9 +175,7 @@ class TarjetaSchema(ma.SQLAlchemyAutoSchema):
         model = Tarjeta
         include_fk = True
         load_instance = True
-    fecha_inicio = ma.Date(allow_none=True)
-    fecha_vencimiento = ma.Date(required=True)
-    anverso_url = ma.String(allow_none=True)
-    reverso_url = ma.String(allow_none=True)
+    fecha_inicio = ma.String(allow_none=True)  # Cambiado a String
+    fecha_vencimiento = ma.String(required=True)  # Cambiado a String
     marca = ma.Nested(MarcaTarjetaSchema, allow_none=True)
     tipo = ma.Nested(TipoTarjetaSchema, allow_none=True)

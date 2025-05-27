@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 from src.models.imagenes import get_filename, upload_image, delete_image
 from src.web.authorization.roles import rol_requerido
-from src.models.users.logica import get_permisos_usuario
+from src.models.users.logica import get_permisos_usuario, get_roles_by_ids
 from src.models import users
 from src.enums.roles import Rol
 
@@ -56,35 +56,118 @@ def get_empleados():
 
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')
-@jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden crear usuarios
-# Recibe los datos por JSON, valida permisos y crea el usuario
 def create_usuario():
-    user_id = get_jwt_identity()  # Obtiene el id del usuario autenticado
-    usuario_actual = users.get_usuario_by_id(user_id)  # Busca el usuario en la base
-    id_rol_actuales = [rol.id for rol in usuario_actual.roles]  # Lista de ids de roles del usuario autenticado
-    # Extrae el cuerpo de la solicitud HTTP en formato JSON y lo convierte en un diccionario de Python.
-    data = request.get_json()  # Obtiene los datos del nuevo usuario
-    permitido, mensaje = verificar_permiso_creacion_usuario(id_rol_actuales, data['roles_ids'])  # Valida permisos
-    if not permitido:
-        return jsonify({'mensaje': mensaje}), 403  # Si no tiene permiso, retorna error
+    from flask_jwt_extended import get_jwt_identity
+    # Intentar obtener el user_id si hay JWT, si no, será None
+    user_id = None
+    try:
+        user_id = get_jwt_identity()
+    except Exception:
+        pass
+    data = request.get_json()
+    if not data or 'roles_ids' not in data:
+        return jsonify({'error': 'El campo roles_ids es obligatorio en el cuerpo de la petición.'}), 400
+
+    # --- CASO AUTOREGISTRO (sin JWT): solo inquilino ---
+    if not user_id:
+        # Aceptar también el caso donde roles_ids es [int], [str], o mezcla
+        try:
+            roles_ids_int = [int(r) for r in data['roles_ids']]
+        except Exception:
+            return jsonify({'mensaje': 'roles_ids debe ser una lista de enteros o strings numéricos.'}), 400
+        # Permitir también que el frontend mande el valor como string ("3")
+        if not (len(roles_ids_int) == 1 and roles_ids_int[0] == int(Rol.INQUILINO.value)):
+            return jsonify({'mensaje': f'Solo se permite el auto-registro de inquilinos. roles_ids recibido: {data["roles_ids"]}'}), 403
+        # Crear usuario inquilino y login automático
+        try:
+            usuario = users.create_usuario(
+                nombre=data['nombre'],
+                correo=data['correo'],
+                roles_ids=data['roles_ids'],
+                password=data['password'],
+                id_tipo_identificacion=data.get('id_tipo_identificacion'),
+                numero_identificacion=data.get('numero_identificacion'),
+                apellido=data.get('apellido'),
+                fecha_nacimiento=data.get('fecha_nacimiento'),
+                id_pais=data.get('id_pais')
+            )
+            tarjetas_data = data.get('tarjetas')
+            if tarjetas_data and isinstance(tarjetas_data, list):
+                from src.models.users.user import Tarjeta
+                from src.models.database import db
+                for t in tarjetas_data:
+                    tarjeta = Tarjeta(
+                        numero=t['numero'],
+                        nombre_titular=t['nombre_titular'],
+                        fecha_inicio=t.get('fecha_inicio'),
+                        fecha_vencimiento=t['fecha_vencimiento'],
+                        cvv=t['cvv'],
+                        usuario_id=usuario.id,
+                        id_marca=t.get('id_marca'),
+                        id_tipo=t.get('id_tipo')
+                    )
+                    db.session.add(tarjeta)
+                db.session.commit()
+            from flask_jwt_extended import create_access_token
+            from datetime import timedelta
+            access_token = create_access_token(identity=str(usuario.id), expires_delta=timedelta(days=1))
+            return jsonify({
+                'usuario': users.get_schema_usuario().dump(usuario),
+                'access_token': access_token
+            }), 201
+        except ValidationError as err:
+            return jsonify(err.messages), 422
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+
+    # --- CASO ADMINISTRADOR O EMPLEADO (con JWT) ---
+    usuario_actual = users.get_usuario_by_id(user_id)
+    id_rol_actuales = [rol.id for rol in usuario_actual.roles]
+    # Solo admin puede crear empleados
+    if Rol.EMPLEADO.value in data['roles_ids']:
+        if Rol.ADMINISTRADOR.value not in id_rol_actuales:
+            return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados'}), 403
+    # Solo admin o empleado pueden crear inquilinos
+    if Rol.INQUILINO.value in data['roles_ids']:
+        if not any(r in id_rol_actuales for r in [Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value]):
+            return jsonify({'mensaje': 'Solo Administrador o Empleado pueden crear usuarios Inquilinos'}), 403
+    # No permitir que empleados creen empleados
+    if Rol.EMPLEADO.value in data['roles_ids'] and Rol.ADMINISTRADOR.value not in id_rol_actuales:
+        return jsonify({'mensaje': 'Solo un Administrador puede crear usuarios Empleados'}), 403
     try:
         usuario = users.create_usuario(
             nombre=data['nombre'],
-            apellido=data.get('apellido'),
             correo=data['correo'],
             roles_ids=data['roles_ids'],
-            password=data.get('password'),
+            password=data['password'],
             id_tipo_identificacion=data.get('id_tipo_identificacion'),
             numero_identificacion=data.get('numero_identificacion'),
-            id_pais=data.get('id_pais'),
-            fecha_nacimiento=data.get('fecha_nacimiento')
-        )  # Crea el usuario
-        return (users.get_schema_usuario().dumps(usuario), 201)  # Retorna el usuario serializado
+            apellido=data.get('apellido'),
+            fecha_nacimiento=data.get('fecha_nacimiento'),
+            id_pais=data.get('id_pais')
+        )
+        tarjetas_data = data.get('tarjetas')
+        if tarjetas_data and isinstance(tarjetas_data, list):
+            from src.models.users.user import Tarjeta
+            from src.models.database import db
+            for t in tarjetas_data:
+                tarjeta = Tarjeta(
+                    numero=t['numero'],
+                    nombre_titular=t['nombre_titular'],
+                    fecha_inicio=t.get('fecha_inicio'),
+                    fecha_vencimiento=t['fecha_vencimiento'],
+                    cvv=t['cvv'],
+                    usuario_id=usuario.id,
+                    id_marca=t.get('id_marca'),
+                    id_tipo=t.get('id_tipo')
+                )
+                db.session.add(tarjeta)
+            db.session.commit()
+        return (users.get_schema_usuario().dumps(usuario), 201)
     except ValidationError as err:
-        return (err.messages, 422)  # Si hay error de validación, retorna error
+        return (err.messages, 422)
     except Exception as e:
-        return ({"error": str(e)}, 400)  # Otro error
+        return ({"error": str(e)}, 400)
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
@@ -97,7 +180,7 @@ def get_usuario_by_id(user_id):
     usuario_schema = users.get_schema_usuario()  # Obtiene el schema
     data = usuario_schema.dump(usuario)  # Serializa el usuario
     data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
-    return data  # Retorna usuario serializado con permisos
+    return data  # Retorna usuario serializado with permisos
 
 # Endpoint: Obtener el usuario autenticado (perfil propio)
 @user_blueprint.get('/me')
