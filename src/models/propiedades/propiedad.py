@@ -105,7 +105,7 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
-    imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+    #imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
 
     id_imagenes = ma.Method("get_image_ids", dump_only=True)
     delete_at = ma.DateTime(allow_none=True, dump_only=True)
