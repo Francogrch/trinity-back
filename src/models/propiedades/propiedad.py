@@ -70,6 +70,7 @@ class Propiedad(db.Model):
         self.id_ciudad = id_ciudad
         self.id_encargado= id_encargado
         self.requiere_documentacion = requiere_documentacion
+        self.delete_at = None
 
     def __repr__(self):
         return f"<Propiedad {self.nombre}>"
@@ -104,9 +105,10 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
-    imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+    #imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
 
     id_imagenes = ma.Method("get_image_ids", dump_only=True)
+    delete_at = ma.DateTime(allow_none=True, dump_only=True)
 
     # Define el método que será llamado por el campo 'id_imagenes'
     def get_image_ids(self, obj):

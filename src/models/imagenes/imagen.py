@@ -20,7 +20,7 @@ class Imagen(db.Model):
         self.url = url
 
     def __repr__(self):
-        return f"<Imagen {self.id}>"
+        return f"{self.id}"
 
 class ImagenSchema(ma.Schema):
     class Meta:

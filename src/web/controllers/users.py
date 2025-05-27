@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 #Usa get_jwt() si necesitas acceder a otros datos o claims personalizados dentro del JWT.
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
-from src.models.imagenes import get_filename, upload_image, delete_image
+from src.models.imagenes import get_filename, upload_image, delete_image, upload_image_usuario,set_id_usuario
 from src.web.authorization.roles import rol_requerido
 from src.models.users.logica import get_permisos_usuario, get_roles_by_ids
 from src.models import users
@@ -119,7 +119,7 @@ def create_usuario():
         except ValidationError as err:
             return jsonify(err.messages), 422
         except Exception as e:
-            return jsonify({"error": str(e)}), 400
+            return jsonify({"error": "Mail ya registrado"}), 400
 
     # --- CASO ADMINISTRADOR O EMPLEADO (con JWT) ---
     usuario_actual = users.get_usuario_by_id(user_id)
@@ -250,6 +250,7 @@ def update_usuario(user_id):
         return jsonify({'error': str(e)}), 400  # Otro error
 
 @user_blueprint.get('/imagenPerfil/<int:user_id>')
+@jwt_required()
 def get_imagen(user_id):
     user = users.get_usuario_by_id(user_id)
     if not user.id_imagen:
@@ -268,8 +269,9 @@ def get_imagen(user_id):
         as_attachment=False
     )
 
+# SIn uso
 @user_blueprint.delete('/imagenPerfil')
-#@jwt_required() 
+@jwt_required() 
 def delete_imagen():
     id_usuario = request.args.get('id_usuario')
     user = users.get_usuario_by_id(id_usuario)
@@ -286,8 +288,8 @@ def delete_imagen():
         return jsonify({"message": message}), 500
 
 @user_blueprint.get('/encargados')
-# @jwt_required()
-# @rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
 def get_encargados():
     usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
     return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
@@ -296,7 +298,7 @@ def get_encargados():
 # --- ENDPOINTS DE IMÁGENES Y DOCUMENTOS DE USUARIO ---
 
 @user_blueprint.post('/imagenDocumento')
-#@jwt_required()
+@jwt_required()
 def upload_imagen():
     """
     Sube la imagen principal (documento o foto de perfil) de un usuario.
@@ -326,6 +328,7 @@ def upload_imagen():
         return jsonify({'error': f'Error interno al subir la imagen: {str(e)}'}), 500
 
 @user_blueprint.get('/imagenesDoc')
+@jwt_required()
 def get_imagenes_id():
     """
     Obtiene los IDs de los documentos/imágenes adicionales asociados a un usuario.
@@ -364,11 +367,12 @@ def upload_imagen_doc():
     - Respuesta: JSON con información de la imagen/documento subido o error.
     """
     id_usuario = request.args.get('id_usuario')
-    image = upload_image('usuario',request,id_usuario=id_usuario)
-    return image
+    id_imagen = request.args.get('id_usuario')
+    return set_id_usuario(id_image,id_usuario)
+
 
 @user_blueprint.delete('/imagenDoc')
-#@jwt_required() 
+@jwt_required() 
 def delete_imagen_doc():
     """
     Elimina un documento o imagen adicional de un usuario.

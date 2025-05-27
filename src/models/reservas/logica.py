@@ -70,6 +70,7 @@ def cambiar_estado_reserva(id_reserva, nuevo_id_estado):
 
 def hay_reservas_solapadas(id_propiedad, start_date, end_date):
     return Reserva.query.filter(
+    Reserva.id_estado != 3,  # Excluye reservas canceladas
     Reserva.id_propiedad == id_propiedad,
     Reserva.fecha_inicio <= end_date,
     Reserva.fecha_fin >= start_date
