@@ -367,8 +367,8 @@ def upload_imagen_doc():
     - Respuesta: JSON con información de la imagen/documento subido o error.
     """
     id_usuario = request.args.get('id_usuario')
-    id_imagen = request.args.get('id_usuario')
-    return set_id_usuario(id_image,id_usuario)
+    image = upload_image('usuario',request,id_usuario=id_usuario)
+    return image
 
 
 @user_blueprint.delete('/imagenDoc')
