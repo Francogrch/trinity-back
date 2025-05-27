@@ -80,3 +80,15 @@ def create_pais_route():
         return get_schema_pais().dump(pais), 201
     except Exception as e:
         return {"error": str(e)}, 400
+
+@parametricas_blueprint.get('/marcas-tarjeta')
+def get_marcas_tarjeta():
+    from src.models.users.user import MarcaTarjeta, MarcaTarjetaSchema
+    marcas = MarcaTarjeta.query.all()
+    return MarcaTarjetaSchema(many=True).dump(marcas)
+
+@parametricas_blueprint.get('/tipos-tarjeta')
+def get_tipos_tarjeta():
+    from src.models.users.user import TipoTarjeta, TipoTarjetaSchema
+    tipos = TipoTarjeta.query.all()
+    return TipoTarjetaSchema(many=True).dump(tipos)

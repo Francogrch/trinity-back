@@ -39,8 +39,6 @@ Table tarjeta {
   fecha_vencimiento date [not null]
   cvv varchar [not null]
   usuario_id integer [not null, ref: > usuario.id]
-  anverso_url varchar
-  reverso_url varchar
   id_marca integer [ref: > marca_tarjeta.id]
   id_tipo integer [ref: > tipo_tarjeta.id]
 }
