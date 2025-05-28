@@ -123,6 +123,17 @@ def run():
         id_pais=pais_arg.id,
         fecha_nacimiento="1998-04-18"
     )
+    user8 = users.create_usuario(
+        nombre="Martín",
+        apellido="SinReservas",
+        correo="noreservas@mail.com",
+        roles_ids=[encargado.id],
+        password=passwordAll,
+        id_tipo_identificacion=dni.id,
+        numero_identificacion="1244788",
+        id_pais=pais_arg.id,
+        fecha_nacimiento="1998-04-18"
+    )
     print("Usuarios empleados e inquilinos adicionales creados")
 
     # Paramétricas de tarjetas
@@ -212,7 +223,7 @@ def run():
     user3.tarjetas.append(tarjeta4)
     user6.tarjetas.append(tarjeta5)
     user7.tarjetas.append(tarjeta6)
-    db.session.add_all([user1, user2, user3, user6, user7, user4, user5])
+    db.session.add_all([user1, user2, user3, user6, user7, user4, user5,user8])
     db.session.commit()
     print("Tarjetas asociadas a usuarios inquilinos en la relación uno-a-muchos.")
 

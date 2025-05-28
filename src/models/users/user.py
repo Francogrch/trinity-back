@@ -19,7 +19,7 @@ usuario_rol = db.Table(
 class Usuario(db.Model):
     __tablename__ = "usuario"
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), unique=True)
+    nombre = db.Column(db.String(100))
     correo = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     id_tipo_identificacion = db.Column(db.Integer, db.ForeignKey('tipo_identificacion.id'), nullable=True)
