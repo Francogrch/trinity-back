@@ -463,3 +463,15 @@ def registrar():
 def upload_imagen_user():
     image = upload_image_usuario(request)
     return image
+
+@user_blueprint.delete('/imagen/')
+#@jwt_required()
+def delete_imagen_user():
+    id_imagen = request.args.get('id_imagen')
+
+    success, message = delete_image(id_imagen, 'usuario')
+
+    if success:
+        return {"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}, 200
+    else:
+        return {"message": message}, 500
