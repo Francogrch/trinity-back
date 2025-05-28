@@ -56,7 +56,7 @@ def run():
     user2 = users.create_usuario(
         nombre="Raul",
         apellido="Gómez",
-        correo="raul@mail.com",
+        correo="francogrch@mail.com",
         roles_ids=[encargado.id],
         password=passwordAll,
         id_tipo_identificacion=pasaporte.id,
@@ -104,7 +104,7 @@ def run():
     user6 = users.create_usuario(
         nombre="Lucía",
         apellido="García",
-        correo="lucia@mail.com",
+        correo="lucialasarte.21@mail.com",
         roles_ids=[inquilino.id],
         password=passwordAll,
         id_tipo_identificacion=pasaporte.id,
@@ -391,7 +391,7 @@ def run():
         codigoAcceso="3301", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
-        id_encargado=1,
+        id_encargado=2,
         requiere_documentacion=False
     )
 
