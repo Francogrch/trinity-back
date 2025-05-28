@@ -189,8 +189,8 @@ def create_usuario():
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
-@jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
+#@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
 def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
@@ -419,7 +419,7 @@ def get_imagen_doc(imagen_id):
 @user_blueprint.post('/registrar')
 def registrar():
     data = request.get_json()  # Obtiene los datos del nuevo usuario
-    imagenes = data['imagenes_id']
+    imagenes = data['id_imagenes']
     try:
         usuario = users.create_new_usuario(
                 nombre=data['nombre'],
