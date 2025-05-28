@@ -86,8 +86,9 @@ def eliminar_propiedad(prop_id):
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value])
 def eliminar_propiedad_reservas(prop_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
     try:
-        propiedad = propiedades.eliminar_prop_con_reservas(prop_id)
+        propiedad = propiedades.eliminar_prop_con_reservas(prop_id,usuario)
     except:
         return {'error': 'Error al actualizar la propiedad'}, 500
 
