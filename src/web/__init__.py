@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Flask
 from flask_cors import CORS
 from flask_mail import Mail, Message
-
+import resetImagenes
 from src.models import database, marshmallow, email, seed, seed_ciudades
 
 from src.web.controllers.auth import auth_blueprint
@@ -67,6 +67,7 @@ def create_app():
     @app.cli.command(name="resetdb")
     def resetdb():
         database.reset_db()
+        resetImagenes.run()
         seed_ciudades.run()
         seed.run()
 
