@@ -1,4 +1,3 @@
-from models.imagenes.logica import delete_image
 from src.models.database import db
 from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol,Tarjeta
 from src.models.parametricas.parametricas import TipoIdentificacion
@@ -168,13 +167,6 @@ def get_roles_by_ids(roles_ids):
     from src.models.users.user import Rol
     return Rol.query.filter(Rol.id.in_(roles_ids)).all()
 
-def delete_imagen_usuario(id_imagen):
-    success, message = delete_image(id_imagen, 'usuario')
-
-    if success:
-        return message
-    else:
-        raise Exception(f"Error al eliminar la imagen del usuario: {message}")
 
 def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
     """
