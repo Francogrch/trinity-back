@@ -49,7 +49,7 @@ def create_propiedad():
     except ValidationError as err:
         return (err.messages, 422)
     except:
-        return ({"error": "Propiedad repetida?"}, 400)
+        return ({"error": "El nombre ingresado ya se encuentra registrado."}, 400)
 
 
 @propiedad_blueprint.patch('/cambiarEstado/<int:prop_id>')
@@ -110,7 +110,7 @@ def update_propiedad():
     except ValidationError as err:
         return (err.messages, 422)
     except:
-        return ({"error": "Propiedad repetida?"}, 400)
+        return ({"error": "Error al editar la propiedad"}, 400)
 
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
@@ -126,7 +126,7 @@ def update_codigo_acceso():
     except ValidationError as err:
         return (err.messages, 422)
     except:
-        return ({"error": "Propiedad repetida?"}, 400)
+        return ({"error": "Error al editar el codigo de acceso."}, 400)
     
 
 @propiedad_blueprint.get('/search')
