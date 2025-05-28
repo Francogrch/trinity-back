@@ -413,3 +413,58 @@ def get_imagen_doc(imagen_id):
         path=filename,
         as_attachment=False
     )
+
+
+@user_blueprint.post('/registrar')
+def registrar():
+    """
+    nombre: string;
+    correo: string;
+    password_hash?: string;
+    tipo_identificacion?: TipoIdentificacion;
+    numero_identificacion?: string;
+    apellido?: string;
+    fecha_nacimiento?: string | Date;
+    pais?: Pais;
+    roles: Rol[];
+    tarjetas?: Tarjeta[];
+    permisos?: PermisosUsuario;
+    imagenes_id?: number[];
+    
+    class Tarjeta {
+    id: number;
+    numero: number;
+    nombre_titular: string;
+    fecha_vencimiento: string;
+    cvv: number;
+    
+    
+    """
+    data = request.get_json()  # Obtiene los datos del nuevo usuario
+    imagenes = data['imagenes_id']
+    usuario = users.create_new_usuario(
+            nombre=data['nombre'],
+            apellido=data.get('apellido'),
+            correo=data['correo'],
+            roles_ids=data['id_rol'],
+            password=data.get('password'),
+            id_tipo_identificacion=data.get('id_tipo_identificacion'),
+            numero_identificacion=data.get('numero_identificacion'),
+            id_pais=data.get('id_pais'),
+            fecha_nacimiento=data.get('fecha_nacimiento'),
+            tarjeta=data.get('tarjeta', None)
+        )  # Crea el usuario
+    # Tarjetas[0] -> numero, nombre_titular, fecha_vencimiento, cvv
+
+    for id_imagen in imagenes:
+        set_id_usuario(id_imagen,usuario.id)
+    # Vincular tarjeta  a usuario si se proporciona
+    return users.get_schema_usuario().dump(usuario)
+
+
+# Subir una imagen sin id_usuario
+@user_blueprint.post('/imagen')
+#@jwt_required()
+def upload_imagen_user():
+    image = upload_image_usuario(request)
+    return image

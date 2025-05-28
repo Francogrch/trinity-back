@@ -22,7 +22,8 @@ def get_encargados():
     filter(Rol.id == EnumRol.EMPLEADO.value).\
     all()
     return empleados
-    
+
+# no se usa
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
@@ -62,6 +63,38 @@ def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=N
         db.session.rollback()
         raise e
 
+def create_new_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
+    """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
+    try:
+        roles = Rol.query.filter(Rol.id.in_(roles_ids)).all()
+        # roles = roles_ids
+        # Conversión robusta de fecha_nacimiento a date si es string
+        if fecha_nacimiento and isinstance(fecha_nacimiento, str):
+            try:
+                fecha_nacimiento = datetime.strptime(fecha_nacimiento, "%Y-%m-%d").date()
+            except ValueError:
+                raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
+        tipo_identificacion_obj = None
+        if id_tipo_identificacion:
+            tipo_identificacion_obj = TipoIdentificacion.query.get(id_tipo_identificacion)
+        nuevo = Usuario(
+            nombre=nombre,
+            correo=correo,
+            roles=roles,
+            password=password,
+            id_tipo_identificacion=id_tipo_identificacion,
+            tipo_identificacion=tipo_identificacion_obj,
+            numero_identificacion=numero_identificacion,
+            apellido=apellido,
+            fecha_nacimiento=fecha_nacimiento,
+            id_pais=id_pais
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        return nuevo
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def get_usuario_by_nombre(nombre):
     return Usuario.query.filter_by(nombre=nombre).first()

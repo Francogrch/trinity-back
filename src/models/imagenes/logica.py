@@ -103,7 +103,7 @@ def upload_image_usuario(request):
         return {'error': 'No se selecciono un archivo'}, 400
 
     if file and allowed_file(file.filename):
-        imagen = create_imagen_sinId()
+        imagen = create_imagen_sin_Id()
 
         original_filename_secure = secure_filename(file.filename)
 
