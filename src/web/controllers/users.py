@@ -6,10 +6,11 @@ from marshmallow import ValidationError
 #Usa get_jwt_identity() si solo necesitas el identificador principal del usuario autenticado.
 #Usa get_jwt() si necesitas acceder a otros datos o claims personalizados dentro del JWT.
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+import sqlalchemy
 
 from src.models.imagenes import get_filename, upload_image, delete_image, upload_image_usuario,set_id_usuario
 from src.web.authorization.roles import rol_requerido
-from src.models.users.logica import get_permisos_usuario, get_roles_by_ids
+from src.models.users.logica import create_tarjeta, get_permisos_usuario, get_roles_by_ids
 from src.models import users
 from src.enums.roles import Rol
 
@@ -414,51 +415,45 @@ def get_imagen_doc(imagen_id):
         as_attachment=False
     )
 
-
+#Acomodar los commits
 @user_blueprint.post('/registrar')
 def registrar():
-    """
-    nombre: string;
-    correo: string;
-    password_hash?: string;
-    tipo_identificacion?: TipoIdentificacion;
-    numero_identificacion?: string;
-    apellido?: string;
-    fecha_nacimiento?: string | Date;
-    pais?: Pais;
-    roles: Rol[];
-    tarjetas?: Tarjeta[];
-    permisos?: PermisosUsuario;
-    imagenes_id?: number[];
-    
-    class Tarjeta {
-    id: number;
-    numero: number;
-    nombre_titular: string;
-    fecha_vencimiento: string;
-    cvv: number;
-    
-    
-    """
     data = request.get_json()  # Obtiene los datos del nuevo usuario
     imagenes = data['imagenes_id']
-    usuario = users.create_new_usuario(
-            nombre=data['nombre'],
-            apellido=data.get('apellido'),
-            correo=data['correo'],
-            roles_ids=data['id_rol'],
-            password=data.get('password'),
-            id_tipo_identificacion=data.get('id_tipo_identificacion'),
-            numero_identificacion=data.get('numero_identificacion'),
-            id_pais=data.get('id_pais'),
-            fecha_nacimiento=data.get('fecha_nacimiento'),
-            tarjeta=data.get('tarjeta', None)
-        )  # Crea el usuario
-    # Tarjetas[0] -> numero, nombre_titular, fecha_vencimiento, cvv
-
+    try:
+        usuario = users.create_new_usuario(
+                nombre=data['nombre'],
+                apellido=data.get('apellido'),
+                correo=data['correo'],
+                roles_ids=data['roles'],
+                password=data.get('password_hash'),
+                id_tipo_identificacion=data.get('tipo_identificacion'),
+                numero_identificacion=data.get('numero_identificacion'),
+                id_pais=data.get('pais'),
+                fecha_nacimiento=data.get('fecha_nacimiento'),
+            )  # Crea el usuario
+        # Tarjetas[0] -> numero, nombre_titular, fecha_vencimiento, cvv
+    except sqlalchemy.exc.IntegrityError as e:
+        return jsonify({"error": "Mail ya registrado"}), 400
+        
+    try:
+        tarjeta = create_tarjeta(
+            numero=data['tarjetas'][0]['numero'],
+            nombre_titular=data['tarjetas'][0]['nombre_titular'],
+            fecha_vencimiento=data['tarjetas'][0]['fecha_vencimiento'],
+            cvv=data['tarjetas'][0]['cvv'],
+            usuario_id=usuario.id
+        )  # Crea la tarjeta asociada al usuario
+    except Exception as e:
+        return jsonify({"error": "Error al crear la tarjeta asociada al usuario"}), 500
+    imagenes_registradas = []
     for id_imagen in imagenes:
-        set_id_usuario(id_imagen,usuario.id)
-    # Vincular tarjeta  a usuario si se proporciona
+        retu = set_id_usuario(id_imagen,usuario.id)
+        if not retu:
+            return {"error": f"La imagen con ID {id_imagen} no esta cargada"}, 500
+        imagenes_registradas.append(id_imagen)
+   
+    # Por ultimo se deberia hacer el commit de usuario, tarjeta e imagenes, en caso contrario hacer un rollback
     return users.get_schema_usuario().dump(usuario)
 
 

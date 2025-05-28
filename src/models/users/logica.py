@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol
+from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol,Tarjeta
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -62,7 +62,24 @@ def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=N
     except Exception as e:
         db.session.rollback()
         raise e
-
+    
+def create_tarjeta(numero,nombre_titular,fecha_vencimiento,cvv,usuario_id):
+    """Crea una nueva tarjeta asociada a un usuario."""
+    try:
+        nuevo = Tarjeta(
+            numero=numero,
+            nombre_titular=nombre_titular,
+            fecha_vencimiento=fecha_vencimiento,
+            cvv=cvv,
+            usuario_id=usuario_id
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        return nuevo
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    
 def create_new_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
@@ -75,6 +92,7 @@ def create_new_usuario(nombre, correo, roles_ids, password, id_tipo_identificaci
             except ValueError:
                 raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
         tipo_identificacion_obj = None
+        
         if id_tipo_identificacion:
             tipo_identificacion_obj = TipoIdentificacion.query.get(id_tipo_identificacion)
         nuevo = Usuario(

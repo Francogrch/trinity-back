@@ -90,15 +90,15 @@ class Tarjeta(db.Model):
     marca = db.relationship('MarcaTarjeta', foreign_keys=[id_marca])
     tipo = db.relationship('TipoTarjeta', foreign_keys=[id_tipo])
 
-    def __init__(self, numero, nombre_titular, fecha_inicio, fecha_vencimiento, cvv, usuario_id, id_marca=None, id_tipo=None):
+    def __init__(self, numero, nombre_titular, fecha_vencimiento, cvv, usuario_id, id_marca=None, id_tipo=None, fecha_inicio=None):
         self.numero = numero
         self.nombre_titular = nombre_titular
         self.fecha_inicio = fecha_inicio
-        self.fecha_vencimiento = fecha_vencimiento
         self.cvv = cvv
         self.usuario_id = usuario_id
         self.id_marca = id_marca
         self.id_tipo = id_tipo
+        self.fecha_vencimiento = fecha_vencimiento
 
     def __repr__(self):
         return f"<Tarjeta {self.numero[-4:]} - {self.nombre_titular}>"

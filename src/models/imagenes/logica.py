@@ -46,6 +46,8 @@ def set_id_propiedad(id_imagen,id_propiedad):
 
 def set_id_usuario(id_imagen,id_usuario):
     imagen = Imagen.query.get(id_imagen)
+    if not imagen:
+        return None
     imagen.id_usuario = id_usuario
     db.session.commit()
     return imagen
