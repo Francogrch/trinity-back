@@ -124,7 +124,7 @@ def run():
         fecha_nacimiento="1998-04-18"
     )
     user8 = users.create_usuario(
-        nombre="Martín",
+        nombre="Emilia",
         apellido="SinReservas",
         correo="noreservas@mail.com",
         roles_ids=[encargado.id],
@@ -574,6 +574,11 @@ def run():
     #
     #
     # Crear reservas de ejemplo
+    estadoConfirmado = parametricas.create_estado("Confirmada")
+    estadoPendiente = parametricas.create_estado("Pendiente")
+    estadoCancelada = parametricas.create_estado("Cancelada")
+    estadoFinalizada = parametricas.create_estado("Finalizada")
+
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop1.id,
         "id_inquilino": user6.id,
@@ -582,7 +587,7 @@ def run():
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": None,
-        "id_estado": 4,  
+        "id_estado": estadoFinalizada.id,  
         "fecha_inicio": datetime(2024, 12, 10),
         "fecha_fin": datetime(2024, 12, 14)
     })
@@ -595,7 +600,7 @@ def run():
         "monto_pagado": 75.0,
         "monto_total": 150.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 11, 1),
         "fecha_fin": datetime(2025, 11, 3)
     })
@@ -608,7 +613,7 @@ def run():
         "monto_pagado": 120.0,
         "monto_total": 360.0,
         "id_chat": None,
-        "id_estado": 2,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 10, 20),
         "fecha_fin": datetime(2025, 10, 23)
     })
@@ -621,7 +626,7 @@ def run():
         "monto_pagado": 200.0,
         "monto_total": 800.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 12, 5),
         "fecha_fin": datetime(2025, 12, 10)
     })
@@ -634,7 +639,7 @@ def run():
         "monto_pagado": 90.0,
         "monto_total": 180.0,
         "id_chat": None,
-        "id_estado": 3,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2024, 9, 15),
         "fecha_fin": datetime(2024, 9, 17)
     })
@@ -647,7 +652,7 @@ def run():
         "monto_pagado": 250.0,
         "monto_total": 1000.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2026, 1, 10),
         "fecha_fin": datetime(2026, 1, 15)
     })
@@ -660,7 +665,7 @@ def run():
         "monto_pagado": 100.0,
         "monto_total": 300.0,
         "id_chat": None,
-        "id_estado": 2,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2025, 9, 1),
         "fecha_fin": datetime(2025, 9, 4)
     })
@@ -673,7 +678,7 @@ def run():
         "monto_pagado": 60.0,
         "monto_total": 120.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 10, 1),
         "fecha_fin": datetime(2025, 10, 3)
     })
@@ -686,7 +691,7 @@ def run():
         "monto_pagado": 40.0,
         "monto_total": 80.0,
         "id_chat": None,
-        "id_estado": 4,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2024, 10, 25),
         "fecha_fin": datetime(2024, 10, 27)
     })
@@ -699,7 +704,7 @@ def run():
         "monto_pagado": 80.0,
         "monto_total": 240.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 11, 20),
         "fecha_fin": datetime(2025, 11, 23)
     })
@@ -712,7 +717,7 @@ def run():
         "monto_pagado": 180.0,
         "monto_total": 720.0,
         "id_chat": None,
-        "id_estado": 2,
+        "id_estado": estadoCancelada.id,
         "fecha_inicio": datetime(2025, 9, 5),
         "fecha_fin": datetime(2025, 9, 9)
     })
@@ -725,7 +730,7 @@ def run():
         "monto_pagado": 130.0,
         "monto_total": 520.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2026, 2, 1),
         "fecha_fin": datetime(2026, 2, 5)
     })
@@ -738,7 +743,7 @@ def run():
         "monto_pagado": 110.0,
         "monto_total": 330.0,
         "id_chat": None,
-        "id_estado": 3,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2024, 11, 10),
         "fecha_fin": datetime(2024, 11, 13)
     })
@@ -751,7 +756,7 @@ def run():
         "monto_pagado": 95.0,
         "monto_total": 190.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 12, 1),
         "fecha_fin": datetime(2025, 12, 3)
     })
@@ -764,14 +769,11 @@ def run():
         "monto_pagado": 160.0,
         "monto_total": 640.0,
         "id_chat": None,
-        "id_estado": 1,
+        "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2026, 3, 1),
         "fecha_fin": datetime(2026, 3, 5)
     }) 
-    estadoConfirmado = parametricas.create_estado("Confirmada")
-    estadoPendiente = parametricas.create_estado("Pendiente")
-    estadoCancelada = parametricas.create_estado("Cancelada")
-    estadoFinalizada = parametricas.create_estado("Finalizada")
+    
     print("Reservas de ejemplo creadas")
 
 
