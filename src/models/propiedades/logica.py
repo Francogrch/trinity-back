@@ -157,6 +157,14 @@ def create_propiedad(
     except Exception as e:
         db.session.rollback()
         raise ()
+def chekin_check(checkin:datetime, checkout:datetime):
+    """
+    Verifica si las fechas de check-in y check-out son válidas.
+    El check-in debe ser anterior al check-out.
+    """
+    checkin = parse_datetime_string(checkin)
+    checkout = parse_datetime_string(checkout)
+    return checkin < checkout
 
 def get_propiedades_search(checkin:datetime, checkout:datetime,huespedes):
     checkin = parse_datetime_string(checkin)
