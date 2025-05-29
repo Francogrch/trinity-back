@@ -75,3 +75,17 @@ class ReservaSchema(ma.Schema):
     def validar_fechas(self, data, **kwargs):
         if data['fecha_inicio'] >= data['fecha_fin']:
             raise ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.", field_name='fecha_inicio')
+
+
+class EmailReservaSchema(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    inquilino_nombre = ma.Function(lambda obj: obj.inquilino.nombre)
+    encargado_nombre = ma.Function(lambda obj: obj.propiedad.encargado.nombre)
+    propiedad_nombre = ma.Function(lambda obj: obj.propiedad.nombre)
+    fecha_inicio = ma.Function(lambda obj: obj.fecha_inicio)
+    fecha_fin = ma.Function(lambda obj: obj.fecha_fin)
+    correo_inquilino = ma.Function(lambda obj: obj.inquilino.correo)
+    correo_encargado = ma.Function(lambda obj: obj.propiedad.encargado.correo)

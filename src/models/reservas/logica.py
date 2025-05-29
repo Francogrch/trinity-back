@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.reservas.reserva import Reserva, ReservaSchema
+from src.models.reservas.reserva import Reserva, ReservaSchema, EmailReservaSchema
 from src.models.propiedades.propiedad import Propiedad
 
 
@@ -82,3 +82,7 @@ def hay_reservas_solapadas(id_propiedad, start_date, end_date):
 
 def get_schema_reserva():
     return ReservaSchema()
+
+
+def get_schema_email_reserva():
+    return EmailReservaSchema()

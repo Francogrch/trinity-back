@@ -1,4 +1,5 @@
-from flask import request, Blueprint
+from threading import Thread
+from flask import request, Blueprint, current_app, url_for
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funciones para manejo de JWT (autenticación y claims)
 from sqlalchemy.orm.exc import NoResultFound
@@ -63,13 +64,18 @@ def create_reserva():
                 ):
             return {'error': 'Propiedad no disponible'}, 400
         reserva = reservas.create_reserva(data_reserva)
-        # Notificaciones por email
-        email.send_reserva_creada_inquilino(reserva)
-        email.send_reserva_creada_encargado(reserva)
+        # Generar datos necesarios para el email
+        data_email = reservas.get_schema_email_reserva().dump(reserva)
+        reserva_url = f"http://localhost:4200/detalle-reserva/{reserva.id}"
+        logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+        # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+        email.run_async_with_context(email.send_reserva_creada_inquilino, data_email, reserva_url, logo_url)
+        email.run_async_with_context(email.send_reserva_creada_encargado, data_email, reserva_url, logo_url)
         return reservas.get_schema_reserva().dump(reserva), 201
     except ValidationError as err:
         return err.messages, 422
-    except:
+    except Exception as e:
+        print(e)
         return {'error': 'Error al crear la reserva'}, 400
 
 
@@ -83,7 +89,12 @@ def cancel_reserva(reserva_id):
         return {'error': 'Error al obtener las reservas'}, 500
     if not res:
         return {'error': 'Reserva no encontrada'}, 404
-    email.send_reserva_cancelada(res, usuario)
+    # Generar datos necesarios para el email
+    data_email = reservas.get_schema_email_reserva().dump(res)
+    reserva_url = f"http://localhost:4200/detalle-reserva/{res.id}"
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+    email.run_async_with_context(email.send_reserva_cancelada, data_email, reserva_url, logo_url, usuario.get_roles()['is_inquilino'])
     return reservas.get_schema_reserva().dump(res), 200
 
 
