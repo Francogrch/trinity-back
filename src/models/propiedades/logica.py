@@ -1,5 +1,5 @@
 from src.models import email
-from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad 
+from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad_filtrada 
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
 from src.models.reservas.reserva import Reserva 
@@ -101,11 +101,13 @@ def eliminar_prop_hasta_fecha(prop_id):
 
 def eliminar_prop_con_reservas(prop_id,usuario):
     propiedad = get_propiedad_id(prop_id)
+    
     if not propiedad:
         return None
     propiedad.is_habilitada = False
     # Eliminar todas las reservas asociadas a la propiedad
-    reservas_propiedad = get_reservas_por_propiedad(prop_id,id_estado=1)
+    reservas_propiedad = get_reservas_por_propiedad_filtrada(prop_id,id_estado=1)
+    print("DEBUUUUUGGGGGGG")
     for reserva in reservas_propiedad:
         res = cambiar_estado_reserva(reserva.id, 3) 
         if res:
@@ -155,6 +157,14 @@ def create_propiedad(
     except Exception as e:
         db.session.rollback()
         raise ()
+def chekin_check(checkin:datetime, checkout:datetime):
+    """
+    Verifica si las fechas de check-in y check-out son válidas.
+    El check-in debe ser anterior al check-out.
+    """
+    checkin = parse_datetime_string(checkin)
+    checkout = parse_datetime_string(checkout)
+    return checkin < checkout
 
 def get_propiedades_search(checkin:datetime, checkout:datetime,huespedes):
     checkin = parse_datetime_string(checkin)

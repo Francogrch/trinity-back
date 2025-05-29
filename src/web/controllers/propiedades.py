@@ -137,6 +137,8 @@ def get_propiedades_search():
     checkout = request.args.get('checkout')
     huespedes = request.args.get('huespedes', type=int)
     
+    if propiedades.chekin_check(checkin, checkout) == False:
+        return {'error': 'No se encontraron propiedades'}, 204
     if id:
         props = propiedades.get_propiedades_search_id(id,checkin, checkout,huespedes)
     else:
