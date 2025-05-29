@@ -1,4 +1,5 @@
 import os
+from sqlalchemy.orm.exc import NoResultFound
 from src.models.imagenes.logica import delete_image, get_filename, get_schema_imagen, upload_image
 from src.models import propiedades
 from src.models import users
@@ -30,8 +31,18 @@ def get_propiedades_eliminadas():
 
 @propiedad_blueprint.get('/id/<int:prop_id>')
 @jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedad_id_route(prop_id):
-    propiedad = propiedades.get_propiedad_id(prop_id)
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        propiedad = propiedades.get_propiedad_usuario(prop_id, usuario)
+    except NoResultFound:
+        return {'error': 'Propiedad no disponible'}, 403
+    except Exception as e:
+        print(e)
+        return {'error': 'Error al obtener la propiedad'}, 500
+    if not propiedad:
+        return {'error': 'Propiedad no encontrada'}, 404
     return (propiedades.get_schema_propiedad().dump(propiedad), 201)
 
 
