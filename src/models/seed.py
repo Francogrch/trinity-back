@@ -54,8 +54,8 @@ def run():
         fecha_nacimiento="1990-01-01"
     )
     user2 = users.create_usuario(
-        nombre="Raul",
-        apellido="Gómez",
+        nombre="Franco",
+        apellido="Rodriguez",
         correo="francogrch@mail.com",
         roles_ids=[encargado.id],
         password=passwordAll,
