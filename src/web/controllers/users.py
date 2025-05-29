@@ -189,8 +189,8 @@ def create_usuario():
 
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
-#@jwt_required()
-#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
 def get_usuario_by_id(user_id):
     usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
     if not usuario:
@@ -418,9 +418,11 @@ def get_imagen_doc(imagen_id):
 #Acomodar los commits
 @user_blueprint.post('/registrar')
 def registrar():
-    data = request.get_json()  # Obtiene los datos del nuevo usuario
-    imagenes = data['id_imagenes']
+    from src.models.database import db
     try:
+        data = request.get_json()  
+
+        # Registro de usuario
         usuario = users.create_new_usuario(
                 nombre=data['nombre'],
                 apellido=data.get('apellido'),
@@ -431,31 +433,52 @@ def registrar():
                 numero_identificacion=data.get('numero_identificacion'),
                 id_pais=data.get('pais'),
                 fecha_nacimiento=data.get('fecha_nacimiento'),
-            )  # Crea el usuario
-        # Tarjetas[0] -> numero, nombre_titular, fecha_vencimiento, cvv
-    except sqlalchemy.exc.IntegrityError as e:
-        return jsonify({"error": "Mail ya registrado"}), 400
-        
-    try:
+            )
+        try:
+            db.session.add(usuario)
+            db.session.flush()
+        except sqlalchemy.exc.IntegrityError: 
+            raise ValueError(f"El correo {data['correo']} ya esta registrado.")
+
+        # Registro de tarjeta
         tarjeta = create_tarjeta(
             numero=data['tarjetas'][0]['numero'],
             nombre_titular=data['tarjetas'][0]['nombre_titular'],
             fecha_vencimiento=data['tarjetas'][0]['fecha_vencimiento'],
             cvv=data['tarjetas'][0]['cvv'],
             usuario_id=usuario.id
-        )  # Crea la tarjeta asociada al usuario
-    except Exception as e:
-        return jsonify({"error": "Error al crear la tarjeta asociada al usuario"}), 500
-    imagenes_registradas = []
-    for id_imagen in imagenes:
-        retu = set_id_usuario(id_imagen,usuario.id)
-        if not retu:
-            return {"error": f"La imagen con ID {id_imagen} no esta cargada"}, 500
-        imagenes_registradas.append(id_imagen)
-   
-    # Por ultimo se deberia hacer el commit de usuario, tarjeta e imagenes, en caso contrario hacer un rollback
-    return users.get_schema_usuario().dump(usuario)
+        )  
+        try:
+            db.session.add(tarjeta)
+        except sqlalchemy.exc.IntegrityError: 
+            raise ValueError(f"El numero de tarjeta {data['tarjetas'][0]['numero']} ya esta registrado.")
+        
+        # Registro de imagenes
+        imagenes = data['id_imagenes']
+        for id_imagen in imagenes:
+            imagen = set_id_usuario(id_imagen,usuario.id)
+            if not imagen:
+                raise ValueError(f"La imagen con ID {id_imagen} no esta cargada.")
+            db.session.add(imagen)
+ 
+        db.session.commit()
 
+        return users.get_schema_usuario().dump(usuario)
+    
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback() # Realiza rollback en caso de error de integridad (ej: mail duplicado)
+        print(f"Error de integridad: {e}")
+        return jsonify({"error": "Datos duplicados."}), 400
+    
+    except ValueError as e:
+        db.session.rollback() # Realiza rollback en caso de errores de validación de datos
+        print(f"Error de validación de datos: {e}")
+        return jsonify({"error": str(e)}), 400
+    
+    except Exception as e:
+        db.session.rollback() # Realiza rollback para cualquier otro error
+        print(f"Error inesperado durante el registro: {e}")
+        return jsonify({"error": "Error interno del servidor al registrar el usuario."}), 500
 
 # Subir una imagen sin id_usuario
 @user_blueprint.post('/imagen')

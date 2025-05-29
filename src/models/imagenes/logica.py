@@ -49,7 +49,6 @@ def set_id_usuario(id_imagen,id_usuario):
     if not imagen:
         return None
     imagen.id_usuario = id_usuario
-    db.session.commit()
     return imagen
 
 def allowed_file(filename):
