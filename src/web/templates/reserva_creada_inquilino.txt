@@ -1,6 +1,6 @@
 Asunto: ¡Tu reserva está confirmada!
 
-Hola {{ user_name }},
+Hola {{ inquilino_nombre }},
 
 ¡Gracias por reservar con Alquiloando!
 

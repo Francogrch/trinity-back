@@ -1,41 +1,37 @@
-from flask import url_for, render_template
+from flask import render_template
 from flask_mail import Mail, Message
 
 mail = Mail()
-
-detalle_reserva_url = "http://localhost:4200/detalle-reserva"
 
 def init_mail(app):
     mail.init_app(app)
 
 
-def send_reserva_creada_inquilino(reserva):
-    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
-
+def send_reserva_creada_inquilino(data_email, reserva_url, logo_url):
     html_body = render_template(
         'reserva_creada_inquilino.html',
-        user_name=reserva.inquilino.nombre,
-        propiedad_nombre=reserva.propiedad.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
+        inquilino_nombre=data_email['inquilino_nombre'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
         logo_url=logo_url,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        cta_url=reserva_url,
         cta_text="Ver mi reserva",
         current_year=2025,
     )
 
     text_body = render_template(
         'reserva_creada_inquilino.txt',
-        user_name=reserva.inquilino.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        inquilino_nombre=data_email['inquilino_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        cta_url=reserva_url,
         current_year=2025,
     )
 
     msg = Message(
         subject="¡Tu reserva está confirmada!",
-        recipients=[reserva.inquilino.correo],
+        recipients=[data_email['correo_inquilino']],
         body=text_body,
         html=html_body
     )
@@ -43,33 +39,31 @@ def send_reserva_creada_inquilino(reserva):
     mail.send(msg)
 
 
-def send_reserva_creada_encargado(reserva):
-    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
-
+def send_reserva_creada_encargado(data_email, reserva_url, logo_url):
     html_body = render_template(
         'reserva_creada_encargado.html',
-        user_name=reserva.propiedad.encargado.nombre,
-        propiedad_nombre=reserva.propiedad.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
+        encargado_nombre=data_email['encargado_nombre'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
         logo_url=logo_url,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        cta_url=reserva_url,
         cta_text="Ver reserva",
         current_year=2025,
     )
 
     text_body = render_template(
         'reserva_creada_encargado.txt',
-        user_name=reserva.propiedad.encargado.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        encargado_nombre=data_email['encargado_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        cta_url=reserva_url,
         current_year=2025,
     )
 
     msg = Message(
         subject="¡Nueva reserva!",
-        recipients=[reserva.propiedad.encargado.correo],
+        recipients=[data_email['correo_encargado']],
         body=text_body,
         html=html_body
     )
@@ -77,36 +71,35 @@ def send_reserva_creada_encargado(reserva):
     mail.send(msg)
 
 
-def send_reserva_cancelada(reserva, sender):
-    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
-    if sender.get_roles()['is_inquilino']:
+def send_reserva_cancelada(data_email, reserva_url, logo_url, from_inquilino):
+    if from_inquilino:
         template_html = 'reserva_cancelada_encargado.html'
         template_txt = 'reserva_cancelada_encargado.txt'
-        recipient = reserva.propiedad.encargado.correo
+        recipient = data_email['correo_encargado']
     else:
         template_html = 'reserva_cancelada_inquilino.html'
         template_txt = 'reserva_cancelada_inquilino.txt'
-        recipient = reserva.inquilino.correo
+        recipient = data_email['correo_inquilino']
 
     html_body = render_template(
         template_html,
-        reserva_id=reserva.id,
-        propiedad_nombre=reserva.propiedad.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
+        reserva_id=data_email['id'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
         logo_url=logo_url,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        cta_url=reserva_url,
         cta_text="Ver reserva",
         current_year=2025,
     )
 
     text_body = render_template(
         template_txt,
-        reserva_id=reserva.id,
-        propiedad_nombre=reserva.propiedad.nombre,
-        fecha_inicio=reserva.fecha_inicio,
-        fecha_fin=reserva.fecha_fin,
-        cta_url=f"{detalle_reserva_url}/{reserva.id}",
+        reserva_id=data_email['id'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        cta_url=reserva_url,
         current_year=2025,
     )
 

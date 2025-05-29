@@ -1,6 +1,6 @@
 Asunto: Nueva reserva
 
-Hola {{ user_name }},
+Hola {{ encargado_nombre }},
 
 Hay una nueva reserva en {{ propiedad_nombre }} para las siguientes fechas:
 
