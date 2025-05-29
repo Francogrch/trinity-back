@@ -1,10 +1,20 @@
-from flask import render_template
+from flask import render_template, current_app
 from flask_mail import Mail, Message
+from threading import Thread
 
 mail = Mail()
 
 def init_mail(app):
     mail.init_app(app)
+
+
+def run_async_with_context(func, *args, **kwargs):
+    """Ejecuta una función en un hilo nuevo con el contexto de la app Flask."""
+    app = current_app._get_current_object()
+    def wrapper():
+        with app.app_context():
+            func(*args, **kwargs)
+    Thread(target=wrapper).start()
 
 
 def send_reserva_creada_inquilino(data_email, reserva_url, logo_url):

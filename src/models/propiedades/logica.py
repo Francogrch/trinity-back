@@ -1,9 +1,10 @@
 from src.models import email
-from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad_filtrada 
+from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad_filtrada, get_schema_email_reserva
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
 from src.models.reservas.reserva import Reserva 
 from datetime import datetime
+from flask import url_for
 import re
 
 def parse_datetime_string(dt_str: str) -> datetime:
@@ -111,7 +112,12 @@ def eliminar_prop_con_reservas(prop_id,usuario):
     for reserva in reservas_propiedad:
         res = cambiar_estado_reserva(reserva.id, 3) 
         if res:
-            email.send_reserva_cancelada(res, usuario)
+            # Generar datos necesarios para el email
+            data_email = get_schema_email_reserva().dump(res)
+            reserva_url = f"http://localhost:4200/detalle-reserva/{res.id}"
+            logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+            # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+            email.run_async_with_context(email.send_reserva_cancelada, data_email, reserva_url, logo_url, usuario.get_roles()['is_inquilino'])
     
 
     propiedad.delete_at = datetime.now()

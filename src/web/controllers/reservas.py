@@ -13,15 +13,6 @@ from src.enums.roles import Rol
 reserva_blueprint = Blueprint('reservas', __name__, url_prefix="/reservas")
 
 
-def run_async_with_context(func, *args, **kwargs):
-    """Ejecuta una función en un hilo nuevo con el contexto de la app Flask."""
-    app = current_app._get_current_object()
-    def wrapper():
-        with app.app_context():
-            func(*args, **kwargs)
-    Thread(target=wrapper).start()
-
-
 @reserva_blueprint.get('/')
 @jwt_required()
 def get_reservas_usuario():
@@ -78,8 +69,8 @@ def create_reserva():
         reserva_url = f"http://localhost:4200/detalle-reserva/{reserva.id}"
         logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
         # Enviar correos en segundo plano sin bloquear la respuesta HTTP
-        run_async_with_context(email.send_reserva_creada_inquilino, data_email, reserva_url, logo_url)
-        run_async_with_context(email.send_reserva_creada_encargado, data_email, reserva_url, logo_url)
+        email.run_async_with_context(email.send_reserva_creada_inquilino, data_email, reserva_url, logo_url)
+        email.run_async_with_context(email.send_reserva_creada_encargado, data_email, reserva_url, logo_url)
         return reservas.get_schema_reserva().dump(reserva), 201
     except ValidationError as err:
         return err.messages, 422
@@ -103,7 +94,7 @@ def cancel_reserva(reserva_id):
     reserva_url = f"http://localhost:4200/detalle-reserva/{res.id}"
     logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
     # Enviar correos en segundo plano sin bloquear la respuesta HTTP
-    run_async_with_context(email.send_reserva_cancelada, data_email, reserva_url, logo_url, usuario.get_roles()['is_inquilino'])
+    email.run_async_with_context(email.send_reserva_cancelada, data_email, reserva_url, logo_url, usuario.get_roles()['is_inquilino'])
     return reservas.get_schema_reserva().dump(res), 200
 
 
