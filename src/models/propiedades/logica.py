@@ -1,5 +1,5 @@
 from src.models import email
-from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad 
+from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad_filtrada 
 from src.models.database import db
 from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
 from src.models.reservas.reserva import Reserva 
@@ -101,11 +101,13 @@ def eliminar_prop_hasta_fecha(prop_id):
 
 def eliminar_prop_con_reservas(prop_id,usuario):
     propiedad = get_propiedad_id(prop_id)
+    
     if not propiedad:
         return None
     propiedad.is_habilitada = False
     # Eliminar todas las reservas asociadas a la propiedad
-    reservas_propiedad = get_reservas_por_propiedad(prop_id,id_estado=1)
+    reservas_propiedad = get_reservas_por_propiedad_filtrada(prop_id,id_estado=1)
+    print("DEBUUUUUGGGGGGG")
     for reserva in reservas_propiedad:
         res = cambiar_estado_reserva(reserva.id, 3) 
         if res:

@@ -7,6 +7,9 @@ def get_reservas_por_propiedad(id_propiedad):
     reservas = Reserva.query.filter_by(id_propiedad=id_propiedad).all()
     return reservas
 
+def get_reservas_por_propiedad_filtrada(id_propiedad,id_estado):
+    reservas = Reserva.query.filter_by(id_propiedad=id_propiedad, id_estado=id_estado).all()
+    return reservas
 
 def get_reservas_por_usuario(usuario):
     roles = usuario.get_roles()
