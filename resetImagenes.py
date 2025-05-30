@@ -54,7 +54,11 @@ def run():
     carpeta_destino = "imagenes/propiedad"
 
     copiar_y_limpiar_directorio(carpeta_origen, carpeta_destino)
-    os.makedirs("imagenes/usuario", exist_ok=True) # exist_ok=True evita un error si ya existe
+
+    carpeta_origen = "backup/imagenes/usuario"
+    carpeta_destino = "imagenes/usuario"
+    
+    copiar_y_limpiar_directorio(carpeta_origen, carpeta_destino)
 
 if __name__ == "__main__":
     carpeta_origen = "backup/imagenes/propiedad"
