@@ -32,7 +32,8 @@ def has_reservas_activas(prop_id):
 @propiedad_blueprint.get('/eliminadas')
 @jwt_required()
 def get_propiedades_eliminadas():
-    props = propiedades.get_propiedades_eliminadas()
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    props = propiedades.get_propiedades_eliminadas_usuario(usuario)
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 

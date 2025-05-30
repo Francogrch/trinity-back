@@ -91,9 +91,22 @@ def update_encargado(id_propiedad,id_encargado):
     db.session.commit()
     return propiedad 
 
+# Deprecated
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()
     return propiedades
+
+def get_propiedades_eliminadas_usuario(usuario):
+    if usuario.get_roles()['is_encargado']:
+        return Propiedad.query.filter(
+                Propiedad.id_encargado == usuario.id,
+                Propiedad.delete_at.isnot(None),
+                Propiedad.delete_at >= datetime.now()
+                ).all()
+    return Propiedad.query.filter(
+            Propiedad.delete_at.isnot(None),
+            Propiedad.delete_at >= datetime.now()
+            ).all()
 
 
 def get_propiedad_usuario(propiedad_id, usuario):
