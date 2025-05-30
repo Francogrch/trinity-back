@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funciones para manejo de JWT (autenticación y claims)
 from sqlalchemy.orm.exc import NoResultFound
 from src.models import reservas
+from src.models import propiedades
 from src.models import users
 from src.models import email
 
@@ -36,7 +37,11 @@ def get_reserva(reserva_id):
         return {'error': 'Error al obtener las reservas'}, 500
     if not res:
         return {'error': 'Reserva no encontrada'}, 404
-    return reservas.get_schema_reserva().dump(res), 200
+    response = {
+            'reserva': reservas.get_schema_reserva().dump(res),
+            'propiedad': propiedades.get_schema_propiedad_protegida().dump(res.propiedad)
+            }
+    return response, 200
 
 
 @reserva_blueprint.get('/propiedad/<int:propiedad_id>')

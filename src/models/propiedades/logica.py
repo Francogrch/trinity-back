@@ -1,7 +1,7 @@
 from src.models import email
 from src.models.reservas.logica import cambiar_estado_reserva,get_reservas_por_propiedad_filtrada, get_schema_email_reserva
 from src.models.database import db
-from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoAccesoSchema
+from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, PropiedadProtegidaSchema, CodigoAccesoSchema
 from src.models.reservas.reserva import Reserva 
 from datetime import datetime
 from flask import url_for
@@ -294,6 +294,10 @@ def update_codigo_acceso(id, codigoAcceso):
 
 def get_schema_propiedad():
     return PropiedadSchema()
+
+
+def get_schema_propiedad_protegida():
+    return PropiedadProtegidaSchema()
 
 
 def get_schema_codigo_acceso():

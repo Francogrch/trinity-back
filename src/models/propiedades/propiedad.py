@@ -135,6 +135,46 @@ class PropiedadSchema(ma.Schema):
         if not (roles['is_encargado'] or roles['is_admin']):
             raise ValidationError("El usuario no es Encargado o Administrador.", field_name='id_encargado')
 
+
+class PropiedadProtegidaSchema(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(required=True)
+    descripcion = ma.String(required=True)
+    entre_calles = ma.String(required=True)
+    calle = ma.String(required=True)
+    huespedes = ma.Integer(required=True)
+    ambientes = ma.Integer(required=True)
+    banios = ma.Integer(required=True)
+    cocheras = ma.Integer(required=True)
+    precioNoche = ma.Float(required=True)
+    is_habilitada = ma.Boolean(required=True)
+    id_pol_reserva = ma.Integer(required=True)
+    id_tipo = ma.Integer(required=True)
+    id_ciudad = ma.Integer(required=True)
+    id_encargado = ma.Integer(required=True)
+    requiere_documentacion = ma.Boolean(required=True)
+    ciudad = ma.Function(lambda obj: obj.ciudad.nombre)
+    id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
+    provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
+    tipo = ma.Function(lambda obj: obj.tipo.tipo)
+    pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+    #imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
+
+    id_imagenes = ma.Method("get_image_ids", dump_only=True)
+    delete_at = ma.DateTime(allow_none=True, dump_only=True)
+
+    # Define el método que será llamado por el campo 'id_imagenes'
+    def get_image_ids(self, obj):
+        # 'obj' es la instancia de Propiedad que se está serializando.
+        # Accede a la relación 'imagenes' y extrae los IDs.
+        if obj.imagenes: # Asegúrate de que la relación no esté vacía o None
+            return [img.id for img in obj.imagenes]
+        return [] # Retorna una lista vacía si no hay imágenes
+
+
 class CodigoAccesoSchema(ma.Schema):
     class Meta:
         unknown = EXCLUDE
