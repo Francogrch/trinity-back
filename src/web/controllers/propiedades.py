@@ -22,6 +22,13 @@ def get_propiedades():
     return propiedades.get_schema_propiedad().dump(props, many=True)
 
 
+@propiedad_blueprint.get('/tieneActivas/<int:prop_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
+def has_reservas_activas(prop_id):
+    return {'tieneActivas': propiedades.has_reservas_activas(prop_id)}, 200
+
+
 @propiedad_blueprint.get('/eliminadas')
 @jwt_required()
 def get_propiedades_eliminadas():

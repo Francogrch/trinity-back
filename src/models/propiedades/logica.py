@@ -9,6 +9,14 @@ from flask import url_for
 import re
 from sqlalchemy import or_
 
+def has_reservas_activas(propiedad_id):
+    return db.session.query(Reserva).\
+    join(Propiedad).\
+    filter(
+            Propiedad.id == propiedad_id,
+            Reserva.id_estado.in_([1,2])
+    ).first() is not None
+
 def parse_datetime_string(dt_str: str) -> datetime:
     """
     Parsea una cadena de fecha y hora con el formato
