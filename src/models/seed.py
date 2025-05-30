@@ -352,7 +352,7 @@ def run():
     )
 
     prop2 = propiedades.create_propiedad(
-        nombre="Departamento Céntrico",
+        nombre="Departamento Centrico",
         descripcion="Cómodo departamento en el centro",
         entre_calles="Av. Principal y Calle 9",
         calle="Calle Central",
