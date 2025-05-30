@@ -94,6 +94,8 @@ def cancel_reserva(reserva_id):
         return {'error': 'Error al obtener las reservas'}, 500
     if not res:
         return {'error': 'Reserva no encontrada'}, 404
+    # Chequea que no haya que actualizar delete_at en Propiedad
+    propiedades.check_estado_eliminada(res.id_propiedad)
     # Generar datos necesarios para el email
     data_email = reservas.get_schema_email_reserva().dump(res)
     reserva_url = f"http://localhost:4200/detalle-reserva/{res.id}"

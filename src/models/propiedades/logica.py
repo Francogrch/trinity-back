@@ -57,6 +57,23 @@ def parse_datetime_string(dt_str: str) -> datetime:
 
     return datetime.strptime(full_datetime_string_for_strptime, format_string)
 
+def has_reservas_activas(propiedad_id):
+    return db.session.query(Reserva).\
+    join(Propiedad).\
+    filter(
+            Propiedad.id == propiedad_id,
+            Reserva.id_estado.in_([1,2])
+    ).first() is not None
+
+def check_estado_eliminada(propiedad_id):
+    propiedad = get_propiedad_id(propiedad_id)
+    if not propiedad or (propiedad.delete_at is not None and propiedad.delete_at < datetime.now()):
+        return
+    if has_reservas_activas(propiedad_id):
+        return
+    propiedad.delete_at = datetime.now()
+    db.session.commit()
+
 def get_propiedades_usuario(usuario):
     if usuario.get_roles()['is_encargado']:
         return Propiedad.query.filter_by(
@@ -74,9 +91,22 @@ def update_encargado(id_propiedad,id_encargado):
     db.session.commit()
     return propiedad 
 
+# Deprecated
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()
     return propiedades
+
+def get_propiedades_eliminadas_usuario(usuario):
+    if usuario.get_roles()['is_encargado']:
+        return Propiedad.query.filter(
+                Propiedad.id_encargado == usuario.id,
+                Propiedad.delete_at.isnot(None),
+                Propiedad.delete_at >= datetime.now()
+                ).all()
+    return Propiedad.query.filter(
+            Propiedad.delete_at.isnot(None),
+            Propiedad.delete_at >= datetime.now()
+            ).all()
 
 
 def get_propiedad_usuario(propiedad_id, usuario):
