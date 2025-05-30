@@ -5,7 +5,9 @@ from src.models.propiedades.propiedad import Propiedad, PropiedadSchema, CodigoA
 from src.models.reservas.reserva import Reserva 
 from datetime import datetime
 from flask import url_for
+
 import re
+from sqlalchemy import or_
 
 def parse_datetime_string(dt_str: str) -> datetime:
     """
@@ -75,6 +77,26 @@ def update_encargado(id_propiedad,id_encargado):
 def get_propiedades_eliminadas():
     propiedades = Propiedad.query.filter(Propiedad.delete_at.isnot(None),Propiedad.delete_at >= datetime.now()).all()
     return propiedades
+
+
+def get_propiedad_usuario(propiedad_id, usuario):
+    filtro_propiedades_accesibles = or_(
+        Propiedad.delete_at == None,  # delete_at is NULL
+        Propiedad.delete_at > datetime.now()     # delete_at es futura
+    )
+    roles = usuario.get_roles()
+    if roles['is_admin']:
+        return Propiedad.query.filter(
+                filtro_propiedades_accesibles,
+                Propiedad.id == propiedad_id
+                ).one()
+    if roles['is_encargado']:
+        return Propiedad.query.filter(
+                filtro_propiedades_accesibles,
+                Propiedad.id_encargado == usuario.id,
+                Propiedad.id == propiedad_id
+                ).one()
+    return None
 
 
 def get_propiedad_id(id):
