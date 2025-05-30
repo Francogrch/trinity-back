@@ -9,14 +9,6 @@ from flask import url_for
 import re
 from sqlalchemy import or_
 
-def has_reservas_activas(propiedad_id):
-    return db.session.query(Reserva).\
-    join(Propiedad).\
-    filter(
-            Propiedad.id == propiedad_id,
-            Reserva.id_estado.in_([1,2])
-    ).first() is not None
-
 def parse_datetime_string(dt_str: str) -> datetime:
     """
     Parsea una cadena de fecha y hora con el formato
@@ -64,6 +56,23 @@ def parse_datetime_string(dt_str: str) -> datetime:
     format_string = "%a %b %d %Y %H:%M:%S %z"
 
     return datetime.strptime(full_datetime_string_for_strptime, format_string)
+
+def has_reservas_activas(propiedad_id):
+    return db.session.query(Reserva).\
+    join(Propiedad).\
+    filter(
+            Propiedad.id == propiedad_id,
+            Reserva.id_estado.in_([1,2])
+    ).first() is not None
+
+def check_estado_eliminada(propiedad_id):
+    propiedad = get_propiedad_id(propiedad_id)
+    if not propiedad or (propiedad.delete_at is not None and propiedad.delete_at < datetime.now()):
+        return
+    if has_reservas_activas(propiedad_id):
+        return
+    propiedad.delete_at = datetime.now()
+    db.session.commit()
 
 def get_propiedades_usuario(usuario):
     if usuario.get_roles()['is_encargado']:
