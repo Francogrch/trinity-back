@@ -106,6 +106,11 @@ def create_new_usuario(nombre, correo, roles_ids, password, id_tipo_identificaci
     #db.session.commit()
     return nuevo
     
+def existe_identificacion(numero_identificacion, id_tipo_identificacion):
+    return Usuario.query.filter_by(
+        id_tipo_identificacion=id_tipo_identificacion,
+        numero_identificacion=numero_identificacion
+    ).first()
 
 def get_usuario_by_nombre(nombre):
     return Usuario.query.filter_by(nombre=nombre).first()

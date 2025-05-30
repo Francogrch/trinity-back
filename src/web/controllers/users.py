@@ -422,6 +422,12 @@ def registrar():
     try:
         data = request.get_json()  
 
+        # Esa validacion se tiene que hacer diferente desde la tabla, con dos campos unicos.
+        if users.existe_identificacion(
+                id_tipo_identificacion=data.get('tipo_identificacion'),
+                numero_identificacion=data.get('numero_identificacion')):
+            raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
+
         # Registro de usuario
         usuario = users.create_new_usuario(
                 nombre=data['nombre'],
