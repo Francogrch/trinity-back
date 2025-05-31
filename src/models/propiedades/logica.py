@@ -67,12 +67,14 @@ def has_reservas_activas(propiedad_id):
 
 def check_estado_eliminada(propiedad_id):
     propiedad = get_propiedad_id(propiedad_id)
-    if not propiedad or (propiedad.delete_at is not None and propiedad.delete_at < datetime.now()):
-        return
-    if has_reservas_activas(propiedad_id):
-        return
+    if (not propiedad or 
+        (propiedad.delete_at is not None and propiedad.delete_at < datetime.now()) or 
+        has_reservas_activas(propiedad_id)):
+        return propiedad
     propiedad.delete_at = datetime.now()
+    cambiar_nombre_eliminada(propiedad_id)
     db.session.commit()
+    return propiedad
 
 def get_propiedades_usuario(usuario):
     if usuario.get_roles()['is_encargado']:
@@ -152,7 +154,7 @@ def eliminar_prop_hasta_fecha(prop_id):
         propiedad.delete_at = fecha_max.fecha_fin 
     else: 
         propiedad.delete_at = datetime.now()
-    cambiar_nombre_eliminada(prop_id)
+    #cambiar_nombre_eliminada(prop_id)
     try:
         db.session.commit()
         return propiedad
