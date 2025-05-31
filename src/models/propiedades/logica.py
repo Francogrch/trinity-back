@@ -132,6 +132,13 @@ def get_propiedad_usuario(propiedad_id, usuario):
 def get_propiedad_id(id):
     return Propiedad.query.get(id)
 
+def cambiar_nombre_eliminada(prop_id):
+    propiedad = get_propiedad_id(prop_id)
+    if not propiedad:
+        return None
+    # Cambiar el nombre de la propiedad eliminada
+    propiedad.nombre = f"{propiedad.nombre} (Eliminada el dia {propiedad.delete_at.strftime('%d/%m/%Y')})"
+    return propiedad 
 
 def eliminar_prop_hasta_fecha(prop_id):
     propiedad = get_propiedad_id(prop_id)
@@ -145,6 +152,7 @@ def eliminar_prop_hasta_fecha(prop_id):
         propiedad.delete_at = fecha_max.fecha_fin 
     else: 
         propiedad.delete_at = datetime.now()
+    cambiar_nombre_eliminada(prop_id)
     try:
         db.session.commit()
         return propiedad
@@ -160,7 +168,6 @@ def eliminar_prop_con_reservas(prop_id,usuario):
     propiedad.is_habilitada = False
     # Eliminar todas las reservas asociadas a la propiedad
     reservas_propiedad = get_reservas_por_propiedad_filtrada(prop_id,id_estado=1)
-    print("DEBUUUUUGGGGGGG")
     for reserva in reservas_propiedad:
         res = cambiar_estado_reserva(reserva.id, 3) 
         if res:
@@ -170,9 +177,8 @@ def eliminar_prop_con_reservas(prop_id,usuario):
             logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
             # Enviar correos en segundo plano sin bloquear la respuesta HTTP
             email.run_async_with_context(email.send_reserva_cancelada, data_email, reserva_url, logo_url, usuario.get_roles()['is_inquilino'])
-    
-
     propiedad.delete_at = datetime.now()
+    cambiar_nombre_eliminada(prop_id)
     try:
         db.session.commit()
         return propiedad

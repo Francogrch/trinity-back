@@ -572,7 +572,7 @@ def run():
         codigoAcceso="6001", # Código estático de 6 dígitos
         is_habilitada=True,
         id_pol_reserva=1,
-        id_encargado=2,
+        id_encargado=5,
         requiere_documentacion=False
     )
 

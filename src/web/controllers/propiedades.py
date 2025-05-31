@@ -47,7 +47,6 @@ def get_propiedad_id_route(prop_id):
     except NoResultFound:
         return {'error': 'Propiedad no disponible'}, 403
     except Exception as e:
-        print(e)
         return {'error': 'Error al obtener la propiedad'}, 500
     if not propiedad:
         return {'error': 'Propiedad no encontrada'}, 404

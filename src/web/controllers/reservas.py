@@ -80,7 +80,6 @@ def create_reserva():
     except ValidationError as err:
         return err.messages, 422
     except Exception as e:
-        print(e)
         return {'error': 'Error al crear la reserva'}, 400
 
 
