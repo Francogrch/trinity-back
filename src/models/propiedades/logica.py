@@ -139,7 +139,8 @@ def cambiar_nombre_eliminada(prop_id):
     if not propiedad:
         return None
     # Cambiar el nombre de la propiedad eliminada
-    propiedad.nombre = f"{propiedad.nombre} (Eliminada el dia {propiedad.delete_at.strftime('%d/%m/%Y')})"
+    propiedad.nombre = f"{propiedad.nombre} (Eliminada el {propiedad.delete_at.strftime('%d/%m/%Y')})"
+
     return propiedad 
 
 def eliminar_prop_hasta_fecha(prop_id):
