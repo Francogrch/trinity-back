@@ -82,6 +82,7 @@ class EmailReservaSchema(ma.Schema):
         unknown = EXCLUDE
 
     id = ma.Integer(dump_only=True)
+    monto_pagado = ma.Float(allow_none=True)
     inquilino_nombre = ma.Function(lambda obj: obj.inquilino.nombre)
     encargado_nombre = ma.Function(lambda obj: obj.propiedad.encargado.nombre)
     propiedad_nombre = ma.Function(lambda obj: obj.propiedad.nombre)

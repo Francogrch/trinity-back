@@ -16,9 +16,11 @@
 
 <p>Entendemos que esta situación puede causar molestias y ofrecemos nuestras disculpas por los inconvenientes ocasionados.</p>
 
-<p><strong>El importe que haya abonado por esta reserva será reembolsado en su totalidad</strong>
+{% if monto_pagado and monto_pagado > 0 %}
+<p><strong>Se reembolsará un total de USD {{ monto_pagado | round(2) }}</strong>
 a la misma forma de pago utilizada originalmente. La devolución se procesará en un plazo
 aproximado de <strong>5 a 10 días hábiles</strong>, dependiendo de su entidad bancaria.</p>
+{% endif %}
 
 <p>Atentamente,<br>
 El equipo de atención al cliente</p>

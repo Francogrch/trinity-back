@@ -11,5 +11,10 @@
   <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
   <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
 </ul>
+
+{% if monto_pagado and monto_pagado > 0 %}
+<p>Se ha recibido una seña de <strong>USD {{ monto_pagado | round(2) }}</strong> para confirmar la reserva.</p>
+{% endif %}
+
 {% endblock %}
 

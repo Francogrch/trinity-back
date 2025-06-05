@@ -11,5 +11,17 @@
   <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
   <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
 </ul>
+
+{% if monto_pagado and monto_pagado > 0 %}
+<p>Hemos recibido una seña de <strong>USD {{ monto_pagado | round(2) }}</strong> para confirmar tu reserva.</p>
+<p>El resto del pago se realizará automáticamente <strong>48 horas antes</strong> del inicio de la reserva.</p>
+{% else %}
+<p>El pago se realizará automáticamente <strong>48 horas antes</strong> del inicio de la reserva.</p>
+{% endif %}
+
+
+<p>Además, <strong>24 horas antes</strong> del inicio de la estadía, te enviaremos por correo electrónico la <strong>ubicación exacta de la propiedad</strong> y el <strong>código de acceso</strong>.</p>
+
+
 <p>Te esperamos con todo listo para que disfrutes de tu estadía.</p>
 {% endblock %}
