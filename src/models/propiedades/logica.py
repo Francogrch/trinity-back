@@ -67,8 +67,9 @@ def has_reservas_activas(propiedad_id):
 
 def check_estado_eliminada(propiedad_id):
     propiedad = get_propiedad_id(propiedad_id)
-    if (not propiedad or 
-        (propiedad.delete_at is not None and propiedad.delete_at < datetime.now()) or 
+    if (not propiedad or
+        (propiedad.delete_at is None) or 
+        (propiedad.delete_at < datetime.now()) or 
         has_reservas_activas(propiedad_id)):
         return propiedad
     propiedad.delete_at = datetime.now()
