@@ -957,5 +957,13 @@ def run():
         url="/imagenes/propiedad/19.png",
         id_propiedad=prop2.id,
     )
+    img20 = imagenes.create_imagen(
+        url="/imagenes/usuario/20.jpeg",
+        id_usuario=user7.id,
+    )
+    img21 = imagenes.create_imagen(
+        url="/imagenes/usuario/21.png",
+        id_usuario=user7.id,
+    )
 
 
