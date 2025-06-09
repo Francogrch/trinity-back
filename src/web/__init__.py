@@ -2,8 +2,10 @@ from datetime import datetime
 from flask import Flask
 from flask_cors import CORS
 from flask_mail import Mail, Message
-import resetImagenes
+
 from src.models import database, marshmallow, email, seed, seed_ciudades
+
+from src.web.utils.reset_tools import resetdb
 
 from src.web.controllers.auth import auth_blueprint
 from src.web.controllers.users import user_blueprint
@@ -47,6 +49,12 @@ def create_app():
     def home():
         return "<h1>Hola</h1>"
 
+    #Esto es horrible, pero es lo que hay
+    @app.get("/resetdb")
+    def reset_endpoint():
+        resetdb()
+        return {}, 200
+
     # Carpeta de subidas
 
     #initialize_upload_folders(app)
@@ -64,11 +72,9 @@ def create_app():
             return value.strftime(format)
         return value
 
+    # Registrar el comando de Flask CLI
     @app.cli.command(name="resetdb")
-    def resetdb():
-        database.reset_db()
-        resetImagenes.run()
-        seed_ciudades.run()
-        seed.run()
+    def resetdb_command():
+        resetdb()
 
     return app
