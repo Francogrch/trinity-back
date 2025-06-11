@@ -5,3 +5,5 @@ flask-marshmallow
 flask-jwt-extended
 marshmallow-sqlalchemy
 Flask-Mail
+pytest
+requests
