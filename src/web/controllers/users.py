@@ -443,7 +443,8 @@ def registrar():
         try:
             db.session.add(usuario)
             db.session.flush()
-        except sqlalchemy.exc.IntegrityError: 
+        except sqlalchemy.exc.IntegrityError as e: 
+            print(e)
             raise ValueError(f"El correo {data['correo']} ya esta registrado.")
 
         # Registro de tarjeta

@@ -53,7 +53,10 @@ def create_reserva(data):
 
 def cancel_reserva(reserva_id, usuario):
     roles = usuario.get_roles()
-    reserva = get_reserva(reserva_id, usuario)
+    try:
+        reserva = get_reserva(reserva_id, usuario)
+    except:
+        reserva = None
     if not reserva or reserva.id_estado == 3 or reserva.id_estado == 4:
         # Si no existe o está finalizada o cancelada devuelve 404
         return None

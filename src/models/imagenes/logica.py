@@ -4,8 +4,6 @@ from src.models.database import db
 from flask import Blueprint, request, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 import os
-from src.web.authorization.roles import rol_requerido
-from src.enums.roles import Rol
 from flask import Flask
 
 
