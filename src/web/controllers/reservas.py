@@ -41,6 +41,7 @@ def get_reserva(reserva_id):
     response = {
             'reserva': reservas.get_schema_reserva().dump(res),
             'calificacion_propiedad': calificaciones.get_schema_calificacion_propiedad().dump(res.calificacion_propiedad),
+            'calificacion_inquilino': calificaciones.get_schema_calificacion_inquilino().dump(res.calificacion_inquilino),
             'propiedad': propiedades.get_schema_propiedad_protegida().dump(res.propiedad)
             }
     return response, 200
@@ -151,21 +152,29 @@ def calificar_propiedad(reserva_id):
     res.calificar_propiedad(calificacion)
     return calificaciones.get_schema_calificacion_propiedad().dump(calificacion), 200
 
-"""
 @reserva_blueprint.patch('/calificarInquilino/<int:reserva_id>')
 @jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def calificar_inquilino(reserva_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
     try:
-        data = request.get_json()
-        nuevo_estado = data.get("nuevo_id_estado")
-        if nuevo_estado is None:
-            return {'error': 'Falta el nuevo_id_estado en el body'}, 400
-        reserva = reservas.cambiar_estado_reserva(reserva_id, nuevo_estado)
+        res = reservas.get_reserva(reserva_id, usuario)
+    except NoResultFound:
+        return {'error': 'Reserva no disponible'}, 403
     except:
-        return {'error': 'Error al cambiar el estado de la reserva'}, 500
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res.is_calificable() or res.calificacion_inquilino != None:
+        return {'error': 'No es posible calificar'}, 400
 
-    if not reserva:
-        return {'error': 'Reserva no encontrada'}, 404
+    data = request.get_json()
+    try:
+        data_calificacion = calificaciones.get_schema_calificacion_inquilino().load(data)
+        calificacion = calificaciones.create_calificacion_inquilino(data)
+    except ValidationError as err:
+        return err.messages, 422
+    except Exception as e:
+        print(e)
+        return {'error': 'Error al calificar'}, 400
 
-    return reservas.get_schema_reserva().dump(reserva), 200
-"""
+    res.calificar_inquilino(calificacion)
+    return calificaciones.get_schema_calificacion_inquilino().dump(calificacion), 200

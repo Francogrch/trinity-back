@@ -903,6 +903,9 @@ def run():
         "precio_calidad": 4,
         "ubicacion": 2
         })
+    calificacion_inquilino_1 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 4
+        })
 
     calificacion_prop_2 = calificaciones.create_calificacion_propiedad({
         "confort": 5,
@@ -911,6 +914,9 @@ def run():
         "personal": 4,
         "precio_calidad": 5,
         "ubicacion": 0
+        })
+    calificacion_inquilino_2 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 5
         })
 
     calificacion_prop_3 = calificaciones.create_calificacion_propiedad({
@@ -921,10 +927,18 @@ def run():
         "precio_calidad": 4,
         "ubicacion": 4
         })
+    calificacion_inquilino_3 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 0
+        })
 
     reserva1.calificar_propiedad(calificacion_prop_1)
+    reserva1.calificar_inquilino(calificacion_inquilino_1)
+
     reserva7.calificar_propiedad(calificacion_prop_2)
+    reserva7.calificar_inquilino(calificacion_inquilino_2)
+
     reserva13.calificar_propiedad(calificacion_prop_3)
+    reserva13.calificar_inquilino(calificacion_inquilino_3)
 
     print("Calificaciones de ejemplo creadas")
 
