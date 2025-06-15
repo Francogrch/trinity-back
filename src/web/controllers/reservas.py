@@ -135,6 +135,9 @@ def calificar_propiedad(reserva_id):
         return {'error': 'Reserva no disponible'}, 403
     except:
         return {'error': 'Error al obtener las reservas'}, 500
+    if not res.is_calificable() or res.calificacion_propiedad != None:
+        return {'error': 'No es posible calificar'}, 400
+
     data = request.get_json()
     try:
         data_calificacion = calificaciones.get_schema_calificacion_propiedad().load(data)

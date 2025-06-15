@@ -863,17 +863,30 @@ def run():
     })
 
     reserva15 = reservas.create_reserva({
-        "id_propiedad": prop15.id,
-        "id_inquilino": user1.id,
+        "id_propiedad": prop13.id,
+        "id_inquilino": user3.id,
         "id_usuario_carga": user2.id,
         "cantidad_personas": 4,
         "monto_pagado": 160.0,
         "monto_total": 640.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2026, 3, 1),
-        "fecha_fin": datetime(2026, 3, 5)
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2025, 3, 1),
+        "fecha_fin": datetime(2025, 6, 5)
     }) 
+
+    reserva16 = reservas.create_reserva({
+        "id_propiedad": prop13.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user6.id,
+        "cantidad_personas": 3,
+        "monto_pagado": 110.0,
+        "monto_total": 330.0,
+        "id_chat": None,
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2024, 11, 10),
+        "fecha_fin": datetime(2024, 11, 13)
+    })
     
     print("Reservas de ejemplo creadas")
 

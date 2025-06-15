@@ -1,6 +1,6 @@
 from src.models.database import db
 from src.models.marshmallow import ma
-from marshmallow import EXCLUDE
+from marshmallow import EXCLUDE, validate
 from datetime import datetime
 
 
@@ -38,12 +38,12 @@ class CalificacionPropiedadSchema(ma.Schema):
         unknown = EXCLUDE
 
     id = ma.Integer(dump_only=True)
-    personal = ma.Float(required=True)
-    instalaciones_servicios = ma.Float(required=True)
-    limpieza = ma.Float(required=True)
-    confort = ma.Float(required=True)
-    precio_calidad = ma.Float(required=True)
-    ubicacion = ma.Float(required=True)
+    personal = ma.Float(required=True, validate=validate.Range(min=0, max=5))
+    instalaciones_servicios = ma.Float(required=True, validate=validate.Range(min=0, max=5))
+    limpieza = ma.Float(required=True, validate=validate.Range(min=0, max=5))
+    confort = ma.Float(required=True, validate=validate.Range(min=0, max=5))
+    precio_calidad = ma.Float(required=True, validate=validate.Range(min=0, max=5))
+    ubicacion = ma.Float(required=True, validate=validate.Range(min=0, max=5))
     created_at = ma.DateTime(allow_none=True, dump_only=True)
 
 
@@ -69,5 +69,5 @@ class CalificacionInquilinoSchema(ma.Schema):
         unknown = EXCLUDE
 
     id = ma.Integer(dump_only=True)
-    calificacion = ma.Float(required=True)
+    calificacion = ma.Float(required=True, validate=validate.Range(min=0, max=5))
     created_at = ma.DateTime(allow_none=True, dump_only=True)

@@ -1,7 +1,7 @@
 from src.models.database import db
 from src.models.marshmallow import ma
 from marshmallow import EXCLUDE, validates_schema, ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Reserva(db.Model):
@@ -62,6 +62,13 @@ class Reserva(db.Model):
     def calificar_inquilino(self, calificacion):
         self.calificacion_inquilino = calificacion
         db.session.commit()
+
+    def is_calificable(self):
+        hoy = datetime.today()
+        dos_semanas_despues = self.fecha_fin + timedelta(weeks=2)
+        if self.id_estado == 4 and self.fecha_fin <= hoy <= dos_semanas_despues:
+            return True
+        return False
 
 
 class ReservaSchema(ma.Schema):
