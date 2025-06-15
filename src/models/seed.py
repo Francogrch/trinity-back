@@ -1,4 +1,4 @@
-from src.models import users, propiedades, parametricas, reservas
+from src.models import users, propiedades, parametricas, reservas, calificaciones
 from src.models.users.user import Tarjeta
 from datetime import datetime, date
 
@@ -863,20 +863,84 @@ def run():
     })
 
     reserva15 = reservas.create_reserva({
-        "id_propiedad": prop15.id,
-        "id_inquilino": user1.id,
+        "id_propiedad": prop13.id,
+        "id_inquilino": user3.id,
         "id_usuario_carga": user2.id,
         "cantidad_personas": 4,
         "monto_pagado": 160.0,
         "monto_total": 640.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2026, 3, 1),
-        "fecha_fin": datetime(2026, 3, 5)
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2025, 3, 1),
+        "fecha_fin": datetime(2025, 6, 5)
     }) 
+
+    reserva16 = reservas.create_reserva({
+        "id_propiedad": prop13.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": user6.id,
+        "cantidad_personas": 3,
+        "monto_pagado": 110.0,
+        "monto_total": 330.0,
+        "id_chat": None,
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2024, 11, 10),
+        "fecha_fin": datetime(2024, 11, 13)
+    })
     
     print("Reservas de ejemplo creadas")
 
+    # Crear calificaciones de ejemplo
+    #
+    #
+    #
+    # Crear calificaciones de ejemplo
+    calificacion_prop_1 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 3,
+        "personal": 1,
+        "precio_calidad": 4,
+        "ubicacion": 2
+        })
+    calificacion_inquilino_1 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 4
+        })
+
+    calificacion_prop_2 = calificaciones.create_calificacion_propiedad({
+        "confort": 5,
+        "instalaciones_servicios": 5,
+        "limpieza": 5,
+        "personal": 4,
+        "precio_calidad": 5,
+        "ubicacion": 0
+        })
+    calificacion_inquilino_2 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 5
+        })
+
+    calificacion_prop_3 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 4,
+        "personal": 4,
+        "precio_calidad": 4,
+        "ubicacion": 4
+        })
+    calificacion_inquilino_3 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 0
+        })
+
+    reserva1.calificar_propiedad(calificacion_prop_1)
+    reserva1.calificar_inquilino(calificacion_inquilino_1)
+
+    reserva7.calificar_propiedad(calificacion_prop_2)
+    reserva7.calificar_inquilino(calificacion_inquilino_2)
+
+    reserva13.calificar_propiedad(calificacion_prop_3)
+    reserva13.calificar_inquilino(calificacion_inquilino_3)
+
+    print("Calificaciones de ejemplo creadas")
 
     # Agregar imagenes a las propiedades
 

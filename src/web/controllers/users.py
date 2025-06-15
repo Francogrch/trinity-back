@@ -53,7 +53,14 @@ def get_usuarios():
 # Devuelve la lista de empleados serializada
 def get_empleados():
     usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
-    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
+    return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
+
+@user_blueprint.get('/inquilinos')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def get_inquilinos():
+    usuarios = users.get_inquilinos()
+    return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
 
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')
@@ -293,7 +300,7 @@ def delete_imagen():
 @rol_requerido([Rol.ADMINISTRADOR.value])  # Solo rol Administrador puede acceder
 def get_encargados():
     usuarios = users.get_encargados()  # Obtiene todos los usuarios de la base
-    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
+    return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
 
 
 # --- ENDPOINTS DE IMÁGENES Y DOCUMENTOS DE USUARIO ---
