@@ -1,4 +1,4 @@
-from src.models import users, propiedades, parametricas, reservas
+from src.models import users, propiedades, parametricas, reservas, calificaciones
 from src.models.users.user import Tarjeta
 from datetime import datetime, date
 
@@ -877,6 +877,43 @@ def run():
     
     print("Reservas de ejemplo creadas")
 
+    # Crear calificaciones de ejemplo
+    #
+    #
+    #
+    # Crear calificaciones de ejemplo
+    calificacion_prop_1 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 3,
+        "personal": 1,
+        "precio_calidad": 4,
+        "ubicacion": 2
+        })
+
+    calificacion_prop_2 = calificaciones.create_calificacion_propiedad({
+        "confort": 5,
+        "instalaciones_servicios": 5,
+        "limpieza": 5,
+        "personal": 4,
+        "precio_calidad": 5,
+        "ubicacion": 0
+        })
+
+    calificacion_prop_3 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 4,
+        "personal": 4,
+        "precio_calidad": 4,
+        "ubicacion": 4
+        })
+
+    reserva1.calificar_propiedad(calificacion_prop_1)
+    reserva7.calificar_propiedad(calificacion_prop_2)
+    reserva13.calificar_propiedad(calificacion_prop_3)
+
+    print("Calificaciones de ejemplo creadas")
 
     # Agregar imagenes a las propiedades
 

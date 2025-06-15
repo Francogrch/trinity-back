@@ -18,6 +18,8 @@ class Reserva(db.Model):
     # Falta tabla chat y tabla estado
     id_chat = db.Column(db.Integer)
     id_estado = db.Column(db.Integer,db.ForeignKey("estado.id"))
+    id_calificacion_propiedad = db.Column(db.Integer,db.ForeignKey("calificacion_propiedad.id"))
+    id_calificacion_inquilino = db.Column(db.Integer,db.ForeignKey("calificacion_inquilino.id"))
     fecha_inicio = db.Column(db.DateTime, nullable=False)
     fecha_fin = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(
@@ -32,6 +34,9 @@ class Reserva(db.Model):
     usuario_carga = db.relationship("Usuario", foreign_keys=[id_usuario_carga])
 
     estado = db.relationship("Estado", foreign_keys=[id_estado])
+
+    calificacion_propiedad = db.relationship("CalificacionPropiedad")
+    calificacion_inquilino = db.relationship("CalificacionInquilino")
 
     def __init__(self, id_propiedad, id_inquilino, cantidad_personas, monto_total,
                  fecha_inicio, fecha_fin, monto_pagado=None, 
@@ -49,6 +54,14 @@ class Reserva(db.Model):
 
     def __repr__(self):
         return f"<Reserva id={self.id} propiedad={self.id_propiedad} inquilino={self.id_inquilino}>"
+
+    def calificar_propiedad(self, calificacion):
+        self.calificacion_propiedad = calificacion
+        db.session.commit()
+
+    def calificar_inquilino(self, calificacion):
+        self.calificacion_inquilino = calificacion
+        db.session.commit()
 
 
 class ReservaSchema(ma.Schema):
