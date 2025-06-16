@@ -1,6 +1,7 @@
 from src.models.marshmallow import ma
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import validate, post_load, EXCLUDE
+from sqlalchemy import func
 from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
 from src.models.parametricas.parametricas import Pais
@@ -28,6 +29,7 @@ class Usuario(db.Model):
     apellido = db.Column(db.String(100), nullable=True)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
     id_pais = db.Column(db.Integer, db.ForeignKey('paises.id'), nullable=True)
+    is_bloqueado = db.Column(db.Boolean, nullable=False, default=False)
     pais = db.relationship("Pais", backref="usuario")
     roles = db.relationship('Rol', secondary=usuario_rol, backref=db.backref('usuario', lazy='dynamic'))
     tarjetas = db.relationship('Tarjeta', backref='usuario', lazy=True)
@@ -35,6 +37,14 @@ class Usuario(db.Model):
     id_imagen = db.Column(db.Integer, db.ForeignKey('imagen.id'), nullable=True)
     imagen = db.relationship('Imagen', back_populates='usuario', uselist=False, lazy=True,foreign_keys='[Imagen.id_usuario]')
     imagenes_doc = db.relationship('Imagen', back_populates='usuario', lazy=True, foreign_keys='[Imagen.id_usuario]')
+    calificaciones = db.relationship(
+            'CalificacionInquilino',
+            secondary='reserva',
+            primaryjoin='Usuario.id == Reserva.id_inquilino',
+            secondaryjoin='CalificacionInquilino.id == Reserva.id_calificacion_inquilino',
+            viewonly=True,
+            lazy='dynamic'
+            )
 
     def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None, id_imagen=None):
         self.nombre = nombre
@@ -64,6 +74,12 @@ class Usuario(db.Model):
                 "is_encargado": any(r == rol_enum.EMPLEADO.value for r in ids_roles_usuario),
                 "is_inquilino": any(r == rol_enum.INQUILINO.value for r in ids_roles_usuario)
                 }
+
+    def get_avg_calificacion(self):
+        from src.models.calificaciones.calificacion import CalificacionInquilino
+        return self.calificaciones.with_entities(
+            func.avg(CalificacionInquilino.calificacion).label('calificacion'),
+        ).scalar()
 
     def __repr__(self):
         return f"<Usuario {self.nombre}>"
@@ -158,6 +174,19 @@ class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
     id = ma.Integer(dump_only=True)
     nombre = ma.String(dump_only=True)
     correo = ma.String(dump_only=True)
+
+class UsuarioResumidoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = ma.Integer(dump_only=True)
+    nombre = ma.String(dump_only=True)
+    apellido = ma.String(dump_only=True)
+    correo = ma.String(dump_only=True)
+    is_bloqueado = ma.Boolean(dump_only=True)
+    tipo_identificacion = ma.Function(lambda obj: obj.tipo_identificacion.nombre)
+    numero_identificacion = ma.String(dump_only=True)
+    calificacion = ma.Function(lambda obj: obj.get_avg_calificacion())
 
 # --- TarjetaSchema al final para evitar ciclos ---
 class MarcaTarjetaSchema(ma.SQLAlchemyAutoSchema):

@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, EmpleadoSchema, Rol,Tarjeta
+from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -22,6 +22,13 @@ def get_encargados():
     filter(Rol.id == EnumRol.EMPLEADO.value).\
     all()
     return empleados
+
+def get_inquilinos():
+    inquilinos = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id == EnumRol.INQUILINO.value).\
+    all()
+    return inquilinos
 
 # no se usa
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
@@ -229,3 +236,6 @@ def get_schema_usuario():
 
 def get_schema_empleado():
     return EmpleadoSchema()
+
+def get_schema_usuario_resumido():
+    return UsuarioResumidoSchema()

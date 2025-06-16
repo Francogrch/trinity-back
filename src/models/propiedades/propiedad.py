@@ -2,6 +2,7 @@ from src.models.database import db
 from src.models.marshmallow import ma
 from src.models.imagenes.imagen import ImagenSchema
 from marshmallow import validate, EXCLUDE, validates, validates_schema, ValidationError
+from sqlalchemy import func
 from datetime import datetime
 
 
@@ -36,6 +37,15 @@ class Propiedad(db.Model):
     # Relación con User
     id_encargado = db.Column(db.Integer, db.ForeignKey("usuario.id"))
     encargado = db.relationship("Usuario", back_populates="propiedades")
+    # Relacion con CalificacionPropiedad
+    calificaciones = db.relationship(
+            'CalificacionPropiedad',
+            secondary='reserva',
+            primaryjoin='Propiedad.id == Reserva.id_propiedad',
+            secondaryjoin='CalificacionPropiedad.id == Reserva.id_calificacion_propiedad',
+            viewonly=True,
+            lazy='dynamic'
+            )
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
@@ -44,7 +54,28 @@ class Propiedad(db.Model):
 
     imagenes = db.relationship('Imagen', back_populates='propiedad', lazy=True, foreign_keys='[Imagen.id_propiedad]')
 
+    def get_avg_calificacion_detallado(self):
+        from src.models.calificaciones.calificacion import CalificacionPropiedad
+        return self.calificaciones.with_entities(
+            func.avg(CalificacionPropiedad.personal).label('personal'),
+            func.avg(CalificacionPropiedad.instalaciones_servicios).label('instalaciones_servicios'),
+            func.avg(CalificacionPropiedad.limpieza).label('limpieza'),
+            func.avg(CalificacionPropiedad.confort).label('confort'),
+            func.avg(CalificacionPropiedad.precio_calidad).label('precio_calidad'),
+            func.avg(CalificacionPropiedad.ubicacion).label('ubicacion')
+        ).first()
 
+    def get_avg_calificacion(self):
+        promedio = self.get_avg_calificacion_detallado()
+        return round((
+                round(promedio.personal or 0, 2) + 
+                round(promedio.instalaciones_servicios or 0, 2) +
+                round(promedio.limpieza or 0, 2) +
+                round(promedio.confort or 0, 2) +
+                round(promedio.precio_calidad or 0, 2) +
+                round(promedio.ubicacion or 0, 2)
+                )/6 or 0, 2)
+        
     def __init__(
         self, nombre, descripcion, entre_calles, calle,
         numero, piso, depto, huespedes, ambientes, banios,
@@ -76,7 +107,7 @@ class Propiedad(db.Model):
         return f"<Propiedad {self.nombre}>"
 
 
-class PropiedadSchema(ma.Schema):
+class PropiedadBaseSchema(ma.Schema):
     class Meta:
         unknown = EXCLUDE
 
@@ -85,15 +116,11 @@ class PropiedadSchema(ma.Schema):
     descripcion = ma.String(required=True)
     entre_calles = ma.String(required=True)
     calle = ma.String(required=True)
-    numero = ma.Integer(required=True)
-    piso = ma.String(allow_none=True)
-    depto = ma.String(allow_none=True)
     huespedes = ma.Integer(required=True)
     ambientes = ma.Integer(required=True)
     banios = ma.Integer(required=True)
     cocheras = ma.Integer(required=True)
     precioNoche = ma.Float(required=True)
-    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'^\d{4}$'))
     is_habilitada = ma.Boolean(required=True)
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
@@ -105,6 +132,8 @@ class PropiedadSchema(ma.Schema):
     provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
     tipo = ma.Function(lambda obj: obj.tipo.tipo)
     pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
+    promedio_calificacion = ma.Function(lambda obj: obj.get_avg_calificacion())
+    promedio_calificacion_detallado = ma.Method("get_detalle_promedios", dump_only=True)
     #imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
 
     id_imagenes = ma.Method("get_image_ids", dump_only=True)
@@ -118,8 +147,23 @@ class PropiedadSchema(ma.Schema):
             return [img.id for img in obj.imagenes]
         return [] # Retorna una lista vacía si no hay imágenes
 
+    def get_detalle_promedios(self, obj):
+        resultado = obj.get_avg_calificacion_detallado()
+        return {
+            'personal': round(resultado.personal or 0, 2),
+            'instalaciones_servicios': round(resultado.instalaciones_servicios or 0, 2),
+            'limpieza': round(resultado.limpieza or 0, 2),
+            'confort': round(resultado.confort or 0, 2),
+            'precio_calidad': round(resultado.precio_calidad or 0, 2),
+            'ubicacion': round(resultado.ubicacion or 0, 2)
+        }
 
 
+class PropiedadSchema(PropiedadBaseSchema):
+    numero = ma.Integer(required=True)
+    piso = ma.String(required=True)
+    dpto = ma.String(required=True)
+    codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'^\d{4}$'))
 
     @validates_schema
     def validar_id_encargado(self, data, **kwargs):
@@ -136,44 +180,8 @@ class PropiedadSchema(ma.Schema):
             raise ValidationError("El usuario no es Encargado o Administrador.", field_name='id_encargado')
 
 
-class PropiedadProtegidaSchema(ma.Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    id = ma.Integer(dump_only=True)
-    nombre = ma.String(required=True)
-    descripcion = ma.String(required=True)
-    entre_calles = ma.String(required=True)
-    calle = ma.String(required=True)
-    huespedes = ma.Integer(required=True)
-    ambientes = ma.Integer(required=True)
-    banios = ma.Integer(required=True)
-    cocheras = ma.Integer(required=True)
-    precioNoche = ma.Float(required=True)
-    is_habilitada = ma.Boolean(required=True)
-    id_pol_reserva = ma.Integer(required=True)
-    id_tipo = ma.Integer(required=True)
-    id_ciudad = ma.Integer(required=True)
-    id_encargado = ma.Integer(required=True)
-    requiere_documentacion = ma.Boolean(required=True)
-    ciudad = ma.Function(lambda obj: obj.ciudad.nombre)
-    id_provincia = ma.Function(lambda obj: obj.ciudad.provincia.id)
-    provincia = ma.Function(lambda obj: obj.ciudad.provincia.nombre)
-    tipo = ma.Function(lambda obj: obj.tipo.tipo)
-    pol_reserva = ma.Function(lambda obj: obj.pol_reserva.label)
-    #imagenes = ma.Nested(ImagenSchema(only=('id',), many=True, dump_only=('id',)))
-
-    id_imagenes = ma.Method("get_image_ids", dump_only=True)
-    delete_at = ma.DateTime(allow_none=True, dump_only=True)
-
-    # Define el método que será llamado por el campo 'id_imagenes'
-    def get_image_ids(self, obj):
-        # 'obj' es la instancia de Propiedad que se está serializando.
-        # Accede a la relación 'imagenes' y extrae los IDs.
-        if obj.imagenes: # Asegúrate de que la relación no esté vacía o None
-            return [img.id for img in obj.imagenes]
-        return [] # Retorna una lista vacía si no hay imágenes
-
+class PropiedadProtegidaSchema(PropiedadBaseSchema):
+    pass
 
 class CodigoAccesoSchema(ma.Schema):
     class Meta:

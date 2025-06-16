@@ -7,6 +7,7 @@ from src.models import reservas
 from src.models import propiedades
 from src.models import users
 from src.models import email
+from src.models import calificaciones
 
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
@@ -39,6 +40,8 @@ def get_reserva(reserva_id):
         return {'error': 'Reserva no encontrada'}, 404
     response = {
             'reserva': reservas.get_schema_reserva().dump(res),
+            'calificacion_propiedad': calificaciones.get_schema_calificacion_propiedad().dump(res.calificacion_propiedad),
+            'calificacion_inquilino': calificaciones.get_schema_calificacion_inquilino().dump(res.calificacion_inquilino),
             'propiedad': propiedades.get_schema_propiedad_protegida().dump(res.propiedad)
             }
     return response, 200
@@ -120,3 +123,58 @@ def cambiar_estado_reserva(reserva_id):
         return {'error': 'Reserva no encontrada'}, 404
 
     return reservas.get_schema_reserva().dump(reserva), 200
+
+
+@reserva_blueprint.patch('/calificarPropiedad/<int:reserva_id>')
+@jwt_required()
+@rol_requerido([Rol.INQUILINO.value])
+def calificar_propiedad(reserva_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        res = reservas.get_reserva(reserva_id, usuario)
+    except NoResultFound:
+        return {'error': 'Reserva no disponible'}, 403
+    except:
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res.is_calificable() or res.calificacion_propiedad != None:
+        return {'error': 'No es posible calificar'}, 400
+
+    data = request.get_json()
+    try:
+        data_calificacion = calificaciones.get_schema_calificacion_propiedad().load(data)
+        calificacion = calificaciones.create_calificacion_propiedad(data)
+    except ValidationError as err:
+        return err.messages, 422
+    except Exception as e:
+        print(e)
+        return {'error': 'Error al calificar'}, 400
+
+    res.calificar_propiedad(calificacion)
+    return calificaciones.get_schema_calificacion_propiedad().dump(calificacion), 200
+
+@reserva_blueprint.patch('/calificarInquilino/<int:reserva_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def calificar_inquilino(reserva_id):
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    try:
+        res = reservas.get_reserva(reserva_id, usuario)
+    except NoResultFound:
+        return {'error': 'Reserva no disponible'}, 403
+    except:
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res.is_calificable() or res.calificacion_inquilino != None:
+        return {'error': 'No es posible calificar'}, 400
+
+    data = request.get_json()
+    try:
+        data_calificacion = calificaciones.get_schema_calificacion_inquilino().load(data)
+        calificacion = calificaciones.create_calificacion_inquilino(data)
+    except ValidationError as err:
+        return err.messages, 422
+    except Exception as e:
+        print(e)
+        return {'error': 'Error al calificar'}, 400
+
+    res.calificar_inquilino(calificacion)
+    return calificaciones.get_schema_calificacion_inquilino().dump(calificacion), 200
