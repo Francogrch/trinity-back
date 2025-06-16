@@ -157,7 +157,7 @@ def run():
     user2 = users.create_usuario(
         nombre="Franco",
         apellido="Rodriguez",
-        correo="francogrch@gmail.com",
+        correo="francogrch@mail.com",
         roles_ids=[encargado.id],
         password=passwordAll,
         id_tipo_identificacion=pasaporte.id,

@@ -85,6 +85,24 @@ def create_reserva():
     except Exception as e:
         return {'error': 'Error al crear la reserva'}, 400
 
+@reserva_blueprint.patch('/confirmar/<int:reserva_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def confirmar_reserva(reserva_id):
+    try:
+        res = reservas.cambiar_estado_reserva(reserva_id, "1")
+    except NoResultFound:
+        return {'error': 'Reserva no disponible'}, 403
+    except:
+        return {'error': 'Error al obtener las reservas'}, 500
+    if not res:
+        return {'error': 'Reserva no encontrada'}, 404
+    
+    reserva_url = f"http://localhost:4200/detalle-reserva/{res.id}"
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    data_email = reservas.get_schema_email_reserva().dump(res)
+    email.run_async_with_context(email.send_reserva_confirmada, data_email, reserva_url, logo_url)
+    return reservas.get_schema_reserva().dump(res), 200
 
 @reserva_blueprint.patch('/cancelar/<int:reserva_id>')
 @jwt_required()

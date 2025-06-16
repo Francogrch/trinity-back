@@ -1,0 +1,19 @@
+¡Tu reserva en Alquiloando ha sido confirmada!
+
+Hola {{ inquilino_nombre }},
+
+¡Buenas noticias! Queremos confirmarte que tu reserva para {{ propiedad_nombre }} ha sido aprobada. El encargado ha revisado la documentación y ¡todo está listo para tu estadía!
+
+Tu alquiler está confirmado para las siguientes fechas:
+
+    Desde: {{ fecha_inicio | datetimeformat }}
+    Hasta: {{ fecha_fin | datetimeformat }}
+
+
+Para que tengas todo organizado, 24 horas antes del inicio de tu estadía, te enviaremos por correo electrónico la ubicación exacta de la propiedad y el código de acceso.
+
+Estamos emocionados de que disfrutes tu estadía. ¡Te esperamos!
+
+Saludos,
+
+El equipo de Alquiloando
