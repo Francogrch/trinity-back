@@ -220,13 +220,14 @@ def get_chat_reserva(reserva_id):
 def send_message(reserva_id):
     try:
         data = request.get_json()
-        if "texto" not in data or not data["texto"]:
+        if "mensaje" not in data or not data["mensaje"]:
             return {'error': 'El mensaje no puede estar vacío'}, 400
         usuario_id = get_jwt_identity()
+        #usuario_id = 1
         chat_id = reservas.get_chat_id_reserva(reserva_id)
         if chat_id is None:
             return {'error': 'No existe un chat asociado a esta reserva'}, 404
-        mensaje = chat.create_mensaje(chat_id=chat_id, texto=data["texto"], id_user=usuario_id)
+        mensaje = chat.create_mensaje(chat_id=chat_id, texto=data["mensaje"], id_user=usuario_id)
         return chat.get_mensaje_schema().dump(mensaje), 201
     except ValidationError as err:
         return err.messages, 422

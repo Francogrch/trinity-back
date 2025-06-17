@@ -120,6 +120,20 @@ def cambiar_estado_usuario(user_id):
     usuario.is_bloqueado = not usuario.is_bloqueado
     db.session.commit()
     return usuario
+def get_nombre(user_id):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    return usuario.nombre
+def get_rol(user_id):
+    usuario = Usuario.query.get(user_id)
+    usuario = get_schema_usuario().dump(usuario)
+    if not usuario:
+        return None
+    if not usuario["roles_ids"]:
+        return None
+    print(usuario.keys())
+    return usuario["roles_ids"][0]
 
 def is_usuario_bloqueado(user_id):
     usuario = Usuario.query.get(user_id)

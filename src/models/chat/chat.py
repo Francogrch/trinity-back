@@ -24,30 +24,35 @@ class Mensaje(db.Model):
     __tablename__ = "mensaje"
     id = db.Column(db.Integer, primary_key=True)
     id_chat = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    created_at = db.Column(
+    mensaje = db.Column(db.Text, nullable=False)
+    fecha = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     id_user = db.Column(db.Integer,db.ForeignKey('usuario.id'), nullable=False)
     
     def __init__(self, id_chat, text, id_user):
         self.id_chat = id_chat
-        self.text = text
+        self.mensaje = text
         self.id_user = id_user
 
 class MensajeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         unknown = EXCLUDE
     
-    id = ma.Integer(dump_only=True)
-    id_chat = ma.Integer(required=True)
-    text = ma.String(required=True)
-    created_at = ma.DateTime(allow_none=True, dump_only=True)
-    id_user = ma.Integer(required=True)
+    mensaje = ma.String(required=True)
+    fecha = ma.DateTime(allow_none=True, dump_only=True)
+    nombre = ma.Method("get_nombre", dump_only=True)  # Assuming get_nombre is a function to fetch user name
+    rol = ma.Method("get_rol", dump_only=True)  # Assuming get_rol is a function to fetch user role
+
+    def get_nombre(self, obj):
+       from src.models.users.logica import get_nombre
+       user = get_nombre(obj.id_user)
+       return user
+    def get_rol(self, obj):
+         from src.models.users.logica import get_rol
+         rol = get_rol(obj.id_user)
+         return rol
 
 class ChatSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         unknown = EXCLUDE  
-    id = ma.Integer(dump_only=True)
-    created_at = ma.DateTime(allow_none=True, dump_only=True)
-    updated_at = ma.DateTime(allow_none=True, dump_only=True)
     mensajes = ma.Nested(MensajeSchema, many=True, dump_only=True)
