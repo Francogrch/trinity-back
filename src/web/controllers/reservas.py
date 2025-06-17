@@ -8,7 +8,7 @@ from src.models import propiedades
 from src.models import users
 from src.models import email
 from src.models import calificaciones
-
+from src.models import chat
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
 
@@ -198,3 +198,40 @@ def calificar_inquilino(reserva_id):
 
     res.calificar_inquilino(calificacion)
     return calificaciones.get_schema_calificacion_inquilino().dump(calificacion), 200
+
+@reserva_blueprint.get('/chat/<int:reserva_id>')
+def get_chat_reserva(reserva_id):
+    try:
+        chat_id = reservas.get_chat_id_reserva(reserva_id)
+        if chat_id is None:
+            return {'error': 'No existe un chat asociado a esta reserva'}, 404
+        chat_reserva = reservas.get_chat_reserva(chat_id)
+        if chat_reserva is None:
+            return {'error': 'Chat no encontrado'}, 404
+        return chat.get_chat_schema().dump(chat_reserva), 200
+    except NoResultFound:
+        return {'error': 'Reserva no encontrada'}, 404
+    except Exception as e:
+        current_app.logger.error(f"Error al obtener el chat de la reserva {reserva_id}: {e}")
+        return {'error': 'Error al obtener el chat de la reserva'}, 500
+        
+@jwt_required()
+@reserva_blueprint.post('/chat/<int:reserva_id>')
+def send_message(reserva_id):
+    try:
+        data = request.get_json()
+        if "texto" not in data or not data["texto"]:
+            return {'error': 'El mensaje no puede estar vacío'}, 400
+        usuario_id = get_jwt_identity()
+        chat_id = reservas.get_chat_id_reserva(reserva_id)
+        if chat_id is None:
+            return {'error': 'No existe un chat asociado a esta reserva'}, 404
+        mensaje = chat.create_mensaje(chat_id=chat_id, texto=data["texto"], id_user=usuario_id)
+        return chat.get_mensaje_schema().dump(mensaje), 201
+    except ValidationError as err:
+        return err.messages, 422
+    except NoResultFound:
+        return {'error': 'Reserva no encontrada'}, 404
+    except Exception as e:
+        current_app.logger.error(f"Error al enviar el mensaje: {e}")
+        return {'error': 'Error al enviar el mensaje'}, 500

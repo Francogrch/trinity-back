@@ -1,5 +1,6 @@
 from src.models import users, propiedades, parametricas, reservas, calificaciones
 from src.models.users.user import Tarjeta
+from src.models import chat
 from datetime import datetime, date
 
 
@@ -680,6 +681,16 @@ def run():
     estadoCancelada = parametricas.create_estado("Cancelada")
     estadoFinalizada = parametricas.create_estado("Finalizada")
 
+
+    chat1 = chat.create_chat()
+    msn1 = chat.create_mensaje(
+        chat_id= chat1.id,
+        id_user= user6.id,
+        texto= "Hola, estoy interesado en reservar la casa de playa.")
+    msn2 = chat.create_mensaje(
+        chat_id= chat1.id,
+        id_user= prop1.id_encargado,
+        texto= "¡Hola! Claro, puedo ayudarte con eso. ¿Para qué fechas estás interesado?")
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop1.id,
         "id_inquilino": user6.id,
@@ -687,11 +698,13 @@ def run():
         "cantidad_personas": 4,
         "monto_pagado": 150.0,
         "monto_total": 600.0,
-        "id_chat": None,
+        "id_chat": chat1.id,
         "id_estado": estadoFinalizada.id,  
         "fecha_inicio": datetime(2024, 12, 10),
         "fecha_fin": datetime(2024, 12, 14)
     })
+    
+
 
     reserva2 = reservas.create_reserva({
         "id_propiedad": prop2.id,

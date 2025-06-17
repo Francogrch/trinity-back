@@ -1,7 +1,8 @@
 from src.models.database import db
 from src.models.reservas.reserva import Reserva, ReservaSchema, EmailReservaSchema
 from src.models.propiedades.propiedad import Propiedad
-
+from src.models.chat.logica import get_chat_schema
+from src.models.chat.chat import Chat
 
 def get_reservas_por_propiedad(id_propiedad):
     reservas = Reserva.query.filter_by(id_propiedad=id_propiedad).all()
@@ -82,6 +83,17 @@ def hay_reservas_solapadas(id_propiedad, start_date, end_date):
     Reserva.fecha_fin >= start_date
     ).first() is not None
 
+def get_chat_id_reserva(reserva_id):
+    reserva = Reserva.query.get(reserva_id)
+    if not reserva:
+        return None
+    return reserva.id_chat
+
+def get_chat_reserva(chat_id):
+    chat = Chat.query.get(chat_id)
+    if not chat:
+        return None
+    return chat
 
 def get_schema_reserva():
     return ReservaSchema()
