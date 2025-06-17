@@ -44,6 +44,11 @@ def get_reserva(reserva_id, usuario):
         one()
     return None
 
+def get_reserva_id(reserva_id):
+    reserva = Reserva.query.get(reserva_id)
+    if not reserva:
+        return None
+    return reserva
 
 def create_reserva(data):
     nueva_reserva = Reserva(**data)

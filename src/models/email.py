@@ -152,3 +152,40 @@ def send_reserva_cancelada(data_email, reserva_url, logo_url, from_inquilino):
     )
 
     mail.send(msg)
+
+def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
+    if rol != 'encargado':
+        recipient = data_email['correo_encargado']
+    else:
+        recipient = data_email['correo_inquilino']
+    print(f"{data_email['correo_encargado']=}, {data_email['correo_inquilino']=}, {reserva_url=}, {logo_url=}, {message=}, {rol=}")
+    html_body = render_template(
+        'mensaje_chat.html',
+        reserva_id=data_email['id'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        logo_url=logo_url,
+        cta_url=reserva_url,
+        cta_text="Ver reserva",
+        current_year=2025,
+        mensaje=message
+    )
+    text_body = render_template(
+        'mensaje_chat.txt',
+        reserva_id=data_email['id'],
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        cta_url=reserva_url,
+        current_year=2025,
+        mensaje=message
+    )
+    msg = Message(
+        subject="Nuevo mensaje en tu reserva",
+        recipients=[recipient],
+        body=text_body,
+        html=html_body
+    )
+
+    mail.send(msg)
