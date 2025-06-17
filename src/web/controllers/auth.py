@@ -1,10 +1,11 @@
-from flask import Blueprint, request, jsonify, current_app  # Para manejar rutas, peticiones y respuestas JSON
+from flask import Blueprint, request, jsonify, url_for  # Para manejar rutas, peticiones y respuestas JSON
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity
 from marshmallow import ValidationError
 
 from datetime import timedelta  # Para definir la duración del token
 
 from src.models import users
+from src.models import email
 from src.extensions.jwt import BLOCKLIST  # Lista negra de tokens revocados
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
@@ -81,5 +82,9 @@ def generate_temporary_link():
     expires = timedelta(minutes=2)
     additional_claims = {"purpose": "RESET_PASSWORD"}
     access_token = create_access_token(identity=str(usuario.id), expires_delta=expires, additional_claims=additional_claims)
-    # send mail
-    return {'token': access_token}, 200  # Devuelve el token al cliente
+    # Generar datos necesarios para el email
+    reset_password_url = f"http://localhost:4200/usuarios/reset-password?token={access_token}"
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+    email.run_async_with_context(email.send_reset_password, logo_url, reset_password_url, usuario.correo)
+    return {}, 200
