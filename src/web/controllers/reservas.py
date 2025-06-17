@@ -215,8 +215,9 @@ def get_chat_reserva(reserva_id):
         current_app.logger.error(f"Error al obtener el chat de la reserva {reserva_id}: {e}")
         return {'error': 'Error al obtener el chat de la reserva'}, 500
         
-@jwt_required()
+
 @reserva_blueprint.post('/chat/<int:reserva_id>')
+@jwt_required()
 def send_message(reserva_id):
     try:
         data = request.get_json()
