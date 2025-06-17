@@ -1,6 +1,6 @@
 from src.models.marshmallow import ma
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import validate, post_load, EXCLUDE
+from marshmallow import validate, post_load, EXCLUDE, validates_schema, ValidationError, validates
 from sqlalchemy import func
 from src.models.database import db
 from src.models.schemas import RolSchema, PaisSchema
@@ -8,6 +8,10 @@ from src.models.parametricas.parametricas import Pais
 from src.models.parametricas.parametricas import TipoIdentificacionSchema
 from src.enums.roles import Rol as rol_enum
 from src.models.imagenes.imagen import ImagenSchema,Imagen
+
+import re
+
+PASSWORD_REGEX = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$")
 
 # Tabla de asociación para muchos-a-muchos entre usuarios y roles
 usuario_rol = db.Table(
@@ -208,3 +212,20 @@ class TarjetaSchema(ma.SQLAlchemyAutoSchema):
     fecha_vencimiento = ma.String(required=True)  # Cambiado a String
     marca = ma.Nested(MarcaTarjetaSchema, allow_none=True)
     tipo = ma.Nested(TipoTarjetaSchema, allow_none=True)
+
+class PasswordSchema(ma.Schema):
+    password = ma.String(required=True)
+    password_confirmacion = ma.String(required=True)
+
+    @validates_schema
+    def validate_password_strength(self, data, **kwargs):
+        if not PASSWORD_REGEX.match(data.get('password')):
+            raise ValidationError(
+                "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula y un número.",
+                field_name='password'
+            )
+
+    @validates_schema
+    def validate_passwords_match(self, data, **kwargs):
+        if data.get('password') != data.get('password_confirmacion'):
+            raise ValidationError('Las contraseñas no coinciden.', field_name='password_confirmacion')

@@ -28,3 +28,13 @@ def unauthorized_response(callback):
 def invalid_token_response(error):
     print(f"DEBUG: Token inválido - {error}")
     return {"msg": "Token inválido"}, 422
+
+@jwt.revoked_token_loader
+def revoked_token_callback(jwt_header, jwt_payload):
+    if jwt_payload.get('purpose') == 'RESET_PASSWORD':
+        return {'error': 'USED'}, 401
+    return {'error': 'LOGGED_OUT'}, 401
+
+@jwt.expired_token_loader
+def my_expired_token_callback(jwt_header, jwt_payload):
+    return {'error': 'EXPIRED'}, 401

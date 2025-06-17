@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta
+from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -168,6 +168,11 @@ def update_usuario(user_id, data):
     db.session.commit()
     return usuario
 
+def change_password(usuario, password):
+    usuario.set_password(password)
+    db.session.commit()
+    return usuario
+
 def set_imagen_usuario(user_id, id_imagen):
     usuario = Usuario.query.get(user_id)
     if not usuario:
@@ -253,3 +258,6 @@ def get_schema_empleado():
 
 def get_schema_usuario_resumido():
     return UsuarioResumidoSchema()
+
+def get_schema_password():
+    return PasswordSchema()
