@@ -512,3 +512,27 @@ def delete_imagen_user():
         return {"message": message if message else f"Imagen con ID {id_imagen} eliminada exitosamente"}, 200
     else:
         return {"message": message}, 500
+
+
+@user_blueprint.patch('/cambiarEstado/<int:user_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def cambiar_estado_usuario(user_id):
+    """
+    Cambia el estado de un usuario (activo/inactivo).
+    - Método: PATCH
+    - URL: /usuarios/cambiarEstado/<user_id>
+    - Parámetros:
+        - user_id: ID del usuario a modificar.
+    - Body: JSON con el nuevo estado ('activo' o 'inactivo').
+    - Respuesta: Mensaje de éxito o error.
+    """
+    user = users.get_usuario_by_id(user_id)
+    if not user:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+    
+    try:
+        users.cambiar_estado_usuario(user_id)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    return users.get_schema_usuario().dump(user), 200

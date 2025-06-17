@@ -60,6 +60,8 @@ def get_reservas_propiedad(propiedad_id):
 @reserva_blueprint.post('/')
 @jwt_required()
 def create_reserva():
+    if users.is_usuario_bloqueado(get_jwt_identity()):
+        return {'error': 'Usuario bloqueado'}, 403
     data = request.get_json()
     if "id_inquilino" not in data or data['id_inquilino'] == None:
         data['id_inquilino'] = get_jwt_identity()

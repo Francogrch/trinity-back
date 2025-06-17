@@ -112,6 +112,20 @@ def create_new_usuario(nombre, correo, roles_ids, password, id_tipo_identificaci
     #db.session.add(nuevo)
     #db.session.commit()
     return nuevo
+
+def cambiar_estado_usuario(user_id):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    usuario.is_bloqueado = not usuario.is_bloqueado
+    db.session.commit()
+    return usuario
+
+def is_usuario_bloqueado(user_id):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    return usuario.is_bloqueado
     
 def existe_identificacion(numero_identificacion, id_tipo_identificacion):
     return Usuario.query.filter_by(
