@@ -120,6 +120,20 @@ def cambiar_estado_usuario(user_id):
     usuario.is_bloqueado = not usuario.is_bloqueado
     db.session.commit()
     return usuario
+def get_nombre(user_id):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    return usuario.nombre
+def get_rol(user_id):
+    usuario = Usuario.query.get(user_id)
+    usuario = get_schema_usuario().dump(usuario)
+    if not usuario:
+        return None
+    if not usuario["roles_ids"]:
+        return None
+    print(usuario.keys())
+    return usuario["roles_ids"][0]
 
 def is_usuario_bloqueado(user_id):
     usuario = Usuario.query.get(user_id)
@@ -157,21 +171,23 @@ def update_usuario(user_id, data):
     for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento', 'id_pais']:
         if campo in data:
             setattr(usuario, campo, data[campo])
-    if 'id_tipo_identificacion' in data:
-        from src.models.parametricas.parametricas import TipoIdentificacion
-        usuario.tipo_identificacion = TipoIdentificacion.query.get(data['id_tipo_identificacion'])
-    if 'roles_ids' in data:
-        roles = Rol.query.filter(Rol.id.in_(data['roles_ids'])).all()
-        usuario.roles = roles
-    if 'password' in data and data['password']:
-        usuario.set_password(data['password'])
-    db.session.commit()
+            
     return usuario
 
 def change_password(usuario, password):
     usuario.set_password(password)
     db.session.commit()
     return usuario
+
+def update_tarjeta(user_id, data):
+    from src.models.users.user import Tarjeta
+    tarjeta = Tarjeta.query.filter_by(usuario_id=user_id).first()
+    if not tarjeta:
+        return None
+    for campo in ['numero', 'nombre_titular', 'fecha_vencimiento', 'cvv']:
+        if campo in data['tarjetas'][0]:
+            setattr(tarjeta, campo, data['tarjetas'][0][campo])
+    return tarjeta
 
 def set_imagen_usuario(user_id, id_imagen):
     usuario = Usuario.query.get(user_id)

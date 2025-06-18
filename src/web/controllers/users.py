@@ -194,6 +194,61 @@ def create_usuario():
         print(f"[ERROR] Error al crear usuario: {error_msg}")
         return ({"error": error_msg}, 400)
 
+
+@user_blueprint.patch('/editar/<int:user_id>')
+@jwt_required()
+def editar_usuario(user_id):
+    """
+    Edita los datos de un usuario existente.
+    - Método: PATCH
+    - URL: /usuarios/editar/<user_id>
+    - Parámetros:
+        - user_id: ID del usuario a editar.
+    - Body: JSON con los campos a actualizar.
+    - Respuesta: JSON con el usuario actualizado o error.
+    """
+    from src.models.database import db
+    from datetime import datetime
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'El cuerpo de la petición no puede estar vacío.'}), 
+
+
+    if users.existe_identificacion(
+        id_tipo_identificacion=data.get('tipo_identificacion'),
+        numero_identificacion=data.get('numero_identificacion')):
+        raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
+    data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d').date()
+    usuario = users.update_usuario(user_id, data)  # Actualiza el usuario con los datos proporcionados
+    if not usuario:
+        return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
+        
+    try:
+        db.session.flush()
+    except sqlalchemy.exc.IntegrityError as e: 
+        raise ValueError(f"El correo {data['correo']} ya esta registrado.")
+
+    # actualizacion de tarjeta
+    if data.get('tarjetas'):
+        tarjeta = users.update_tarjeta(user_id,data)  
+        if not tarjeta:
+            raise ValueError(f"La tarjeta con el numero {data['tarjetas'][0]['numero']} no esta cargada.")
+        try:
+            db.session.flush()
+        except sqlalchemy.exc.IntegrityError: 
+            raise ValueError(f"El numero de tarjeta {data['tarjetas'][0]['numero']} ya esta registrado.")
+    
+    # actualizacion de imagenes
+    imagenes = data['id_imagenes']
+    for id_imagen in imagenes:
+        imagen = set_id_usuario(id_imagen,usuario.id)
+        if not imagen:
+            raise ValueError(f"La imagen con ID {id_imagen} no esta cargada.")
+        db.session.add(imagen)
+
+    db.session.commit()
+
+    return users.get_schema_usuario().dump(usuario)
 # Endpoint: Obtener usuario por id (solo admin y empleados)
 @user_blueprint.get('/<int:user_id>')
 @jwt_required()
@@ -467,6 +522,67 @@ def registrar():
         except sqlalchemy.exc.IntegrityError: 
             raise ValueError(f"El numero de tarjeta {data['tarjetas'][0]['numero']} ya esta registrado.")
         
+        # Registro de imagenes
+        imagenes = data['id_imagenes']
+        for id_imagen in imagenes:
+            imagen = set_id_usuario(id_imagen,usuario.id)
+            if not imagen:
+                raise ValueError(f"La imagen con ID {id_imagen} no esta cargada.")
+            db.session.add(imagen)
+ 
+        db.session.commit()
+
+        return users.get_schema_usuario().dump(usuario)
+    
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback() # Realiza rollback en caso de error de integridad (ej: mail duplicado)
+        print(f"Error de integridad: {e}")
+        return jsonify({"error": "Datos duplicados."}), 400
+    
+    except ValueError as e:
+        db.session.rollback() # Realiza rollback en caso de errores de validación de datos
+        print(f"Error de validación de datos: {e}")
+        return jsonify({"error": str(e)}), 400
+    
+    except Exception as e:
+        db.session.rollback() # Realiza rollback para cualquier otro error
+        print(f"Error inesperado durante el registro: {e}")
+        return jsonify({"error": "Error interno del servidor al registrar el usuario."}), 500
+
+
+@user_blueprint.post('/registrarEmpleado')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])
+def registrar_empleado():
+    from src.models.database import db
+    try:
+        data = request.get_json()  
+
+        # Esa validacion se tiene que hacer diferente desde la tabla, con dos campos unicos.
+        if users.existe_identificacion(
+                id_tipo_identificacion=data.get('tipo_identificacion'),
+                numero_identificacion=data.get('numero_identificacion')):
+            raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
+
+        # Registro de usuario
+        usuario = users.create_new_usuario(
+                nombre=data['nombre'],
+                apellido=data.get('apellido'),
+                correo=data['correo'],
+                roles_ids=[2,],
+                password=data.get('password_hash'),
+                id_tipo_identificacion=data.get('tipo_identificacion'),
+                numero_identificacion=data.get('numero_identificacion'),
+                id_pais=data.get('pais'),
+                fecha_nacimiento=data.get('fecha_nacimiento'),
+            )
+        try:
+            db.session.add(usuario)
+            db.session.flush()
+        except sqlalchemy.exc.IntegrityError as e: 
+            print(e)
+            raise ValueError(f"El correo {data['correo']} ya esta registrado.")
+
         # Registro de imagenes
         imagenes = data['id_imagenes']
         for id_imagen in imagenes:

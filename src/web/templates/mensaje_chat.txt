@@ -1,0 +1,18 @@
+¡Tienes un nuevo mensaje en tu reserva de Alquiloando!
+
+Hola,
+
+Queremos informarte que has recibido un nuevo mensaje relacionado con tu reserva en {{ propiedad_nombre }}.
+
+Aquí tienes el mensaje:
+"{{ mensaje }}"
+
+La reserva es para las siguientes fechas:
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+Para ver el mensaje completo y responder, visita el siguiente enlace:
+{{ cta_url }}
+
+Saludos cordiales,
+El equipo de Alquiloando

@@ -2,7 +2,7 @@ from src.models.database import db
 from src.models.marshmallow import ma
 from marshmallow import EXCLUDE, validates_schema, ValidationError
 from datetime import datetime, timedelta
-
+from src.models.chat.logica import create_chat
 
 class Reserva(db.Model):
     __tablename__ = 'reserva'
@@ -16,7 +16,7 @@ class Reserva(db.Model):
     monto_pagado = db.Column(db.Float)
     monto_total = db.Column(db.Float, nullable=False)
     # Falta tabla chat y tabla estado
-    id_chat = db.Column(db.Integer)
+    id_chat = db.Column(db.Integer, db.ForeignKey("chat.id"))
     id_estado = db.Column(db.Integer,db.ForeignKey("estado.id"))
     id_calificacion_propiedad = db.Column(db.Integer,db.ForeignKey("calificacion_propiedad.id"))
     id_calificacion_inquilino = db.Column(db.Integer,db.ForeignKey("calificacion_inquilino.id"))
@@ -49,7 +49,11 @@ class Reserva(db.Model):
         self.fecha_inicio = fecha_inicio
         self.fecha_fin = fecha_fin
         self.monto_pagado = monto_pagado
-        self.id_chat = id_chat
+        if id_chat is None:
+            chat_new = create_chat()
+            self.id_chat = chat_new.id
+        else:
+            self.id_chat = id_chat
         self.id_estado = id_estado
 
     def __repr__(self):

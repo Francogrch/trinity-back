@@ -162,7 +162,7 @@ class PropiedadBaseSchema(ma.Schema):
 class PropiedadSchema(PropiedadBaseSchema):
     numero = ma.Integer(required=True)
     piso = ma.String(required=True)
-    dpto = ma.String(required=True)
+    depto = ma.String(required=True)
     codigoAcceso = ma.String(required=True, validate=validate.Regexp(r'^\d{4}$'))
 
     @validates_schema
