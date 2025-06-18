@@ -58,7 +58,7 @@ def logout():
 def reset_password():
     usuario = users.get_usuario_by_id(get_jwt_identity())
     claims = get_jwt()
-    if not usuario or claims.get('purpose') != 'RESET_PASSWORD':
+    if not usuario:
         return {'error': 'Token incorrecto'}, 422
     data = request.get_json()  # Extrae el JSON enviado en el body de la solicitud
     try:
@@ -79,7 +79,7 @@ def generate_temporary_link():
     usuario = users.get_usuario_by_correo(data['correo'])  # Busca el usuario por su correo
     if not usuario:
         return {}, 200
-    expires = timedelta(minutes=2)
+    expires = timedelta(hours=24)
     additional_claims = {"purpose": "RESET_PASSWORD"}
     access_token = create_access_token(identity=str(usuario.id), expires_delta=expires, additional_claims=additional_claims)
     # Generar datos necesarios para el email
