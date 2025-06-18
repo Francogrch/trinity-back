@@ -173,11 +173,21 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
 
 class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
+        load_instance = True
         unknown = EXCLUDE
+        # Campos que quieres incluir automáticamente de Usuario
+        #include_fields = ("id", "nombre", "correo")
 
     id = ma.Integer(dump_only=True)
     nombre = ma.String(dump_only=True)
+    apellido = ma.String(dump_only=True)
     correo = ma.String(dump_only=True)
+    rol = ma.Method("get_primer_rol", dump_only=True)
+
+    def get_primer_rol(self, obj):
+        if obj.roles:
+            return obj.roles[0].nombre
+        return None
 
 class UsuarioResumidoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

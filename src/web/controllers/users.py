@@ -48,12 +48,12 @@ def get_usuarios():
 
 # Endpoint: Obtener todos los empleados (solo para admin)
 @user_blueprint.get('/empleados')
-@jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo rol Administrador puede acceder
+#@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo rol Administrador puede acceder
 # Devuelve la lista de empleados serializada
 def get_empleados():
     usuarios = users.get_empleados()  # Obtiene todos los usuarios de la base
-    return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
+    return users.get_schema_empleado().dump(usuarios, many=True)  # Serializa y retorna
 
 @user_blueprint.get('/inquilinos')
 @jwt_required()
