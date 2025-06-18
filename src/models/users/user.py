@@ -182,6 +182,11 @@ class EmpleadoSchema(ma.SQLAlchemyAutoSchema):
     nombre = ma.String(dump_only=True)
     apellido = ma.String(dump_only=True)
     correo = ma.String(dump_only=True)
+    tipo_identificacion = ma.Function(
+        lambda obj: obj.tipo_identificacion.nombre if obj.tipo_identificacion else None,
+        dump_only=True
+    )
+    numero_identificacion = ma.String(dump_only=True)
     rol = ma.Method("get_primer_rol", dump_only=True)
 
     def get_primer_rol(self, obj):
