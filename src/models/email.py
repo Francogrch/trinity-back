@@ -153,6 +153,30 @@ def send_reserva_cancelada(data_email, reserva_url, logo_url, from_inquilino):
 
     mail.send(msg)
 
+
+def send_reset_password(logo_url, reset_password_url, user_email):
+    html_body = render_template(
+        'solicitud_reset_password.html',
+        logo_url=logo_url,
+        cta_url=reset_password_url,
+        cta_text="Ver reserva",
+        current_year=2025,
+    )
+
+    text_body = render_template(
+        'solicitud_reset_password.txt',
+        cta_url=reset_password_url,
+        current_year=2025,
+    )
+
+    msg = Message(
+        subject="Recuperación de contraseña",
+        recipients=[user_email],
+        body=text_body,
+        html=html_body
+    )
+    mail.send(msg)
+
 def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
     if rol != 'encargado':
         recipient = data_email['correo_encargado']
@@ -187,5 +211,4 @@ def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
         body=text_body,
         html=html_body
     )
-
     mail.send(msg)

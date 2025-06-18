@@ -1,5 +1,5 @@
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta
+from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -174,6 +174,11 @@ def update_usuario(user_id, data):
             
     return usuario
 
+def change_password(usuario, password):
+    usuario.set_password(password)
+    db.session.commit()
+    return usuario
+
 def update_tarjeta(user_id, data):
     from src.models.users.user import Tarjeta
     tarjeta = Tarjeta.query.filter_by(usuario_id=user_id).first()
@@ -269,3 +274,6 @@ def get_schema_empleado():
 
 def get_schema_usuario_resumido():
     return UsuarioResumidoSchema()
+
+def get_schema_password():
+    return PasswordSchema()
