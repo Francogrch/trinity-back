@@ -193,7 +193,6 @@ def calificar_inquilino(reserva_id):
     except ValidationError as err:
         return err.messages, 422
     except Exception as e:
-        print(e)
         return {'error': 'Error al calificar'}, 400
 
     res.calificar_inquilino(calificacion)

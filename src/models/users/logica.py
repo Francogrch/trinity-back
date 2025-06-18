@@ -30,6 +30,18 @@ def get_inquilinos():
     all()
     return inquilinos
 
+def get_administradores():
+    administradores = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id == EnumRol.ADMINISTRADOR.value).\
+    all()
+    return administradores
+
+def get_correos_administradores():
+    administradores = get_administradores()
+    correos = [admin.correo for admin in administradores]
+    return correos
+
 # no se usa
 def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
@@ -132,7 +144,6 @@ def get_rol(user_id):
         return None
     if not usuario["roles_ids"]:
         return None
-    print(usuario.keys())
     return usuario["roles_ids"][0]
 
 def is_usuario_bloqueado(user_id):

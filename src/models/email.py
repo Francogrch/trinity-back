@@ -178,11 +178,12 @@ def send_reset_password(logo_url, reset_password_url, user_email):
     mail.send(msg)
 
 def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
-    if rol != 'encargado':
-        recipient = data_email['correo_encargado']
+    if rol == 3:
+        from src.models.users.logica import get_correos_administradores
+        recipients = [data_email['correo_encargado']]
+        recipients.extend(get_correos_administradores())
     else:
-        recipient = data_email['correo_inquilino']
-    print(f"{data_email['correo_encargado']=}, {data_email['correo_inquilino']=}, {reserva_url=}, {logo_url=}, {message=}, {rol=}")
+        recipients = [data_email['correo_inquilino']]
     html_body = render_template(
         'mensaje_chat.html',
         reserva_id=data_email['id'],
@@ -207,7 +208,7 @@ def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
     )
     msg = Message(
         subject="Nuevo mensaje en tu reserva",
-        recipients=[recipient],
+        recipients=recipients,
         body=text_body,
         html=html_body
     )
