@@ -13,6 +13,7 @@ def get_empleados():
     empleados = db.session.query(Usuario).\
     join(Usuario.roles).\
     filter(Rol.id != EnumRol.INQUILINO.value).\
+    filter(Usuario.delete_at == None).\
     all()
     return empleados
 
@@ -20,6 +21,7 @@ def get_encargados():
     empleados = db.session.query(Usuario).\
     join(Usuario.roles).\
     filter(Rol.id == EnumRol.EMPLEADO.value).\
+    filter(Usuario.delete_at == None).\
     all()
     return empleados
 
@@ -34,6 +36,7 @@ def get_administradores():
     administradores = db.session.query(Usuario).\
     join(Usuario.roles).\
     filter(Rol.id == EnumRol.ADMINISTRADOR.value).\
+    filter(Usuario.delete_at == None).\
     all()
     return administradores
 
@@ -171,12 +174,15 @@ def delete_usuario_by_id(user_id):
     usuario = Usuario.query.get(user_id)
     if not usuario:
         return None
-    db.session.delete(usuario)
+    usuario.delete_at = date.today()
+    #db.session.delete(usuario)
     db.session.commit()
     return usuario
 
 def update_usuario(user_id, data):
     usuario = Usuario.query.get(user_id)
+    if usuario.delete_at:
+        raise ValueError("No se puede actualizar un usuario eliminado")
     # Conversión robusta de fecha_nacimiento a date si es string
     if data['fecha_nacimiento'] and isinstance(data['fecha_nacimiento'], str):
         try:

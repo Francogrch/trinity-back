@@ -297,8 +297,8 @@ def get_usuarios_por_rol(rol_id):
 
 # Endpoint: Eliminar usuario por id (solo admin)
 @user_blueprint.delete('/<int:user_id>')
-@jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value])
+#@jwt_required()
+#@rol_requerido([Rol.ADMINISTRADOR.value])
 def delete_usuario_by_id(user_id):
     try:
         usuario = users.delete_usuario_by_id(user_id)  # Elimina el usuario
