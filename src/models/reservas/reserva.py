@@ -69,7 +69,7 @@ class Reserva(db.Model):
 
     def is_calificable(self):
         hoy = datetime.today()
-        dos_semanas_despues = self.fecha_fin + timedelta(weeks=2)
+        dos_semanas_despues = self.fecha_fin + timedelta(days=15)
         if self.id_estado == 4 and self.fecha_fin <= hoy <= dos_semanas_despues:
             return True
         return False
