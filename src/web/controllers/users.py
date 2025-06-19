@@ -299,11 +299,11 @@ def delete_usuario_by_id(user_id):
 # Endpoint: Actualizar usuario por id (solo admin y empleados)
 @user_blueprint.put('/<int:user_id>')
 @jwt_required()
-@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+#@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def update_usuario(user_id):
     data = request.get_json()  # Obtiene los datos a actualizar
     try:
-        usuario = users.update_usuario(user_id, data)  # Actualiza el usuario
+        usuario = users.update_me(user_id, data)  # Actualiza el usuario
         if not usuario:
             return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
         return users.get_schema_usuario().dumps(usuario)  # Retorna usuario actualizado

@@ -177,12 +177,34 @@ def delete_usuario_by_id(user_id):
 
 def update_usuario(user_id, data):
     usuario = Usuario.query.get(user_id)
+    # Conversión robusta de fecha_nacimiento a date si es string
+    if data['fecha_nacimiento'] and isinstance(data['fecha_nacimiento'], str):
+        try:
+            data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], "%Y-%m-%d").date()
+        except ValueError:
+            raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
     if not usuario:
         return None
     for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento', 'id_pais']:
         if campo in data:
             setattr(usuario, campo, data[campo])
             
+    return usuario
+
+def update_me(user_id, data):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    # Conversión robusta de fecha_nacimiento a date si es string
+    if data['fecha_nacimiento'] and isinstance(data['fecha_nacimiento'], str):
+        try:
+            data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], "%Y-%m-%d").date()
+        except ValueError:
+            raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
+    for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento', 'id_pais']:
+        if campo in data:
+            setattr(usuario, campo, data[campo])
+    db.session.commit()
     return usuario
 
 def change_password(usuario, password):

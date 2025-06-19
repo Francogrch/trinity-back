@@ -148,7 +148,7 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
         exclude = ["imagen"]
-
+    id = ma.Integer(dump_only=True)
     # IDs explícitos para facilitar consumo en frontend
     id_pais = ma.Integer(attribute="id_pais")
     id_tipo_identificacion = ma.Integer(attribute="id_tipo_identificacion")
