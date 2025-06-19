@@ -179,6 +179,21 @@ def delete_usuario_by_id(user_id):
     db.session.commit()
     return usuario
 
+def cambiar_id_encargado(user_id,new_id_encargado):
+    from src.models.propiedades.logica import get_propiedades_usuario
+    propiedades = get_propiedades_usuario(get_usuario_by_id(user_id))
+    
+    if propiedades:
+        for propiedad in propiedades:
+            propiedad.id_encargado = new_id_encargado
+        try:
+            
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+   
+
 def update_usuario(user_id, data):
     usuario = Usuario.query.get(user_id)
     if usuario.delete_at:

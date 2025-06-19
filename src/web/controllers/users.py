@@ -297,16 +297,19 @@ def get_usuarios_por_rol(rol_id):
 
 # Endpoint: Eliminar usuario por id (solo admin)
 @user_blueprint.delete('/<int:user_id>')
-#@jwt_required()
-#@rol_requerido([Rol.ADMINISTRADOR.value])
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])
 def delete_usuario_by_id(user_id):
     try:
-        usuario = users.delete_usuario_by_id(user_id)  # Elimina el usuario
+        usuario = users.delete_usuario_by_id(user_id)
+        if usuario.get_roles()['is_encargado']:
+            users.cambiar_id_encargado(user_id, int(get_jwt_identity()))
+        # cambiar correo y datos indentificatorios ??
         if not usuario:
-            return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
-        return jsonify({'mensaje': 'Usuario eliminado correctamente'})  # Éxito
+            return jsonify({'mensaje': 'Usuario no encontrado'}), 404  
+        return jsonify({'mensaje': 'Usuario eliminado correctamente'}) 
     except Exception as e:
-        return jsonify({'error': str(e)}), 400  # Otro error
+        return jsonify({'error': str(e)}), 400 
 
 # Endpoint: Actualizar usuario por id (solo admin y empleados)
 @user_blueprint.put('/<int:user_id>')
