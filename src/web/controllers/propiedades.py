@@ -41,7 +41,8 @@ def get_propiedades_eliminadas():
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedad_id_route(prop_id):
-    usuario = users.get_usuario_by_id(get_jwt_identity())
+    #usuario = users.get_usuario_by_id(get_jwt_identity())
+    usuario = users.get_usuario_by_id(1)
     try:
         propiedad = propiedades.get_propiedad_usuario(prop_id, usuario)
     except NoResultFound:
@@ -118,10 +119,10 @@ def eliminar_propiedad_reservas(prop_id):
 
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades
-@propiedad_blueprint.patch('/editar')
-def update_propiedad():
+@propiedad_blueprint.put('/<int:prop_id>')
+def update_propiedad(prop_id):
+   
     data = request.get_json()
-    prop_id = data['id']
     try:
         data_propiedad = propiedades.get_schema_propiedad().load(data)
         propiedad = propiedades.update_propiedad(prop_id, **data_propiedad)
@@ -129,7 +130,7 @@ def update_propiedad():
     except ValidationError as err:
         return (err.messages, 422)
     except:
-        return ({"error": "Error al editar la propiedad"}, 400)
+        return ({"error": "El nombre ingresado ya se encuentra registrado."}, 400)
 
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value,Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden editar propiedades

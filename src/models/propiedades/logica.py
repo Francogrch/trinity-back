@@ -285,7 +285,7 @@ def toggle_estado(prop_id):
 def update_propiedad(
     prop_id, nombre, descripcion, entre_calles, calle, numero,
     huespedes, ambientes, banios, cocheras,
-    precioNoche, codigoAcceso, is_habilitada,
+    precioNoche, codigoAcceso,
     id_pol_reserva, id_tipo, id_ciudad, id_encargado,
     requiere_documentacion, piso=None, depto=None
 ):
@@ -305,7 +305,7 @@ def update_propiedad(
         propiedad.cocheras=cocheras
         propiedad.precioNoche=precioNoche
         propiedad.codigoAcceso=codigoAcceso
-        propiedad.is_habilitada=is_habilitada
+        #propiedad.is_habilitada=is_habilitada
         propiedad.id_pol_reserva=id_pol_reserva
         propiedad.id_tipo=id_tipo
         propiedad.id_ciudad=id_ciudad

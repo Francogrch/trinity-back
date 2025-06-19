@@ -121,7 +121,7 @@ class PropiedadBaseSchema(ma.Schema):
     banios = ma.Integer(required=True)
     cocheras = ma.Integer(required=True)
     precioNoche = ma.Float(required=True)
-    is_habilitada = ma.Boolean(required=True)
+    is_habilitada = ma.Boolean(required=False)
     id_pol_reserva = ma.Integer(required=True)
     id_tipo = ma.Integer(required=True)
     id_ciudad = ma.Integer(required=True)

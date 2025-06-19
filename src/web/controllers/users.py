@@ -569,7 +569,7 @@ def registrar_empleado():
                 nombre=data['nombre'],
                 apellido=data.get('apellido'),
                 correo=data['correo'],
-                roles_ids=[data['rol_id']],
+                roles_ids=[data['roles']],
                 password=data.get('password_hash'),
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion'),
@@ -582,14 +582,6 @@ def registrar_empleado():
         except sqlalchemy.exc.IntegrityError as e: 
             print(e)
             raise ValueError(f"El correo {data['correo']} ya esta registrado.")
-
-        # Registro de imagenes
-        imagenes = data['id_imagenes']
-        for id_imagen in imagenes:
-            imagen = set_id_usuario(id_imagen,usuario.id)
-            if not imagen:
-                raise ValueError(f"La imagen con ID {id_imagen} no esta cargada.")
-            db.session.add(imagen)
  
         db.session.commit()
 
