@@ -569,7 +569,7 @@ def registrar_empleado():
                 nombre=data['nombre'],
                 apellido=data.get('apellido'),
                 correo=data['correo'],
-                roles_ids=[2,],
+                roles_ids=[data['rol_id']],
                 password=data.get('password_hash'),
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion'),
