@@ -250,6 +250,8 @@ def editar_usuario(user_id):
 
     return users.get_schema_usuario().dump(usuario)
 # Endpoint: Obtener usuario por id (solo admin y empleados)
+# Deprecated. Chequear si alguien lo usa, sino borrar
+# Usar get_usuario_reducido_by_id
 @user_blueprint.get('/<int:user_id>')
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
@@ -261,6 +263,16 @@ def get_usuario_by_id(user_id):
     data = usuario_schema.dump(usuario)  # Serializa el usuario
     data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
     return data  # Retorna usuario serializado with permisos
+
+# Reemplaza a get_usuario_by_id
+@user_blueprint.get('/<int:user_id>/reducido')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value, Rol.INQUILINO.value])
+def get_usuario_reducido_by_id(user_id):
+    usuario = users.get_usuario_by_id(user_id)  # Busca el usuario por id
+    if not usuario:
+        return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
+    return users.get_schema_usuario_resumido().dump(usuario)
 
 # Endpoint: Obtener el usuario autenticado (perfil propio)
 @user_blueprint.get('/me')
