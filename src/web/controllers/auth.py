@@ -35,7 +35,7 @@ def login():
             additional_claims=additional_claims,
             expires_delta=timedelta(hours=2)  # Token válido por 2 horas
         )
-        return jsonify({'token': access_token})  # Devuelve el token al cliente
+        return jsonify({'token': access_token, 'rol': usuario.roles[0].id})  # Devuelve el token al cliente
 
     # Si el usuario no existe o la contraseña es incorrecta, devuelve error 401
     return jsonify({'mensaje': 'Credenciales inválidas'}), 401
