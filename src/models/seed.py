@@ -250,47 +250,26 @@ def run():
     db.session.commit()
 
     # Tarjetas de ejemplo solo para usuarios inquilinos
-    tarjeta1 = Tarjeta(
-        numero="4111111111111111",
-        nombre_titular="Juan Pérez",
-        fecha_inicio="01/2022",
-        fecha_vencimiento="01/2026",
-        cvv="123",
-        usuario_id=user1.id,
-        id_marca=visa.id,
-        id_tipo=credito.id
-    )
-    tarjeta2 = Tarjeta(
-        numero="5500000000000004",
-        nombre_titular="Juan Pérez",
-        fecha_inicio="05/2023",
-        fecha_vencimiento="05/2027",
-        cvv="456",
-        usuario_id=user1.id,
-        id_marca=mastercard.id,
-        id_tipo=debito.id
-    )
+    
     tarjeta3 = Tarjeta(
         numero="4000000000000002",
         nombre_titular="Raul Gómez",
-        fecha_inicio="06/2021",
-        fecha_vencimiento="06/2025",
+        fecha_vencimiento="06/25",
         cvv="789",
         usuario_id=user2.id,
         id_marca=visa.id,
         id_tipo=debito.id
     )
     tarjeta4 = Tarjeta(
-        numero="340000000000009",
+        numero="3400000000000019",
         nombre_titular="Roberto López",
-        fecha_inicio="09/2022",
-        fecha_vencimiento="09/2026",
+        fecha_vencimiento="09/26",
         cvv="321",
         usuario_id=user3.id,
         id_marca=amex.id,
         id_tipo=credito.id
     )
-    db.session.add_all([tarjeta1, tarjeta2, tarjeta3, tarjeta4])
+    db.session.add_all([ tarjeta3, tarjeta4])
     db.session.commit()
     print("Tarjetas de ejemplo creadas y asociadas a usuarios inquilinos")
 
@@ -298,8 +277,7 @@ def run():
     tarjeta5 = Tarjeta(
         numero="6011000000000004",
         nombre_titular="Lucía García",
-        fecha_inicio="02/2023",
-        fecha_vencimiento="02/2025",
+        fecha_vencimiento="02/25",
         cvv="654",
         usuario_id=user6.id,
         id_marca=visa.id,
@@ -308,8 +286,7 @@ def run():
     tarjeta6 = Tarjeta(
         numero="3530111333300000",
         nombre_titular="Martín Suárez",
-        fecha_inicio="01/2024",
-        fecha_vencimiento="01/2028",
+        fecha_vencimiento="01/28",
         cvv="852",
         usuario_id=user7.id,
         id_marca=mastercard.id,
@@ -320,7 +297,7 @@ def run():
     print("Tarjetas de ejemplo creadas y asociadas a nuevos usuarios inquilinos")
 
     # Relacionar tarjetas solo con usuarios que sean inquilinos
-    user1.tarjetas.extend([tarjeta1, tarjeta2])
+    #user1.tarjetas.extend([tarjeta1, tarjeta2])
     user2.tarjetas.append(tarjeta3)
     user3.tarjetas.append(tarjeta4)
     user6.tarjetas.append(tarjeta5)

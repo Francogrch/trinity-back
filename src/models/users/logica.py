@@ -1,3 +1,4 @@
+from src.models.imagenes.logica import set_id_usuario
 from src.models.database import db
 from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
 from src.models.parametricas.parametricas import TipoIdentificacion
@@ -225,6 +226,21 @@ def update_me(user_id, data):
     for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento', 'id_pais']:
         if campo in data:
             setattr(usuario, campo, data[campo])
+
+    if (usuario.get_roles()["is_inquilino"] and data['tarjetas'][0] and data['id_imagenes'][0]):
+        if data['tarjetas'][0]:
+            update_tarjeta(usuario.id, data)
+        if data['id_imagenes'][0]:
+            set_id_usuario(data['id_imagenes'][0],usuario.id)
+            set_id_usuario(data['id_imagenes'][1],usuario.id)
+    db.session.commit()
+    return usuario
+
+def update_imagen(user_id, id_imagen):
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    usuario.imagenes_doc = id_imagen
     db.session.commit()
     return usuario
 
