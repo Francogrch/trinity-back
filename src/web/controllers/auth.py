@@ -79,7 +79,8 @@ def reset_password():
     except Exception as e:
         print(e)
         return ({"error": "No se pudo editar la contraseña."}, 400)
-    BLOCKLIST.add(claims['jti'])  # Agrega el jti a la lista negra en memoria
+    if claims.get('purpose') == "RESET_PASSWORD":
+        BLOCKLIST.add(claims['jti'])  # Agrega el jti a la lista negra en memoria si el jwt no es de sesion
     return {}, 200  # Confirma que el logout fue exitoso
 
 
