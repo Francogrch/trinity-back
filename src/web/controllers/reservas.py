@@ -220,8 +220,10 @@ def get_chat_reserva(reserva_id):
 def send_message(reserva_id):
     try:
         data = request.get_json()
-        if "mensaje" not in data or not data["mensaje"]:
+        if "mensaje" not in data or not data["mensaje"] or data["mensaje"].strip() == "":
             return {'error': 'El mensaje no puede estar vacío'}, 400
+        if len(data["mensaje"]) > 256:
+            return {'error': 'El mensaje no puede exceder los 256 caracteres'}, 400
         usuario_id = get_jwt_identity()
         #usuario_id = 6
         chat_id = reservas.get_chat_id_reserva(reserva_id)

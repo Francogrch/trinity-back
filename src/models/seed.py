@@ -680,7 +680,15 @@ def run():
         "fecha_inicio": datetime(2024, 12, 10),
         "fecha_fin": datetime(2024, 12, 14)
     })
-    
+    chat2 = chat.create_chat()
+    msn3 = chat.create_mensaje(
+        chat_id= chat2.id,
+        id_user= prop2.id_encargado,
+        texto= "Hola, ¿cómo puedo ayudarte con la reserva del departamento céntrico?")
+    msn4 = chat.create_mensaje(
+        chat_id= chat2.id,
+        id_user= user3.id,
+        texto= "Hola, estoy interesado en reservar el departamento céntrico para el próximo fin de semana.")    
 
 
     reserva2 = reservas.create_reserva({
@@ -690,7 +698,7 @@ def run():
         "cantidad_personas": 2,
         "monto_pagado": 75.0,
         "monto_total": 150.0,
-        "id_chat": None,
+        "id_chat": chat2.id,
         "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 11, 1),
         "fecha_fin": datetime(2025, 11, 3)

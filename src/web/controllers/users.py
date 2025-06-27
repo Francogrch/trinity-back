@@ -324,6 +324,8 @@ def update_usuario(user_id):
         return users.get_schema_usuario().dumps(usuario)  # Retorna usuario actualizado
     except ValidationError as err:
         return (err.messages, 422)  # Error de validación
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400  # Error de validación de datos
     except Exception as e:
         return jsonify({'error': str(e)}), 400  # Otro error
 

@@ -1,3 +1,4 @@
+import sqlalchemy
 from src.models.imagenes.logica import set_id_usuario
 from src.models.database import db
 from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
@@ -217,24 +218,34 @@ def update_me(user_id, data):
     usuario = Usuario.query.get(user_id)
     if not usuario:
         return None
+    if data['correo'] != usuario.correo and correo_exists(data['correo']):
+        raise ValueError("El correo ya está en uso")
     # Conversión robusta de fecha_nacimiento a date si es string
     if data['fecha_nacimiento'] and isinstance(data['fecha_nacimiento'], str):
         try:
             data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], "%Y-%m-%d").date()
         except ValueError:
             raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
-    for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento', 'id_pais']:
+    for campo in ['nombre', 'correo', 'id_tipo_identificacion', 'numero_identificacion', 'apellido', 'fecha_nacimiento']:
         if campo in data:
             setattr(usuario, campo, data[campo])
-
+    usuario.id_pais = data['pais']
+    usuario.id_tipo_identificacion = data['tipo_identificacion']
     if (usuario.get_roles()["is_inquilino"] and data['tarjetas'][0] and data['id_imagenes'][0]):
         if data['tarjetas'][0]:
             update_tarjeta(usuario.id, data)
         if data['id_imagenes'][0]:
             set_id_usuario(data['id_imagenes'][0],usuario.id)
             set_id_usuario(data['id_imagenes'][1],usuario.id)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
     return usuario
+
+def correo_exists(correo):
+    return Usuario.query.filter_by(correo=correo).first() is not None
 
 def update_imagen(user_id, id_imagen):
     usuario = Usuario.query.get(user_id)
