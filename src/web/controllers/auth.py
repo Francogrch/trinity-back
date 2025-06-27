@@ -53,6 +53,16 @@ def logout():
     return jsonify(msg="Sesión cerrada correctamente"), 200  # Confirma que el logout fue exitoso
 
 
+@auth_blueprint.post('/check-password')
+@jwt_required()
+def check_password():
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    password = request.get_json().get('password')
+    if usuario and password and usuario.check_password(password):  # Si el usuario existe y la contraseña es correcta
+        return {}, 200
+    return {'error': 'Contraseña incorrecta'}, 401
+
+
 @auth_blueprint.post('/forgot-password/reset')
 @jwt_required()
 def reset_password():
