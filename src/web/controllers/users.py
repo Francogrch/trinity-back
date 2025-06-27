@@ -496,10 +496,11 @@ def get_imagen_doc(imagen_id):
 
 #Acomodar los commits
 @user_blueprint.post('/registrar')
-def registrar():
+def registrar(data=None):
     from src.models.database import db
     try:
-        data = request.get_json()  
+        if not data:
+            data = request.get_json()  
 
         # Esa validacion se tiene que hacer diferente desde la tabla, con dos campos unicos.
         if users.existe_identificacion(
@@ -566,6 +567,16 @@ def registrar():
         print(f"Error inesperado durante el registro: {e}")
         return jsonify({"error": "Error interno del servidor al registrar el usuario."}), 500
 
+@user_blueprint.post('/registrarInquilino')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def registrar_inquilino():
+    data = request.get_json()
+    data['password_hash'] = "".random(10)
+    response = registrar(data)
+    # Mail con contrasenia
+
+    return response 
 
 @user_blueprint.post('/registrarEmpleado')
 @jwt_required()
