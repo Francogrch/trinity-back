@@ -159,7 +159,7 @@ def send_reset_password(logo_url, reset_password_url, user_email):
         'solicitud_reset_password.html',
         logo_url=logo_url,
         cta_url=reset_password_url,
-        cta_text="Ver reserva",
+        cta_text="Recuperar contraseña",
         current_year=2025,
     )
 
@@ -171,6 +171,30 @@ def send_reset_password(logo_url, reset_password_url, user_email):
 
     msg = Message(
         subject="Recuperación de contraseña",
+        recipients=[user_email],
+        body=text_body,
+        html=html_body
+    )
+    mail.send(msg)
+
+
+def send_definir_password(logo_url, reset_password_url, user_email):
+    html_body = render_template(
+        'definir_password.html',
+        logo_url=logo_url,
+        cta_url=reset_password_url,
+        cta_text="Definir contraseña",
+        current_year=2025,
+    )
+
+    text_body = render_template(
+        'definir_password.txt',
+        cta_url=reset_password_url,
+        current_year=2025,
+    )
+
+    msg = Message(
+        subject="Definir contraseña",
         recipients=[user_email],
         body=text_body,
         html=html_body

@@ -1,6 +1,8 @@
 from logging import exception
 import os
-from flask import Blueprint, current_app, request, jsonify, send_from_directory
+import random
+import string
+from flask import Blueprint, current_app, request, jsonify, send_from_directory, url_for
 from marshmallow import ValidationError
 
 #Usa get_jwt_identity() si solo necesitas el identificador principal del usuario autenticado.
@@ -12,6 +14,8 @@ from src.models.imagenes import get_filename, upload_image, delete_image, upload
 from src.web.authorization.roles import rol_requerido
 from src.models.users.logica import create_tarjeta, get_permisos_usuario, get_roles_by_ids
 from src.models import users
+from src.models import auth
+from src.models import email
 from src.enums.roles import Rol
 
 # Crea un blueprint para las rutas relacionadas a usuarios, con prefijo /usuarios
@@ -572,9 +576,16 @@ def registrar(data=None):
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
 def registrar_inquilino():
     data = request.get_json()
-    data['password_hash'] = "".random(10)
+    data['password_hash'] = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     response = registrar(data)
-    # Mail con contrasenia
+
+    # Generar datos necesarios para el email
+    usuario = users.get_usuario_by_id(response.get('id'))  # Busca el usuario por id
+    access_token = auth.definir_password(usuario)
+    reset_password_url = f"http://localhost:4200/usuarios/reset-password?token={access_token}"
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+    email.run_async_with_context(email.send_definir_password, logo_url, reset_password_url, usuario.correo)
 
     return response 
 
@@ -598,7 +609,7 @@ def registrar_empleado():
                 apellido=data.get('apellido'),
                 correo=data['correo'],
                 roles_ids=[data['roles']],
-                password=data.get('password_hash'),
+                password=''.join(random.choices(string.ascii_letters + string.digits, k=10)),
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion'),
                 id_pais=data.get('pais'),
@@ -612,6 +623,12 @@ def registrar_empleado():
             raise ValueError(f"El correo {data['correo']} ya esta registrado.")
  
         db.session.commit()
+
+        access_token = auth.definir_password(usuario)
+        reset_password_url = f"http://localhost:4200/usuarios/reset-password?token={access_token}"
+        logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+        # Enviar correos en segundo plano sin bloquear la respuesta HTTP
+        email.run_async_with_context(email.send_definir_password, logo_url, reset_password_url, usuario.correo)
 
         return users.get_schema_usuario().dump(usuario)
     
