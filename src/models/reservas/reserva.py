@@ -32,7 +32,7 @@ class Reserva(db.Model):
         "Propiedad", backref="reservas", foreign_keys=[id_propiedad])
     inquilino = db.relationship("Usuario", foreign_keys=[id_inquilino])
     usuario_carga = db.relationship("Usuario", foreign_keys=[id_usuario_carga])
-
+    documentacion = db.relationship('Imagen', back_populates='reserva', lazy=True, foreign_keys='[Imagen.id_reserva]')
     estado = db.relationship("Estado", foreign_keys=[id_estado])
 
     calificacion_propiedad = db.relationship("CalificacionPropiedad")
@@ -94,7 +94,12 @@ class ReservaSchema(ma.Schema):
     updated_at = ma.DateTime(dump_only=True)
 
     estado = ma.Function(lambda obj: obj.estado.label)
+    id_doc = ma.Method("get_image_ids", dump_only=True)
 
+    def get_image_ids(self, obj):
+        if obj.imagenes_doc:
+            return [img.id for img in obj.imagenes_doc]
+        return []
     @validates_schema
     def validar_fechas(self, data, **kwargs):
         if data['fecha_inicio'] >= data['fecha_fin']:

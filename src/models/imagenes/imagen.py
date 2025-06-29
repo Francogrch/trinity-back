@@ -10,11 +10,12 @@ class Imagen(db.Model):
 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)
     id_propiedad = db.Column(db.Integer, db.ForeignKey('propiedad.id'), nullable=True)
-
+    id_reserva = db.Column(db.Integer, db.ForeignKey('reserva.id'), nullable=True)
     usuario = db.relationship('Usuario', foreign_keys=[id_usuario], back_populates='imagen') # O el nombre que uses
     propiedad = db.relationship('Propiedad', foreign_keys=[id_propiedad], back_populates='imagenes')
-
-    def __init__(self, url=None,id_usuario=None, id_propiedad=None):
+    reserva = db.relationship('Reserva', foreign_keys=[id_reserva], back_populates='documentacion')
+    def __init__(self, url=None,id_usuario=None, id_propiedad=None,id_reserva=None):
+        self.id_reserva = id_reserva
         self.id_usuario = id_usuario
         self.id_propiedad = id_propiedad
         self.url = url

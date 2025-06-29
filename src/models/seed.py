@@ -1027,5 +1027,21 @@ def run():
         url="/imagenes/usuario/21.png",
         id_usuario=user7.id,
     )
+    img22 = imagenes.create_imagen(
+        url="/imagenes/documentacion/22.jpeg",
+        id_reserva=reserva1.id,
+    )
+    img23 = imagenes.create_imagen(
+        url="/imagenes/documentacion/23.png",
+        id_reserva=reserva1.id,
+    )
+    img24 = imagenes.create_imagen(
+        url="/imagenes/documentacion/24.png",
+        id_reserva=reserva2.id,
+    )
+    img25 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva2.id,
+    )
 
 

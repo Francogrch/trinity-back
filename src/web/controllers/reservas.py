@@ -1,8 +1,10 @@
+import os
 from threading import Thread
-from flask import request, Blueprint, current_app, url_for
+from flask import jsonify, request, Blueprint, current_app, send_from_directory, url_for
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required, get_jwt_identity  # Importa funciones para manejo de JWT (autenticación y claims)
 from sqlalchemy.orm.exc import NoResultFound
+from src.models.imagenes.logica import delete_image, get_filename, upload_image
 from src.models import reservas
 from src.models import propiedades
 from src.models import users
@@ -247,3 +249,35 @@ def send_message(reserva_id):
     except Exception as e:
         current_app.logger.error(f"Error al enviar el mensaje: {e}")
         return {'error': 'Error al enviar el mensaje'}, 500
+    
+@reserva_blueprint.post('/documentacion/<int:reserva_id>')
+@jwt_required()
+def subir_documentacion(reserva_id):
+    image = upload_image('documentacion',request,id_reserva=reserva_id)
+    return image
+
+@reserva_blueprint.delete('/documentacion/<int:imagen_id>')
+@jwt_required()
+def eliminar_documentacion(imagen_id):
+    try:
+        success, message = delete_image(imagen_id, tipo_imagen='documentacion')
+        if success:
+            return jsonify({"message": message if message else f"Imagen con ID {imagen_id} eliminada exitosamente"}), 200
+        else:
+            return jsonify({"error": message if message else f"No se pudo eliminar la imagen con ID {imagen_id}"}), 500
+    except Exception as e:
+        print(f"[ERROR] Excepción al eliminar imagen: {e}")
+        return jsonify({"error": f"Error al eliminar la imagen: {str(e)}"}), 500
+    
+@reserva_blueprint.get('/documentacion/<int:reserva_id>')
+@jwt_required()
+def get_documentacion_reserva(reserva_id):
+    base_upload_directory = os.path.abspath(
+        os.path.join(current_app.root_path, "..", "..", "imagenes", "documentacion")
+    )
+    filename = get_filename(str(reserva_id))
+    return send_from_directory(
+        directory=base_upload_directory,
+        path=filename,
+        as_attachment=False
+    )

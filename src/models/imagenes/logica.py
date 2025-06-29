@@ -18,8 +18,8 @@ def get_imagenes():
 def get_imagen_id(id):
     return Imagen.query.get(id)
 
-def create_imagen(url=None,id_usuario=None, id_propiedad=None):
-    imagen = Imagen(url=url,id_usuario=id_usuario, id_propiedad=id_propiedad)
+def create_imagen(url=None,id_usuario=None, id_propiedad=None,id_reserva=None):
+    imagen = Imagen(url=url,id_usuario=id_usuario, id_propiedad=id_propiedad,id_reserva=id_reserva)
     db.session.add(imagen)
     db.session.commit()
     return imagen
@@ -53,7 +53,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def upload_image(tipo_imagen,request,id_usuario=None, id_propiedad=None):
+def upload_image(tipo_imagen,request,id_usuario=None, id_propiedad=None,id_reserva=None):
     upload_folder = current_app.config.get('UPLOAD_FOLDER', f"imagenes/{tipo_imagen}")
 
     if 'image' not in request.files:
@@ -68,6 +68,8 @@ def upload_image(tipo_imagen,request,id_usuario=None, id_propiedad=None):
             imagen = create_imagen(id_usuario=id_usuario)
         if id_propiedad:
             imagen = create_imagen(id_propiedad=id_propiedad)
+        if id_reserva:
+            imagen = create_imagen(id_reserva=id_reserva)
 
         print(f"Imagen creada: {imagen.id}")
 

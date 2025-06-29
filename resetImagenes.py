@@ -60,6 +60,10 @@ def run():
     
     copiar_y_limpiar_directorio(carpeta_origen, carpeta_destino)
 
+    carpeta_origen = "backup/imagenes/documentacion"
+    carpeta_destino = "imagenes/documentacion"
+    copiar_y_limpiar_directorio(carpeta_origen, carpeta_destino)
+
 if __name__ == "__main__":
     carpeta_origen = "backup/imagenes/propiedad"
     carpeta_destino = "imagenes/propiedad"

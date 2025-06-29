@@ -21,14 +21,16 @@ def initialize_upload_folders(app: Flask):
     app.config['UPLOAD_BASE_FOLDER'] = 'imagenes'
     app.config['UPLOAD_FOLDER_PROPIEDADES'] = os.path.join(app.config['UPLOAD_BASE_FOLDER'], 'propiedad')
     app.config['UPLOAD_FOLDER_USUARIOS'] = os.path.join(app.config['UPLOAD_BASE_FOLDER'], 'usuario')
+    app.config['UPLOAD_FOLDER_DOCUMENTACION'] = os.path.join(app.config['UPLOAD_BASE_FOLDER'], 'documentacion')
 
     app_root_path = os.path.abspath(os.path.dirname(__file__))
 
     propiedades_upload_path = os.path.join(app_root_path, app.config['UPLOAD_FOLDER_PROPIEDADES'])
     usuarios_upload_path = os.path.join(app_root_path, app.config['UPLOAD_FOLDER_USUARIOS'])
-
+    documentacion_upload_path = os.path.join(app_root_path, app.config['UPLOAD_FOLDER_DOCUMENTACION'])
     os.makedirs(propiedades_upload_path, exist_ok=True)
     os.makedirs(usuarios_upload_path, exist_ok=True)
+    os.makedirs(documentacion_upload_path, exist_ok=True)
 
 
 def create_app():
