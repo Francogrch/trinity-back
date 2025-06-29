@@ -297,9 +297,11 @@ def get_usuario_actual():
 def check_user_exists(correo):
     empleado = users.empleado_exists(correo)  # Busca usuarios por rol
     if not empleado:
+        if users.correo_exists(correo):
+            return {'error': 'INQUILINO_ACTIVO'}, 422
         return {}, 200
     if empleado.delete_at == None:
-        return {'error': 'ACTIVE'}, 422
+        return {'error': 'EMPLEADO_ACTIVO'}, 422
     return users.get_schema_empleado().dump(empleado), 400
 
 # Endpoint: Obtener usuarios por rol (solo admin y empleados)
