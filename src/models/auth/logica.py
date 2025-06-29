@@ -6,7 +6,8 @@ def login(usuario):
     additional_claims = {
         'id': usuario.id,
         'tipo_identificacion': usuario.tipo_identificacion.nombre if usuario.tipo_identificacion else None,
-        'numero_identificacion': usuario.numero_identificacion
+        'numero_identificacion': usuario.numero_identificacion,
+        'purpose': 'LOGIN'
     }
     # Crea un token JWT con identidad del usuario y claims personalizados
     return create_access_token(
@@ -17,3 +18,13 @@ def login(usuario):
 
 def block_token(jti):
     BLOCKLIST.add(jti)  # Agrega el jti a la lista negra en memoria
+
+def definir_password(usuario):
+    expires = timedelta(hours=24)
+    additional_claims = {"purpose": "SET_PASSWORD"}
+    return create_access_token(identity=str(usuario.id), expires_delta=expires, additional_claims=additional_claims)
+
+def reset_password(usuario):
+    expires = timedelta(hours=24)
+    additional_claims = {"purpose": "RESET_PASSWORD"}
+    return create_access_token(identity=str(usuario.id), expires_delta=expires, additional_claims=additional_claims)

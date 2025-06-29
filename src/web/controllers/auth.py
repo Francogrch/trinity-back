@@ -9,6 +9,7 @@ from src.models import email
 from src.extensions.jwt import BLOCKLIST  # Lista negra de tokens revocados
 from src.web.authorization.roles import rol_requerido
 from src.enums.roles import Rol
+from src.models import auth
 
 # Crea un blueprint para agrupar las rutas de autenticación
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
@@ -23,18 +24,8 @@ def login():
     usuario = users.get_usuario_by_correo(data['correo'])  # Busca el usuario por su correo
 
     if usuario and usuario.check_password(data['password']):  # Si el usuario existe y la contraseña es correcta
-        # Claims personalizados: id, tipo y número de identificación
-        additional_claims = {
-            'id': usuario.id,
-            'tipo_identificacion': usuario.tipo_identificacion.nombre if usuario.tipo_identificacion else None,
-            'numero_identificacion': usuario.numero_identificacion
-        }
-        # Crea un token JWT con identidad del usuario y claims personalizados
-        access_token = create_access_token(
-            identity=str(usuario.id),  # ID del usuario como identidad principal
-            additional_claims=additional_claims,
-            expires_delta=timedelta(hours=2)  # Token válido por 2 horas
-        )
+
+        access_token = auth.login(usuario)
         return jsonify({'token': access_token, 'rol': usuario.roles[0].id})  # Devuelve el token al cliente
 
     # Si el usuario no existe o la contraseña es incorrecta, devuelve error 401
@@ -79,7 +70,7 @@ def reset_password():
     except Exception as e:
         print(e)
         return ({"error": "No se pudo editar la contraseña."}, 400)
-    if claims.get('purpose') == "RESET_PASSWORD":
+    if claims.get('purpose') != "LOGIN":
         BLOCKLIST.add(claims['jti'])  # Agrega el jti a la lista negra en memoria si el jwt no es de sesion
     return {}, 200  # Confirma que el logout fue exitoso
 
