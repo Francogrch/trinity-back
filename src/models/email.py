@@ -159,7 +159,7 @@ def send_reset_password(logo_url, reset_password_url, user_email):
         'solicitud_reset_password.html',
         logo_url=logo_url,
         cta_url=reset_password_url,
-        cta_text="Ver reserva",
+        cta_text="Recuperar contraseña",
         current_year=2025,
     )
 
@@ -183,7 +183,7 @@ def send_definir_password(logo_url, reset_password_url, user_email):
         'definir_password.html',
         logo_url=logo_url,
         cta_url=reset_password_url,
-        cta_text="Ver reserva",
+        cta_text="Definir contraseña",
         current_year=2025,
     )
 
