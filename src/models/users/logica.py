@@ -288,6 +288,14 @@ def get_roles_by_ids(roles_ids):
     from src.models.users.user import Rol
     return Rol.query.filter(Rol.id.in_(roles_ids)).all()
 
+def empleado_exists(correo):
+    empleado = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Usuario.correo == correo).\
+    filter(Rol.id != EnumRol.INQUILINO.value).\
+    first()
+    return empleado
+
 
 def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
     """
