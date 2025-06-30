@@ -167,7 +167,7 @@ def get_usuario_by_nombre(nombre):
     return Usuario.query.filter_by(nombre=nombre).first()
 
 def get_usuario_by_correo(correo):
-    return Usuario.query.filter_by(correo=correo).first()
+    return Usuario.query.filter_by(correo=correo, delete_at=None).first()
 
 def get_usuario_by_id(user_id):
     return Usuario.query.get(user_id)
