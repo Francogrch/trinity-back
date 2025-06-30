@@ -41,8 +41,8 @@ def get_propiedades_eliminadas():
 @jwt_required()
 @rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])  # Solo roles Administrador y Empleado pueden acceder
 def get_propiedad_id_route(prop_id):
-    #usuario = users.get_usuario_by_id(get_jwt_identity())
-    usuario = users.get_usuario_by_id(1)
+    usuario = users.get_usuario_by_id(get_jwt_identity())
+    #usuario = users.get_usuario_by_id(1)
     try:
         propiedad = propiedades.get_propiedad_usuario(prop_id, usuario)
     except NoResultFound:

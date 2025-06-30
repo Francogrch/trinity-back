@@ -291,6 +291,19 @@ def get_usuario_actual():
     data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
     return data  # Retorna el usuario con permisos
 
+@user_blueprint.get('/check/<string:correo>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def check_user_exists(correo):
+    empleado = users.empleado_exists(correo)  # Busca usuarios por rol
+    if not empleado:
+        if users.correo_exists(correo):
+            return {'error': 'INQUILINO_ACTIVO'}, 422
+        return {}, 200
+    if empleado.delete_at == None:
+        return {'error': 'EMPLEADO_ACTIVO'}, 422
+    return users.get_schema_empleado().dump(empleado), 400
+
 # Endpoint: Obtener usuarios por rol (solo admin y empleados)
 @user_blueprint.get('/por-rol/<int:rol_id>')
 @jwt_required()
