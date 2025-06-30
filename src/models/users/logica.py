@@ -1,7 +1,7 @@
 import sqlalchemy
 from src.models.imagenes.logica import set_id_usuario
 from src.models.database import db
-from src.models.users.user import Usuario, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
+from src.models.users.user import Usuario, usuario_rol, UsuarioSchema, UsuarioResumidoSchema, EmpleadoSchema, Rol,Tarjeta, PasswordSchema
 from src.models.parametricas.parametricas import TipoIdentificacion
 from datetime import date, datetime
 from src.models.users.permisos import PermisosRol, PERMISOS_CLASSES
@@ -163,6 +163,12 @@ def existe_identificacion(numero_identificacion, id_tipo_identificacion):
         numero_identificacion=numero_identificacion
     ).first()
 
+def get_cantidad_admins():
+    return db.session.query(Usuario)\
+            .join(usuario_rol)\
+            .filter(usuario_rol.c.rol_id == 1, Usuario.delete_at == None)\
+            .count()
+
 def get_usuario_by_nombre(nombre):
     return Usuario.query.filter_by(nombre=nombre).first()
 
@@ -172,10 +178,20 @@ def get_usuario_by_correo(correo):
 def get_usuario_by_id(user_id):
     return Usuario.query.get(user_id)
 
+def get_usuario_activo_by_id(user_id):
+    return Usuario.query.filter_by(id=user_id, delete_at=None).first()
+
+# así no se pueden controlar la cantidad de admin. Uso el de abajo
 def delete_usuario_by_id(user_id):
     usuario = Usuario.query.filter_by(id=user_id, delete_at=None).first()
     if not usuario:
         return None
+    usuario.delete_at = date.today()
+    #db.session.delete(usuario)
+    db.session.commit()
+    return usuario
+
+def delete_usuario(usuario):
     usuario.delete_at = date.today()
     #db.session.delete(usuario)
     db.session.commit()

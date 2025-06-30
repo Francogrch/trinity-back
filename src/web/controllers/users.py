@@ -321,11 +321,16 @@ def get_usuarios_por_rol(rol_id):
 @rol_requerido([Rol.ADMINISTRADOR.value])
 def delete_usuario_by_id(user_id):
     try:
-        usuario = users.delete_usuario_by_id(user_id)
+        usuario = users.get_usuario_activo_by_id(user_id)
         if not usuario:
             return jsonify({'mensaje': 'Usuario no encontrado'}), 404  
+        if usuario.id == int(get_jwt_identity()):
+            return {'mensaje': 'No se puede borrar a uno mismo'}, 422
+        if usuario.get_roles()['is_admin'] and users.get_cantidad_admins() <= 1:
+            return {'mensaje': 'Debe haber al menos un admin'}, 422
         if usuario.get_roles()['is_encargado']:
             users.cambiar_id_encargado(user_id, int(get_jwt_identity()))
+        users.delete_usuario(usuario)
         # cambiar correo y datos indentificatorios ??
         return jsonify({'mensaje': 'Usuario eliminado correctamente'}) 
     except Exception as e:
