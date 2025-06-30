@@ -322,11 +322,11 @@ def get_usuarios_por_rol(rol_id):
 def delete_usuario_by_id(user_id):
     try:
         usuario = users.delete_usuario_by_id(user_id)
+        if not usuario:
+            return jsonify({'mensaje': 'Usuario no encontrado'}), 404  
         if usuario.get_roles()['is_encargado']:
             users.cambiar_id_encargado(user_id, int(get_jwt_identity()))
         # cambiar correo y datos indentificatorios ??
-        if not usuario:
-            return jsonify({'mensaje': 'Usuario no encontrado'}), 404  
         return jsonify({'mensaje': 'Usuario eliminado correctamente'}) 
     except Exception as e:
         return jsonify({'error': str(e)}), 400 

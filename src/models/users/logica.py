@@ -173,7 +173,7 @@ def get_usuario_by_id(user_id):
     return Usuario.query.get(user_id)
 
 def delete_usuario_by_id(user_id):
-    usuario = Usuario.query.get(user_id)
+    usuario = Usuario.query.filter_by(id=user_id, delete_at=None).first()
     if not usuario:
         return None
     usuario.delete_at = date.today()
