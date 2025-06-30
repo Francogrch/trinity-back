@@ -299,10 +299,13 @@ def check_user_exists(correo):
     if not empleado:
         if users.correo_exists(correo):
             return {'error': 'INQUILINO_ACTIVO'}, 422
-        return {}, 200
+        return {'status': 'DISPONIBLE', 'usuario': None}, 200
     if empleado.delete_at == None:
         return {'error': 'EMPLEADO_ACTIVO'}, 422
-    return users.get_schema_empleado().dump(empleado), 400
+    return {
+            'status': 'ELIMINADO',
+            'usuario': users.get_schema_empleado().dump(empleado)
+            }, 200
 
 # Endpoint: Obtener usuarios por rol (solo admin y empleados)
 @user_blueprint.get('/por-rol/<int:rol_id>')
@@ -318,12 +321,17 @@ def get_usuarios_por_rol(rol_id):
 @rol_requerido([Rol.ADMINISTRADOR.value])
 def delete_usuario_by_id(user_id):
     try:
-        usuario = users.delete_usuario_by_id(user_id)
-        if usuario.get_roles()['is_encargado']:
-            users.cambiar_id_encargado(user_id, int(get_jwt_identity()))
-        # cambiar correo y datos indentificatorios ??
+        usuario = users.get_usuario_activo_by_id(user_id)
         if not usuario:
             return jsonify({'mensaje': 'Usuario no encontrado'}), 404  
+        if usuario.id == int(get_jwt_identity()):
+            return {'mensaje': 'No se puede borrar a uno mismo'}, 422
+        if usuario.get_roles()['is_admin'] and users.get_cantidad_admins() <= 1:
+            return {'mensaje': 'Debe haber al menos un admin'}, 422
+        if usuario.get_roles()['is_encargado']:
+            users.cambiar_id_encargado(user_id, int(get_jwt_identity()))
+        users.delete_usuario(usuario)
+        # cambiar correo y datos indentificatorios ??
         return jsonify({'mensaje': 'Usuario eliminado correctamente'}) 
     except Exception as e:
         return jsonify({'error': str(e)}), 400 
