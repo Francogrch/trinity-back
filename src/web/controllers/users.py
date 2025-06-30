@@ -299,10 +299,13 @@ def check_user_exists(correo):
     if not empleado:
         if users.correo_exists(correo):
             return {'error': 'INQUILINO_ACTIVO'}, 422
-        return {}, 200
+        return {'status': 'DISPONIBLE', 'usuario': None}, 200
     if empleado.delete_at == None:
         return {'error': 'EMPLEADO_ACTIVO'}, 422
-    return users.get_schema_empleado().dump(empleado), 400
+    return {
+            'status': 'ELIMINADO',
+            'usuario': users.get_schema_empleado().dump(empleado)
+            }, 200
 
 # Endpoint: Obtener usuarios por rol (solo admin y empleados)
 @user_blueprint.get('/por-rol/<int:rol_id>')
