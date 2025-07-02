@@ -320,10 +320,10 @@ def check_user_exists(correo):
     empleado = users.empleado_exists(correo)  # Busca usuarios por rol
     if not empleado:
         if users.correo_exists(correo):
-            return {'error': 'INQUILINO_ACTIVO'}, 422
+            return {'error': 'El correo pertenece a un inquilino.'}, 422
         return {'status': 'DISPONIBLE', 'usuario': None}, 200
     if empleado.delete_at == None:
-        return {'error': 'EMPLEADO_ACTIVO'}, 422
+        return {'error': 'El correo pertenece a un empleado.'}, 422
     usuario = users.get_schema_empleado().dump(empleado)
     usuario['fecha_nacimiento'] = empleado.fecha_nacimiento.isoformat()
     usuario['id_tipo_identificacion'] = empleado.id_tipo_identificacion
