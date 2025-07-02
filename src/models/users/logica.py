@@ -263,6 +263,21 @@ def update_me(user_id, data):
 def correo_exists(correo):
     return Usuario.query.filter_by(correo=correo).first() is not None
 
+def update_delete_at(user_id):
+    usuario = get_usuario_by_id(user_id)
+    if not usuario:
+        return None
+    try:
+        usuario.delete_at = None
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        raise ValueError("No se puede reactivar un usuario eliminado")
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    return usuario
+
 def update_imagen(user_id, id_imagen):
     usuario = Usuario.query.get(user_id)
     if not usuario:

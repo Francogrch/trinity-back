@@ -1,3 +1,4 @@
+import datetime
 from logging import exception
 import os
 import random
@@ -212,7 +213,6 @@ def editar_usuario(user_id):
     - Respuesta: JSON con el usuario actualizado o error.
     """
     from src.models.database import db
-    from datetime import datetime
     data = request.get_json()
     if not data:
         return jsonify({'error': 'El cuerpo de la petición no puede estar vacío.'}), 
@@ -267,6 +267,27 @@ def get_usuario_by_id(user_id):
     data = usuario_schema.dump(usuario)  # Serializa el usuario
     data["permisos"] = get_permisos_usuario(usuario)  # Agrega los permisos calculados
     return data  # Retorna usuario serializado with permisos
+
+
+
+@user_blueprint.patch('/reactivarEmpleado/<int:user_id>')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value])
+def reactivar_empleado(user_id):
+    usuario = users.get_usuario_by_id(user_id)
+    if not usuario:
+        return jsonify({'mensaje': 'Usuario no encontrado'}), 404
+    if usuario.delete_at is None:
+        return jsonify({'mensaje': 'El usuario ya está activo'}), 422
+    data = request.get_json()
+    if not data:
+        return jsonify({'mensaje': 'Datos incompletos para reactivación'}), 400
+    #data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d').date()
+    usuario = users.update_usuario(user_id, data)  # Actualiza el usuario con los datos proporcionados
+    if not usuario:
+        return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
+    usuario = users.update_delete_at(user_id, data)  # Actualiza el campo delete_at
+    return users.get_schema_usuario().dump(usuario)  # Retorna el usuario actualizado
 
 # Reemplaza a get_usuario_by_id
 @user_blueprint.get('/<int:user_id>/reducido')
