@@ -51,7 +51,7 @@ class Usuario(db.Model):
             )
     delete_at = db.Column(db.DateTime)
 
-    def __init__(self, nombre, correo, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None, id_imagen=None):
+    def __init__(self, nombre, correo, is_bloqueado=False, roles=None, password=None, id_tipo_identificacion=None, tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None, id_imagen=None):
         self.nombre = nombre
         self.correo = correo
         if roles:
@@ -66,6 +66,7 @@ class Usuario(db.Model):
         self.id_pais = id_pais
         self.id_imagen = id_imagen
         self.delete_at = None
+        self.is_bloqueado=is_bloqueado
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

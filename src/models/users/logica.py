@@ -34,6 +34,14 @@ def get_inquilinos():
     all()
     return inquilinos
 
+def get_inquilinos_activos():
+    inquilinos = db.session.query(Usuario).\
+    join(Usuario.roles).\
+    filter(Rol.id == EnumRol.INQUILINO.value).\
+    filter(Usuario.is_bloqueado == False).\
+    all()
+    return inquilinos
+
 def get_administradores():
     administradores = db.session.query(Usuario).\
     join(Usuario.roles).\
@@ -48,7 +56,7 @@ def get_correos_administradores():
     return correos
 
 # no se usa
-def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
+def create_usuario(nombre, correo, roles_ids, password, is_bloqueado=False, id_tipo_identificacion=None, numero_identificacion=None, apellido=None, fecha_nacimiento=None, id_pais=None):
     """Crea un nuevo usuario con los datos recibidos y múltiples roles."""
     try:
         # Asegura que roles_ids sea una lista de enteros
@@ -76,7 +84,8 @@ def create_usuario(nombre, correo, roles_ids, password, id_tipo_identificacion=N
             numero_identificacion=numero_identificacion,
             apellido=apellido,
             fecha_nacimiento=fecha_nacimiento,
-            id_pais=id_pais
+            id_pais=id_pais,
+            is_bloqueado=is_bloqueado
         )
         db.session.add(nuevo)
         db.session.commit()

@@ -175,7 +175,8 @@ def run():
         id_tipo_identificacion=cedula.id,
         numero_identificacion="87654321",
         id_pais=pais_chi.id,
-        fecha_nacimiento="2000-12-31"
+        fecha_nacimiento="2000-12-31",
+        is_bloqueado=True
     )
     print("Usuarios y tipos de identificación de ejemplo creados")
 
