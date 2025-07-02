@@ -302,9 +302,14 @@ def check_user_exists(correo):
         return {'status': 'DISPONIBLE', 'usuario': None}, 200
     if empleado.delete_at == None:
         return {'error': 'EMPLEADO_ACTIVO'}, 422
+    usuario = users.get_schema_empleado().dump(empleado)
+    usuario['fecha_nacimiento'] = empleado.fecha_nacimiento.isoformat()
+    usuario['id_tipo_identificacion'] = empleado.id_tipo_identificacion
+    usuario['id_pais'] = empleado.id_pais
+    usuario['id_rol'] = empleado.roles[0].id
     return {
             'status': 'ELIMINADO',
-            'usuario': users.get_schema_empleado().dump(empleado)
+            'usuario': usuario
             }, 200
 
 # Endpoint: Obtener usuarios por rol (solo admin y empleados)
