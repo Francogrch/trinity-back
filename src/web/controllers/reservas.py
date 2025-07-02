@@ -270,13 +270,13 @@ def eliminar_documentacion(imagen_id):
         print(f"[ERROR] Excepción al eliminar imagen: {e}")
         return jsonify({"error": f"Error al eliminar la imagen: {str(e)}"}), 500
     
-@reserva_blueprint.get('/documentacion/<int:reserva_id>')
-@jwt_required()
-def get_documentacion_reserva(reserva_id):
+@reserva_blueprint.get('/documentacion/<int:doc_id>')
+#@jwt_required()
+def get_documentacion_reserva(doc_id):
     base_upload_directory = os.path.abspath(
         os.path.join(current_app.root_path, "..", "..", "imagenes", "documentacion")
     )
-    filename = get_filename(str(reserva_id))
+    filename = get_filename(str(doc_id))
     return send_from_directory(
         directory=base_upload_directory,
         path=filename,
