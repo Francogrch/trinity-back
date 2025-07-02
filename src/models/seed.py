@@ -677,7 +677,7 @@ def run():
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": chat1.id,
-        "id_estado": estadoPendiente.id,  
+        "id_estado": estadoPendiente.id,
         "fecha_inicio": datetime(2024, 12, 10),
         "fecha_fin": datetime(2025, 12, 14)
     })
