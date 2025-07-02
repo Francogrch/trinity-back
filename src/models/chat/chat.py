@@ -1,7 +1,7 @@
 from src.models.database import db
 from src.models.marshmallow import ma
 from marshmallow import EXCLUDE, validate
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 
 class Chat(db.Model):
@@ -33,6 +33,7 @@ class Mensaje(db.Model):
         self.id_chat = id_chat
         self.mensaje = text
         self.id_user = id_user
+        self.fecha = datetime.utcnow().replace(tzinfo=timezone.utc)-timedelta(hours=3)
 
 class MensajeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

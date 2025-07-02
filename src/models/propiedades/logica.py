@@ -238,7 +238,7 @@ def get_propiedades_search(checkin:datetime, checkout:datetime,huespedes):
     checkin = parse_datetime_string(checkin)
     checkout = parse_datetime_string(checkout)
     reservas_solapadas = Reserva.query.filter(
-        Reserva.id_estado == "1",
+        Reserva.id_estado.in_([1, 2]), 
         Reserva.fecha_inicio <= checkout,
         Reserva.fecha_fin >= checkin
     ).all()
@@ -257,7 +257,7 @@ def get_propiedades_search(checkin:datetime, checkout:datetime,huespedes):
     disponibles = query.all()
     return disponibles
     
-
+# no se usa
 def get_propiedades_search_id(id,checkin, checkout,huespedes):
     todas_las_propiedades_disponibles = get_propiedades_search(checkin, checkout, huespedes)
     propiedades_filtradas_por_ciudad = [
