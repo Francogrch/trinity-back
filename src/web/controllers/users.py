@@ -67,6 +67,13 @@ def get_inquilinos():
     usuarios = users.get_inquilinos()
     return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
 
+@user_blueprint.get('/inquilinos/activos')
+@jwt_required()
+@rol_requerido([Rol.ADMINISTRADOR.value, Rol.EMPLEADO.value])
+def get_inquilinos_activos():
+    usuarios = users.get_inquilinos_activos()
+    return users.get_schema_usuario_resumido().dump(usuarios, many=True)  # Serializa y retorna
+
 # Endpoint: Crear un nuevo usuario (solo admin y empleados)
 @user_blueprint.post('/')
 @jwt_required(optional=True)
