@@ -97,8 +97,8 @@ class ReservaSchema(ma.Schema):
     id_doc = ma.Method("get_image_ids", dump_only=True)
 
     def get_image_ids(self, obj):
-        if obj.imagenes_doc:
-            return [img.id for img in obj.imagenes_doc]
+        if obj.documentacion:
+            return [img.id for img in obj.documentacion]
         return []
     @validates_schema
     def validar_fechas(self, data, **kwargs):

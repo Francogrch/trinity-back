@@ -32,6 +32,7 @@ def get_reservas_usuario():
 @jwt_required()
 def get_reserva(reserva_id):
     usuario = users.get_usuario_by_id(get_jwt_identity())
+    #usuario = users.get_usuario_by_id(1)
     try:
         res = reservas.get_reserva(reserva_id, usuario)
     except NoResultFound:

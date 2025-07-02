@@ -326,7 +326,7 @@ def run():
         id_tipo=dpto.id,
         id_ciudad=1,
         id_encargado=1,
-        requiere_documentacion=False
+        requiere_documentacion=True
     )
 
     prop2 = propiedades.create_propiedad(
@@ -348,7 +348,7 @@ def run():
         id_tipo=dpto.id,
         id_ciudad=2,
         id_encargado=2,
-        requiere_documentacion=False
+        requiere_documentacion=True
     )
 
     prop3 = propiedades.create_propiedad(
