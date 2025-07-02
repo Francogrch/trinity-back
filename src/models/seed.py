@@ -677,9 +677,9 @@ def run():
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": chat1.id,
-        "id_estado": estadoFinalizada.id,  
+        "id_estado": estadoPendiente.id,  
         "fecha_inicio": datetime(2024, 12, 10),
-        "fecha_fin": datetime(2024, 12, 14)
+        "fecha_fin": datetime(2025, 12, 14)
     })
     chat2 = chat.create_chat()
     msn3 = chat.create_mensaje(

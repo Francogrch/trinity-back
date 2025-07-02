@@ -283,17 +283,18 @@ def get_usuario_by_id(user_id):
 def reactivar_empleado(user_id):
     usuario = users.get_usuario_by_id(user_id)
     if not usuario:
-        return jsonify({'mensaje': 'Usuario no encontrado'}), 404
+        return jsonify({'error': 'Usuario no encontrado'}), 404
     if usuario.delete_at is None:
-        return jsonify({'mensaje': 'El usuario ya está activo'}), 422
+        return jsonify({'error': 'El usuario ya está activo'}), 422
     data = request.get_json()
     if not data:
-        return jsonify({'mensaje': 'Datos incompletos para reactivación'}), 400
-    #data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d').date()
-    usuario = users.update_delete_at(user_id)  # Actualiza el campo delete_at
-    usuario = users.update_usuario(user_id, data)  # Actualiza el usuario con los datos proporcionados
+        return jsonify({'error': 'Datos incompletos para reactivación'}), 400
+    try:
+        usuario = users.update_delete_at(user_id,data)  # Actualiza el campo delete_at
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
     if not usuario:
-        return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
+        return jsonify({'error': 'Usuario no encontrado'}), 404  # Si no existe, error
     
     return users.get_schema_usuario().dump(usuario)  # Retorna el usuario actualizado
 

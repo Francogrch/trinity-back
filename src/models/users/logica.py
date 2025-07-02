@@ -166,11 +166,11 @@ def is_usuario_bloqueado(user_id):
         return None
     return usuario.is_bloqueado
     
-def existe_identificacion(numero_identificacion, id_tipo_identificacion):
+def existe_identificacion(numero_identificacion, id_tipo_identificacion,id_usuario):
     return Usuario.query.filter_by(
         id_tipo_identificacion=id_tipo_identificacion,
-        numero_identificacion=numero_identificacion
-    ).first()
+        numero_identificacion=numero_identificacion,
+    ).filter(Usuario.id != id_usuario).first()
 
 def get_cantidad_admins():
     return db.session.query(Usuario)\
@@ -272,16 +272,34 @@ def update_me(user_id, data):
 def correo_exists(correo):
     return Usuario.query.filter_by(correo=correo).first() is not None
 
-def update_delete_at(user_id):
+def update_delete_at(user_id,data):
     usuario = get_usuario_by_id(user_id)
     if not usuario:
         return None
+    if data['correo'] != usuario.correo and correo_exists(data['correo']):
+        raise ValueError("El correo ya está en uso")
+    if existe_identificacion(data['numero_identificacion'], data['tipo_identificacion'], user_id):
+        raise ValueError("El número de identificación ya está en uso")
     try:
         usuario.delete_at = None
+        if data['fecha_nacimiento'] and isinstance(data['fecha_nacimiento'], str):
+            try:
+                data['fecha_nacimiento'] = datetime.strptime(data['fecha_nacimiento'], "%Y-%m-%d").date()
+            except ValueError:
+                raise ValueError("El formato de fecha_nacimiento debe ser YYYY-MM-DD")
+        if not usuario:
+            return None
+        for campo in ['nombre', 'correo', 'numero_identificacion', 'apellido', 'fecha_nacimiento']:
+            if campo in data:
+                setattr(usuario, campo, data[campo])
+        usuario.id_tipo_identificacion=data.get('tipo_identificacion')
+        usuario.id_pais=data.get('pais')
+        if data.get('roles'):
+            usuario.roles = [Rol.query.filter_by(id=str(data['roles'])).first()]
         db.session.commit()
     except sqlalchemy.exc.IntegrityError as e:
         db.session.rollback()
-        raise ValueError("No se puede reactivar un usuario eliminado")
+        raise ValueError("Hay datos que ya estan registrados, por favor verifique los datos ingresados")
     except Exception as e:
         db.session.rollback()
         raise e
