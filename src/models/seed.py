@@ -665,10 +665,8 @@ def run():
     chat1 = chat.create_chat()
     sentence = db.session.execute(db.text(
             """INSERT INTO `mensaje` (`id`, `id_chat`, `mensaje`, `fecha`, `id_user`) VALUES
-            (1, '1', "Hola, estoy interesado en reservar la casa de playa.", "2024-10-08 14:35:50", 3),
-            (2, '1', "¡Hola! Claro, puedo ayudarte con eso. ¿Para qué fechas estás interesado?", "2024-10-09 11:35:01", 1),
-            (3, '1', "Se atoró la puerta, no puedo entrar", "2024-12-12 08:35:00", 3),
-            (4, '1', "Entendido, un cerrajero está en camino", "2024-12-12 08:39:00", 2);"""
+            (1, '1', "Se atoró la puerta, no puedo entrar", "2024-12-12 08:35:00", 3),
+            (2, '1', "Entendido, un cerrajero está en camino", "2024-12-12 08:39:00", 2);"""
     ))
     """
     msn1 = chat.create_mensaje(
@@ -695,8 +693,8 @@ def run():
     chat2 = chat.create_chat()
     sentence = db.session.execute(db.text(
             """INSERT INTO `mensaje` (`id`, `id_chat`, `mensaje`, `fecha`, `id_user`) VALUES
-            (5, '2', "Hola, ¿cómo puedo ayudarte con la reserva del departamento céntrico?", "2025-06-26 14:35:50", 1),
-            (6, '2', "Hola, estoy interesado en reservar el departamento céntrico para el próximo fin de semana.", "2025-06-26 16:19:00", 3);"""
+            (5, '2', "Hola, ¿En que direccion se encuetra la propiedad?", "2025-06-26 14:35:50", 3),
+            (6, '2', "Hola Roberto, la informacion necesaria se le enviara mediante mail en las 24 horas previas al check-in", "2025-06-26 16:19:00", 1);"""
     ))
     """
     msn3 = chat.create_mensaje(
