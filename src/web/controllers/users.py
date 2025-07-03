@@ -225,7 +225,7 @@ def editar_usuario(user_id):
         return jsonify({'error': 'El cuerpo de la petición no puede estar vacío.'}), 
 
 
-    if users.existe_identificacion(
+    if users.existe_identificacion_viejo(
         id_tipo_identificacion=data.get('tipo_identificacion'),
         numero_identificacion=data.get('numero_identificacion')):
         raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
@@ -563,7 +563,7 @@ def registrar(data=None):
             data = request.get_json()  
 
         # Esa validacion se tiene que hacer diferente desde la tabla, con dos campos unicos.
-        if users.existe_identificacion(
+        if users.existe_identificacion_viejo(
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion')):
             raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
@@ -654,7 +654,7 @@ def registrar_empleado():
         data = request.get_json()  
 
         # Esa validacion se tiene que hacer diferente desde la tabla, con dos campos unicos.
-        if users.existe_identificacion(
+        if users.existe_identificacion_viejo(
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion')):
             raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")

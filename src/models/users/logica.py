@@ -171,6 +171,13 @@ def existe_identificacion(numero_identificacion, id_tipo_identificacion,id_usuar
         id_tipo_identificacion=id_tipo_identificacion,
         numero_identificacion=numero_identificacion,
     ).filter(Usuario.id != id_usuario).first()
+    
+# lo agrego para que no se rompa las cosas viejas
+def existe_identificacion_viejo(numero_identificacion, id_tipo_identificacion):
+    return Usuario.query.filter_by(
+        id_tipo_identificacion=id_tipo_identificacion,
+        numero_identificacion=numero_identificacion,
+    ).first()
 
 def get_cantidad_admins():
     return db.session.query(Usuario)\
