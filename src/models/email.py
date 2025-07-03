@@ -237,3 +237,32 @@ def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
         html=html_body
     )
     mail.send(msg)
+
+def send_documentacion_subida(data_email, reserva_url, logo_url):
+    from src.models.users.logica import get_correos_administradores
+    recipients = get_correos_administradores()
+    html_body = render_template(
+        'documentacion.html',
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        logo_url=logo_url,
+        cta_url=reserva_url,
+        cta_text="Ver reserva",
+        current_year=2025,
+    )
+    text_body = render_template(
+        'documentacion.txt',
+        propiedad_nombre=data_email['propiedad_nombre'],
+        fecha_inicio=data_email['fecha_inicio'],
+        fecha_fin=data_email['fecha_fin'],
+        cta_url=reserva_url,
+        current_year=2025,
+    )
+    msg = Message(
+        subject="¡Documentación subida!",
+        recipients=recipients,
+        body=text_body,
+        html=html_body
+    )
+    mail.send(msg)

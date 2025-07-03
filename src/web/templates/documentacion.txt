@@ -1,0 +1,16 @@
+¡Documentacion subida!
+
+Hola,
+
+Queremos informarte que han subido documentacion para a la reserva en {{ propiedad_nombre }}.
+
+
+La reserva es para las siguientes fechas:
+Desde: {{ fecha_inicio | datetimeformat }}
+Hasta: {{ fecha_fin | datetimeformat }}
+
+Para ver el mensaje completo y responder, visita el siguiente enlace:
+{{ cta_url }}
+
+Saludos cordiales,
+El equipo de Alquiloando

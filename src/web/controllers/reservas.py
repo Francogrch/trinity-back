@@ -255,6 +255,13 @@ def send_message(reserva_id):
 @jwt_required()
 def subir_documentacion(reserva_id):
     image = upload_image('documentacion',request,id_reserva=reserva_id)
+    reserva = reservas.get_reserva_id(reserva_id)
+    reserva_url = f"http://localhost:4200/detalle-reserva/{reserva.id}"
+    logo_url = url_for('static', filename='img/laTrinidadAzulChico.png', _external=True)
+    data_email = reservas.get_schema_email_reserva().dump(reserva)
+    print(reserva.propiedad.nombre)
+    email.run_async_with_context(email.send_documentacion_subida
+                                 , data_email=data_email, reserva_url=reserva_url, logo_url=logo_url)
     return image
 
 @reserva_blueprint.delete('/documentacion/<int:imagen_id>')

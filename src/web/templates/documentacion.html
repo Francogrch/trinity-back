@@ -1,0 +1,17 @@
+{% extends "email_base.html" %}
+
+{% block subject %}¡Documentacion subida!{% endblock %}
+
+{% block content %}
+<p>Hola,</p>
+<p>Queremos informarte que han subido documentacion para a la reserva en <strong>{{ propiedad_nombre }}</strong>.</p>
+
+<p>La reserva es para las siguientes fechas:</p>
+<ul>
+  <li><strong>Desde:</strong> {{ fecha_inicio | datetimeformat }}</li>
+  <li><strong>Hasta:</strong> {{ fecha_fin | datetimeformat }}</li>
+</ul>
+
+<p>Saludos cordiales,</p>
+<p>El equipo de Alquiloando</p>
+{% endblock %}
