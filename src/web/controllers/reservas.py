@@ -43,8 +43,8 @@ def get_reserva(reserva_id):
         return {'error': 'Reserva no encontrada'}, 404
     response = {
             'reserva': reservas.get_schema_reserva().dump(res),
-            'calificacion_propiedad': calificaciones.get_schema_calificacion_propiedad().dump(res.calificacion_propiedad),
-            'calificacion_inquilino': calificaciones.get_schema_calificacion_inquilino().dump(res.calificacion_inquilino),
+            'calificacion_propiedad': calificaciones.get_schema_calificacion_propiedad().dump(res.calificacion_propiedad) or None,
+            'calificacion_inquilino': calificaciones.get_schema_calificacion_inquilino().dump(res.calificacion_inquilino) or None,
             'propiedad': propiedades.get_schema_propiedad_protegida().dump(res.propiedad)
             }
     return response, 200
