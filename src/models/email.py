@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import render_template, current_app
 from flask_mail import Mail, Message
 from threading import Thread
@@ -204,8 +205,10 @@ def send_definir_password(logo_url, reset_password_url, user_email):
 def send_mensaje_chat(data_email, reserva_url, logo_url, message, rol):
     if rol == 3:
         from src.models.users.logica import get_correos_administradores
-        recipients = [data_email['correo_encargado']]
-        recipients.extend(get_correos_administradores())
+        if data_email['fecha_inicio'] < datetime.now():
+            recipients = [data_email['correo_encargado']]
+        else:
+            recipients = get_correos_administradores()
     else:
         recipients = [data_email['correo_inquilino']]
     html_body = render_template(
