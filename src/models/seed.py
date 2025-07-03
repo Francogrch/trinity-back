@@ -812,6 +812,19 @@ def run():
         "fecha_fin": datetime(2024, 10, 27)
     })
 
+    reserva10 = reservas.create_reserva({
+        "id_propiedad": prop1.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
+        "cantidad_personas": 3,
+        "monto_pagado": 120.0,
+        "monto_total": 360.0,
+        "id_chat": None,
+        "id_estado": estadoPendiente.id,
+        "fecha_inicio": datetime(2025, 7, 25),
+        "fecha_fin": datetime(2025, 7, 27)
+    })
+
     """
     reserva10 = reservas.create_reserva({
         "id_propiedad": prop10.id,
