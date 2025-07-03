@@ -75,7 +75,7 @@ def create_reserva():
         if reservas.hay_reservas_solapadas(
                 data_reserva['id_propiedad'], data_reserva['fecha_inicio'], data_reserva['fecha_fin']
                 ):
-            return {'error': 'Propiedad no disponible'}, 400
+            return {'error': '¡Casi! Esta propiedad acaba de ser ocupada.'}, 400
         reserva = reservas.create_reserva(data_reserva)
         # Generar datos necesarios para el email
         data_email = reservas.get_schema_email_reserva().dump(reserva)
