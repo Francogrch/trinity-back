@@ -419,6 +419,7 @@ def run():
     )
 
     # --- Ejemplos de Casas ---
+    """
     prop6 = propiedades.create_propiedad(
         nombre="Casa Familiar con Jardín en Belgrano",
         descripcion="Amplia casa con 3 habitaciones, patio y parrilla. Perfecta para familias que buscan tranquilidad.",
@@ -646,6 +647,7 @@ def run():
         id_encargado=2,
         requiere_documentacion=False
     )
+    """
 
     print("Propiedades de ejemplo creadas")
 
@@ -663,23 +665,23 @@ def run():
     chat1 = chat.create_chat()
     msn1 = chat.create_mensaje(
         chat_id= chat1.id,
-        id_user= user6.id,
+        id_user= user3.id,
         texto= "Hola, estoy interesado en reservar la casa de playa.")
     msn2 = chat.create_mensaje(
         chat_id= chat1.id,
         id_user= prop1.id_encargado,
         texto= "¡Hola! Claro, puedo ayudarte con eso. ¿Para qué fechas estás interesado?")
     reserva1 = reservas.create_reserva({
-        "id_propiedad": prop1.id,
-        "id_inquilino": user6.id,
-        "id_usuario_carga": user2.id,
+        "id_propiedad": prop2.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 4,
         "monto_pagado": 150.0,
         "monto_total": 600.0,
         "id_chat": chat1.id,
-        "id_estado": estadoPendiente.id,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2024, 12, 10),
-        "fecha_fin": datetime(2025, 12, 14)
+        "fecha_fin": datetime(2024, 12, 14)
     })
     chat2 = chat.create_chat()
     msn3 = chat.create_mensaje(
@@ -693,9 +695,9 @@ def run():
 
 
     reserva2 = reservas.create_reserva({
-        "id_propiedad": prop2.id,
+        "id_propiedad": prop3.id,
         "id_inquilino": user3.id,
-        "id_usuario_carga": user1.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 2,
         "monto_pagado": 75.0,
         "monto_total": 150.0,
@@ -707,95 +709,96 @@ def run():
 
     reserva3 = reservas.create_reserva({
         "id_propiedad": prop3.id,
-        "id_inquilino": user7.id,
+        "id_inquilino": user3.id,
         "id_usuario_carga": None,
         "cantidad_personas": 3,
         "monto_pagado": 120.0,
         "monto_total": 360.0,
         "id_chat": None,
         "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2025, 10, 20),
-        "fecha_fin": datetime(2025, 10, 23)
+        "fecha_inicio": datetime(2025, 7, 1),
+        "fecha_fin": datetime(2025, 7, 6)
     })
 
     reserva4 = reservas.create_reserva({
-        "id_propiedad": prop4.id,
-        "id_inquilino": user1.id,
-        "id_usuario_carga": user4.id,
+        "id_propiedad": prop3.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 5,
         "monto_pagado": 200.0,
         "monto_total": 800.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2025, 12, 5),
-        "fecha_fin": datetime(2025, 12, 10)
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2025, 6, 1),
+        "fecha_fin": datetime(2025, 7, 1)
     })
 
     reserva5 = reservas.create_reserva({
-        "id_propiedad": prop5.id,
-        "id_inquilino": user2.id,
-        "id_usuario_carga": user5.id,
+        "id_propiedad": prop3.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 2,
         "monto_pagado": 90.0,
         "monto_total": 180.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2024, 9, 15),
         "fecha_fin": datetime(2024, 9, 17)
     })
 
     reserva6 = reservas.create_reserva({
-        "id_propiedad": prop6.id,
-        "id_inquilino": user4.id,
-        "id_usuario_carga": user6.id,
+        "id_propiedad": prop1.id,
+        "id_inquilino": user7.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 6,
         "monto_pagado": 250.0,
         "monto_total": 1000.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2026, 1, 10),
-        "fecha_fin": datetime(2026, 1, 15)
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2024, 1, 10),
+        "fecha_fin": datetime(2024, 1, 15)
     })
 
     reserva7 = reservas.create_reserva({
-        "id_propiedad": prop7.id,
-        "id_inquilino": user5.id,
-        "id_usuario_carga": user7.id,
+        "id_propiedad": prop3.id,
+        "id_inquilino": user6.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 3,
         "monto_pagado": 100.0,
         "monto_total": 300.0,
         "id_chat": None,
         "id_estado": estadoFinalizada.id,
-        "fecha_inicio": datetime(2025, 9, 1),
-        "fecha_fin": datetime(2025, 9, 4)
+        "fecha_inicio": datetime(2024, 9, 1),
+        "fecha_fin": datetime(2024, 9, 4)
     })
 
     reserva8 = reservas.create_reserva({
-        "id_propiedad": prop8.id,
+        "id_propiedad": prop4.id,
         "id_inquilino": user6.id,
-        "id_usuario_carga": user1.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 2,
         "monto_pagado": 60.0,
         "monto_total": 120.0,
         "id_chat": None,
-        "id_estado": estadoConfirmado.id,
-        "fecha_inicio": datetime(2025, 10, 1),
-        "fecha_fin": datetime(2025, 10, 3)
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2024, 10, 1),
+        "fecha_fin": datetime(2024, 10, 3)
     })
 
     reserva9 = reservas.create_reserva({
-        "id_propiedad": prop9.id,
+        "id_propiedad": prop5.id,
         "id_inquilino": user6.id,
-        "id_usuario_carga": user2.id,
+        "id_usuario_carga": None,
         "cantidad_personas": 1,
         "monto_pagado": 40.0,
         "monto_total": 80.0,
         "id_chat": None,
-        "id_estado": estadoCancelada.id,
+        "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2024, 10, 25),
         "fecha_fin": datetime(2024, 10, 27)
     })
 
+    """
     reserva10 = reservas.create_reserva({
         "id_propiedad": prop10.id,
         "id_inquilino": user1.id,
@@ -886,6 +889,7 @@ def run():
         "fecha_inicio": datetime(2024, 11, 10),
         "fecha_fin": datetime(2024, 11, 13)
     })
+    """
     
     print("Reservas de ejemplo creadas")
 
@@ -927,17 +931,47 @@ def run():
         "ubicacion": 4
         })
     calificacion_inquilino_3 = calificaciones.create_calificacion_inquilino({
-        "calificacion": 0
+        "calificacion": 3
+        })
+
+    calificacion_prop_4 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 4,
+        "personal": 4,
+        "precio_calidad": 4,
+        "ubicacion": 4
+        })
+    calificacion_inquilino_4 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 1
+        })
+
+    calificacion_prop_5 = calificaciones.create_calificacion_propiedad({
+        "confort": 2,
+        "instalaciones_servicios": 2,
+        "limpieza": 4,
+        "personal": 5,
+        "precio_calidad": 5,
+        "ubicacion": 5
+        })
+    calificacion_inquilino_5 = calificaciones.create_calificacion_inquilino({
+        "calificacion": 1
         })
 
     reserva1.calificar_propiedad(calificacion_prop_1)
     reserva1.calificar_inquilino(calificacion_inquilino_1)
 
-    reserva7.calificar_propiedad(calificacion_prop_2)
-    reserva7.calificar_inquilino(calificacion_inquilino_2)
+    reserva6.calificar_propiedad(calificacion_prop_2)
+    reserva6.calificar_inquilino(calificacion_inquilino_2)
 
-    reserva13.calificar_propiedad(calificacion_prop_3)
-    reserva13.calificar_inquilino(calificacion_inquilino_3)
+    reserva7.calificar_propiedad(calificacion_prop_3)
+    reserva7.calificar_inquilino(calificacion_inquilino_3)
+
+    reserva8.calificar_propiedad(calificacion_prop_4)
+    reserva8.calificar_inquilino(calificacion_inquilino_4)
+
+    reserva9.calificar_propiedad(calificacion_prop_5)
+    reserva9.calificar_inquilino(calificacion_inquilino_5)
 
     print("Calificaciones de ejemplo creadas")
 
@@ -964,6 +998,7 @@ def run():
         url="/imagenes/propiedad/5.png",
         id_propiedad=prop5.id,
     )
+    """ 
     img6 = imagenes.create_imagen(
         url="/imagenes/propiedad/6.png",
         id_propiedad=prop6.id,
@@ -1004,13 +1039,14 @@ def run():
         url="/imagenes/propiedad/15.png",
         id_propiedad=prop15.id,
     )
+    """
     img16 = imagenes.create_imagen(
         url="/imagenes/usuario/16.png",
-        id_usuario=user6.id,
+        id_usuario=user3.id,
     )
     img17 = imagenes.create_imagen(
         url="/imagenes/usuario/17.png",
-        id_usuario=user6.id,
+        id_usuario=user3.id,
     )
     img18 = imagenes.create_imagen(
         url="/imagenes/propiedad/18.png",
@@ -1022,11 +1058,11 @@ def run():
     )
     img20 = imagenes.create_imagen(
         url="/imagenes/usuario/20.jpeg",
-        id_usuario=user7.id,
+        id_usuario=user4.id,
     )
     img21 = imagenes.create_imagen(
         url="/imagenes/usuario/21.png",
-        id_usuario=user7.id,
+        id_usuario=user4.id,
     )
     img22 = imagenes.create_imagen(
         url="/imagenes/documentacion/22.jpeg",
