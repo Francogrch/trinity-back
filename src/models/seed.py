@@ -663,6 +663,14 @@ def run():
 
 
     chat1 = chat.create_chat()
+    sentence = db.session.execute(db.text(
+            """INSERT INTO `mensaje` (`id`, `id_chat`, `mensaje`, `fecha`, `id_user`) VALUES
+            (1, '1', "Hola, estoy interesado en reservar la casa de playa.", "2024-10-08 14:35:50", 3),
+            (2, '1', "¡Hola! Claro, puedo ayudarte con eso. ¿Para qué fechas estás interesado?", "2024-10-09 11:35:01", 1),
+            (3, '1', "Se atoró la puerta, no puedo entrar", "2024-12-12 08:35:00", 3),
+            (4, '1', "Entendido, un cerrajero está en camino", "2024-12-12 08:39:00", 2);"""
+    ))
+    """
     msn1 = chat.create_mensaje(
         chat_id= chat1.id,
         id_user= user3.id,
@@ -671,6 +679,7 @@ def run():
         chat_id= chat1.id,
         id_user= prop1.id_encargado,
         texto= "¡Hola! Claro, puedo ayudarte con eso. ¿Para qué fechas estás interesado?")
+    """
     reserva1 = reservas.create_reserva({
         "id_propiedad": prop2.id,
         "id_inquilino": user3.id,
@@ -684,6 +693,12 @@ def run():
         "fecha_fin": datetime(2024, 12, 14)
     })
     chat2 = chat.create_chat()
+    sentence = db.session.execute(db.text(
+            """INSERT INTO `mensaje` (`id`, `id_chat`, `mensaje`, `fecha`, `id_user`) VALUES
+            (5, '2', "Hola, ¿cómo puedo ayudarte con la reserva del departamento céntrico?", "2025-06-26 14:35:50", 1),
+            (6, '2', "Hola, estoy interesado en reservar el departamento céntrico para el próximo fin de semana.", "2025-06-26 16:19:00", 3);"""
+    ))
+    """
     msn3 = chat.create_mensaje(
         chat_id= chat2.id,
         id_user= prop2.id_encargado,
@@ -692,6 +707,7 @@ def run():
         chat_id= chat2.id,
         id_user= user3.id,
         texto= "Hola, estoy interesado en reservar el departamento céntrico para el próximo fin de semana.")    
+    """
 
 
     reserva2 = reservas.create_reserva({
