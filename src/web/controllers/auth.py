@@ -51,7 +51,7 @@ def check_password():
     password = request.get_json().get('password')
     if usuario and password and usuario.check_password(password):  # Si el usuario existe y la contraseña es correcta
         return {}, 200
-    return {'error': 'Contraseña incorrecta'}, 401
+    return {'error': 'Contraseña incorrecta'}, 422
 
 
 @auth_blueprint.post('/forgot-password/reset')
