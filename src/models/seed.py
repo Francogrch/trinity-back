@@ -147,7 +147,7 @@ def run():
     user1 = users.create_usuario(
         nombre="Juan",
         apellido="Pérez",
-        correo="juan@mail.com",
+        correo="francogrch+admin@gmail.com",
         roles_ids=[administrador.id],
         password=passwordAll,
         id_tipo_identificacion=dni.id,
@@ -158,7 +158,7 @@ def run():
     user2 = users.create_usuario(
         nombre="Franco",
         apellido="Rodriguez",
-        correo="francogrch@mail.com",
+        correo="francogrch+encargado@gmail.com",
         roles_ids=[encargado.id],
         password=passwordAll,
         id_tipo_identificacion=pasaporte.id,
@@ -169,7 +169,7 @@ def run():
     user3 = users.create_usuario(
         nombre="Roberto",
         apellido="López",
-        correo="roberto@mail.com",
+        correo="francogrch+inquilino@gmail.com",
         roles_ids=[inquilino.id],
         password=passwordAll,
         id_tipo_identificacion=cedula.id,
