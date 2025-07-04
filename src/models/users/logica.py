@@ -430,7 +430,7 @@ def tiene_reservas_en_curso(usuario):
             return True
     return False
 
-def eliminar_inquilino(user_id):
+def eliminar_inquilino(user_id, es_inquilino=False):
     from src.models.reservas.logica import cancelar_reservas_not_commit
     usuario = Usuario.query.get(user_id)
     if not usuario:
@@ -440,6 +440,8 @@ def eliminar_inquilino(user_id):
     if usuario.delete_at:
         raise ValueError("El usuario ya está eliminado")
     if tiene_reservas_en_curso(usuario):
+        if es_inquilino:
+            raise ValueError("Tienes una reserva en curso, no te podes eliminar.")
         usuario.is_bloqueado = True
         cancelar_reservas_not_commit(user_id)
         db.session.commit()

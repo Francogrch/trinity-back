@@ -755,7 +755,7 @@ def cambiar_estado_usuario(user_id):
 
 @user_blueprint.delete('/eliminarInquilino/<int:user_id>')
 @jwt_required()
-@rol_requerido(Rol.ADMINISTRADOR.value)
+@rol_requerido([Rol.ADMINISTRADOR.value])
 def eliminar_usuario(user_id):
     user = users.get_usuario_by_id(user_id)
     if not user:
@@ -765,3 +765,26 @@ def eliminar_usuario(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return jsonify({'mensaje': 'Usuario eliminado correctamente'}), 200
+
+
+@user_blueprint.delete('/me')
+@rol_requerido([Rol.INQUILINO.value])
+@jwt_required()
+def eliminar_usuario_actual():
+    """
+    Elimina el usuario autenticado.
+    - Método: DELETE
+    - URL: /usuarios/me
+    - Respuesta: Mensaje de éxito o error.
+    """
+    user = users.get_usuario_by_id(get_jwt_identity())
+    #user = users.get_usuario_activo_by_id("6")
+    if not user:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+    if not user.get_roles()['is_inquilino']:
+        return jsonify({'error': 'Solo los inquilinos pueden eliminar su cuenta'}), 403
+    try:
+        users.eliminar_inquilino(user.id,es_inquilino=True)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    return jsonify({'mensaje': 'Cuenta eliminada correctamente'}), 200
