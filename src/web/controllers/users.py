@@ -751,3 +751,17 @@ def cambiar_estado_usuario(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return users.get_schema_usuario().dump(user), 200
+
+
+@user_blueprint.delete('/eliminarInquilino/<int:user_id>')
+@jwt_required()
+@rol_requerido(Rol.ADMINISTRADOR.value)
+def eliminar_usuario(user_id):
+    user = users.get_usuario_by_id(user_id)
+    if not user:
+        return jsonify({'error': 'Usuario no encontrado'}), 404    
+    try:
+        users.eliminar_inquilino(user_id)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    return jsonify({'mensaje': 'Usuario eliminado correctamente'}), 200

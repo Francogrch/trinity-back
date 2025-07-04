@@ -99,6 +99,14 @@ def hay_reservas_solapadas(id_propiedad, start_date, end_date):
     Reserva.fecha_fin >= start_date
     ).first() is not None
 
+def cancelar_reservas_not_commit(user_id):
+    from datetime import date
+    reservas = Reserva.query.filter_by(id_inquilino=user_id).filter(Reserva.id_estado.in_((1, 2))).all()
+    for reserva in reservas:
+        if not (reserva.fecha_inicio.date() <= date.today() <= reserva.fecha_fin.date() and reserva.id_estado not in [3,4]):
+            reserva.id_estado = 3  # Cambia a estado "Cancelada"
+    return reservas
+
 def get_chat_id_reserva(reserva_id):
     reserva = Reserva.query.get(reserva_id)
     if not reserva:

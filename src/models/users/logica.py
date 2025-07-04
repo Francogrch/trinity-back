@@ -419,6 +419,50 @@ def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
             for permiso, valor in rol_permisos.items():
                 permisos[permiso] = permisos[permiso] or valor
         return permisos
+    
+def tiene_reservas_en_curso(usuario):
+    from src.models.reservas.logica import get_reservas_por_usuario
+    reservas = get_reservas_por_usuario(usuario)
+    for reserva in reservas:
+        # Testear bien este if
+        print(f"Reserva: {reserva.id}, Fecha Inicio: {reserva.fecha_inicio}, Fecha Fin: {reserva.fecha_fin}, Estado: {reserva.id_estado}")
+        if reserva.fecha_inicio.date() <= date.today() <= reserva.fecha_fin.date() and reserva.id_estado not in [3,4]:
+            return True
+    return False
+
+def eliminar_inquilino(user_id):
+    from src.models.reservas.logica import cancelar_reservas_not_commit
+    usuario = Usuario.query.get(user_id)
+    if not usuario:
+        return None
+    if usuario.get_roles()["is_admin"] or usuario.get_roles()["is_encargado"]:
+        raise ValueError("No se puede eliminar un usuario con rol de administrador o encargado.")
+    if usuario.delete_at:
+        raise ValueError("El usuario ya está eliminado")
+    if tiene_reservas_en_curso(usuario):
+        usuario.is_bloqueado = True
+        cancelar_reservas_not_commit(user_id)
+        db.session.commit()
+        raise ValueError("El usuario tiene reservas en curso, no se puede eliminar. Fue bloqueado. Se cancelaron reservas futuras.")
+    try:
+        usuario.delete_at = date.today()
+        cancelar_reservas_not_commit(user_id)
+        # Hay que testear que el correo pueda ser null, hay que modificar el esquema
+        usuario.correo = f"{usuario.correo}{date.today().strftime('%Y%m%d')}"
+        usuario.nombre = f"{usuario.nombre} (eliminado)"
+        usuario.apellido = f"{usuario.apellido} (eliminado)"
+        usuario.numero_identificacion = None
+        usuario.is_bloqueado = True
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        raise ValueError("Error de integración: No se puede eliminar el usuario porque tiene datos relacionados.")
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    return usuario
+
+
 
 def get_schema_usuario():
     return UsuarioSchema()
