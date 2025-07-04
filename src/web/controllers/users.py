@@ -639,7 +639,8 @@ def registrar_inquilino():
     data = request.get_json()
     data['password_hash'] = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     response = registrar(data)
-
+    if response.keys() == {'error'}:
+        return response
     # Generar datos necesarios para el email
     usuario = users.get_usuario_by_id(response.get('id'))  # Busca el usuario por id
     access_token = auth.definir_password(usuario)
