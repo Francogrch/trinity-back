@@ -778,7 +778,7 @@ def eliminar_usuario_actual():
     - Respuesta: Mensaje de éxito o error.
     """
     user = users.get_usuario_by_id(get_jwt_identity())
-    #user = users.get_usuario_activo_by_id("3")
+    #user = users.get_usuario_activo_by_id("10")
     if not user:
         return jsonify({'error': 'Usuario no encontrado'}), 404
     if not user.get_roles()['is_inquilino']:

@@ -451,8 +451,7 @@ def eliminar_inquilino(user_id, es_inquilino=False):
     try:
         usuario.delete_at = date.today()
         cancelar_reservas_not_commit(user_id)
-        # Hay que testear que el correo pueda ser null, hay que modificar el esquema
-        usuario.correo = f"{usuario.correo}{date.today().strftime('%Y%m%d')}"
+        usuario.correo = None
         usuario.nombre = f"{usuario.nombre} (eliminado)"
         usuario.apellido = f"{usuario.apellido} (eliminado)"
         usuario.numero_identificacion = None
