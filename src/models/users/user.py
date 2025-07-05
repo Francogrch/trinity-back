@@ -206,6 +206,8 @@ class UsuarioResumidoSchema(ma.SQLAlchemyAutoSchema):
     apellido = ma.String(dump_only=True)
     correo = ma.String(dump_only=True)
     is_bloqueado = ma.Boolean(dump_only=True)
+    fecha_nacimiento = ma.Date(dump_only=True)
+    pais = ma.Function(lambda obj: obj.pais.nombre)
     tipo_identificacion = ma.Function(lambda obj: obj.tipo_identificacion.nombre)
     numero_identificacion = ma.String(dump_only=True)
     calificacion = ma.Function(lambda obj: obj.get_avg_calificacion())
