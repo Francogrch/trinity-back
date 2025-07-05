@@ -30,7 +30,7 @@ def get_encargados():
 def get_inquilinos():
     inquilinos = db.session.query(Usuario).\
     join(Usuario.roles).\
-    filter(Rol.id == EnumRol.INQUILINO.value).\
+    filter(Rol.id == EnumRol.INQUILINO.value, Usuario.delete_at == None).\
     all()
     return inquilinos
 
@@ -423,6 +423,8 @@ def get_permisos_usuario(usuario, modo='combinado', rol_exclusivo=None):
 def tiene_reservas_en_curso(usuario):
     from src.models.reservas.logica import get_reservas_por_usuario
     reservas = get_reservas_por_usuario(usuario)
+    if not reservas:
+        return False
     for reserva in reservas:
         # Testear bien este if
         print(f"Reserva: {reserva.id}, Fecha Inicio: {reserva.fecha_inicio}, Fecha Fin: {reserva.fecha_fin}, Estado: {reserva.id_estado}")
