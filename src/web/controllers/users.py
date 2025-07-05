@@ -785,6 +785,8 @@ def eliminar_usuario_actual():
         return jsonify({'error': 'Solo los inquilinos pueden eliminar su cuenta'}), 403
     try:
         users.eliminar_inquilino(user.id,es_inquilino=True)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return jsonify({'mensaje': 'Cuenta eliminada correctamente'}), 200
