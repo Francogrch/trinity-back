@@ -185,7 +185,7 @@ def run():
         nombre="Emilia",
         apellido="Martínez",
         correo="emilia@mail.com",
-        roles_ids=[encargado.id],
+        roles_ids=[inquilino.id],
         password=passwordAll,
         id_tipo_identificacion=dni.id,
         numero_identificacion="23456789",
@@ -255,7 +255,7 @@ def run():
     tarjeta3 = Tarjeta(
         numero="4000000000000002",
         nombre_titular="Raul Gómez",
-        fecha_vencimiento="06/25",
+        fecha_vencimiento="06/26",
         cvv="789",
         usuario_id=user2.id,
         id_marca=visa.id,
@@ -299,7 +299,7 @@ def run():
 
     # Relacionar tarjetas solo con usuarios que sean inquilinos
     #user1.tarjetas.extend([tarjeta1, tarjeta2])
-    user2.tarjetas.append(tarjeta3)
+    user4.tarjetas.append(tarjeta3)
     user3.tarjetas.append(tarjeta4)
     user6.tarjetas.append(tarjeta5)
     user7.tarjetas.append(tarjeta6)
@@ -731,7 +731,7 @@ def run():
         "id_chat": None,
         "id_estado": estadoConfirmado.id,
         "fecha_inicio": datetime(2025, 7, 1),
-        "fecha_fin": datetime(2025, 7, 6)
+        "fecha_fin": datetime(2025, 7, 12)
     })
 
     reserva4 = reservas.create_reserva({
@@ -744,7 +744,7 @@ def run():
         "id_chat": None,
         "id_estado": estadoFinalizada.id,
         "fecha_inicio": datetime(2025, 6, 1),
-        "fecha_fin": datetime(2025, 7, 1)
+        "fecha_fin": datetime(2025, 7, 5)
     })
 
     reserva5 = reservas.create_reserva({
@@ -815,7 +815,7 @@ def run():
     reserva10 = reservas.create_reserva({
         "id_propiedad": prop1.id,
         "id_inquilino": user3.id,
-        "id_usuario_carga": None,
+        "id_usuario_carga": user2.id,
         "cantidad_personas": 3,
         "monto_pagado": 120.0,
         "monto_total": 360.0,
@@ -1069,11 +1069,11 @@ def run():
     """
     img16 = imagenes.create_imagen(
         url="/imagenes/usuario/16.png",
-        id_usuario=user3.id,
+        id_usuario=user6.id,
     )
     img17 = imagenes.create_imagen(
         url="/imagenes/usuario/17.png",
-        id_usuario=user3.id,
+        id_usuario=user6.id,
     )
     img18 = imagenes.create_imagen(
         url="/imagenes/propiedad/18.png",
@@ -1085,11 +1085,11 @@ def run():
     )
     img20 = imagenes.create_imagen(
         url="/imagenes/usuario/20.jpeg",
-        id_usuario=user4.id,
+        id_usuario=user3.id,
     )
     img21 = imagenes.create_imagen(
         url="/imagenes/usuario/21.png",
-        id_usuario=user4.id,
+        id_usuario=user3.id,
     )
     img22 = imagenes.create_imagen(
         url="/imagenes/documentacion/22.jpeg",
