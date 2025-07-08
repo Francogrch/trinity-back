@@ -35,10 +35,25 @@ def get_inquilinos():
     return inquilinos
 
 def get_inquilinos_activos():
+    ahora = datetime.now()
+    mes_actual = ahora.month
+    anio_actual = ahora.year % 100
+
     inquilinos = db.session.query(Usuario).\
     join(Usuario.roles).\
     filter(Rol.id == EnumRol.INQUILINO.value).\
     filter(Usuario.is_bloqueado == False).\
+    join(Usuario.tarjetas).\
+    filter(
+        sqlalchemy.and_(
+            db.func.substr(Tarjeta.fecha_vencimiento, 4, 2).cast(db.Integer) > anio_actual,
+            Tarjeta.fecha_vencimiento != None
+        ) |
+        sqlalchemy.and_(
+            db.func.substr(Tarjeta.fecha_vencimiento, 4, 2).cast(db.Integer) == anio_actual,
+            db.func.substr(Tarjeta.fecha_vencimiento, 1, 2).cast(db.Integer) >= mes_actual
+        )
+    ).\
     all()
     return inquilinos
 
