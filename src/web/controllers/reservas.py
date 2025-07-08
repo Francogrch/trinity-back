@@ -69,7 +69,10 @@ def create_reserva():
     else:
         data['id_usuario_carga'] = get_jwt_identity()
     if users.is_usuario_bloqueado(data['id_inquilino']):
-        return {'error': 'Usuario bloqueado'}, 422
+        return {
+                'title': "Oops..."
+                'error': 'Tu cuenta ha sido bloqueado. Si crees que fue error, contactate con nosotros.',
+                }, 422
     try:
         data_reserva = reservas.get_schema_reserva().load(data)
         if reservas.hay_reservas_solapadas(
