@@ -762,6 +762,8 @@ def eliminar_usuario(user_id):
         return jsonify({'error': 'Usuario no encontrado'}), 404    
     try:
         users.eliminar_inquilino(user_id)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return jsonify({'mensaje': 'Usuario eliminado correctamente'}), 200
