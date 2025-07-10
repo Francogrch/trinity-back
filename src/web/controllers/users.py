@@ -378,14 +378,15 @@ def delete_usuario_by_id(user_id):
 def update_usuario(user_id):
     data = request.get_json()  # Obtiene los datos a actualizar
     try:
-        usuario = users.update_me(user_id, data)  # Actualiza el usuario
+        usuario = users.get_usuario_by_id(user_id)
         if not usuario:
             return jsonify({'mensaje': 'Usuario no encontrado'}), 404  # Si no existe, error
         if users.existe_identificacion(
                 id_tipo_identificacion=data.get('tipo_identificacion'),
                 numero_identificacion=data.get('numero_identificacion'),
-                id_usuario=usuario.id):
+                id_usuario=user_id):
             raise ValueError("Ya existe un usuario con ese tipo y número de identificación.")
+        usuario = users.update_me(user_id, data)  # Actualiza el usuario
         return users.get_schema_usuario().dumps(usuario)  # Retorna usuario actualizado
     except ValidationError as err:
         return (err.messages, 422)  # Error de validación
