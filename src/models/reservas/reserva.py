@@ -92,7 +92,7 @@ class ReservaSchema(ma.Schema):
     fecha_fin = ma.DateTime(required=True)
     created_at = ma.DateTime(dump_only=True)
     updated_at = ma.DateTime(dump_only=True)
-
+    propiedad = ma.Nested("PropiedadSchema", only=["nombre"], dump_only=True)
     estado = ma.Function(lambda obj: obj.estado.label)
     id_doc = ma.Method("get_image_ids", dump_only=True)
 
