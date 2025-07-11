@@ -1515,6 +1515,22 @@ def run():
             "fecha_inicio": datetime(2029, 7,8),
             "fecha_fin": datetime(2029, 7, 10)
         })
+    reserva37 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 8),
+            "fecha_fin": datetime(2025, 7, 9)
+        })
+    img39 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva37.id,
+    )
 
 
     
