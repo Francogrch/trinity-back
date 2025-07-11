@@ -1108,4 +1108,426 @@ def run():
         id_reserva=reserva2.id,
     )
 
+    # Reservas demo 2
+
+    calificacion_prop = calificaciones.create_calificacion_propiedad({
+        "confort": 3,
+        "instalaciones_servicios": 4,
+        "limpieza": 4,
+        "personal": 5,
+        "precio_calidad": 5,
+        "ubicacion": 5
+        })
+    calificacion_inquilino = calificaciones.create_calificacion_inquilino({
+        "calificacion": 3
+        })
+    reserva11 = reservas.create_reserva({
+        "id_propiedad": prop5.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
+        "cantidad_personas": 3,
+        "monto_pagado": 120.0,
+        "monto_total": 360.0,
+        "id_chat": None,
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2025, 7, 6),
+        "fecha_fin": datetime(2025, 7, 7)
+    })
+    reserva12 = reservas.create_reserva({
+        "id_propiedad": prop5.id,
+        "id_inquilino": user3.id,
+        "id_usuario_carga": None,
+        "cantidad_personas": 3,
+        "monto_pagado": 120.0,
+        "monto_total": 360.0,
+        "id_chat": None,
+        "id_estado": estadoFinalizada.id,
+        "fecha_inicio": datetime(2025, 7, 4),
+        "fecha_fin": datetime(2025, 7, 5)
+    })
+    reserva12.calificar_propiedad(calificacion_prop)
+
+    reserva13 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 1),
+            "fecha_fin": datetime(2025, 7, 3)
+        })
+    reserva13.calificar_inquilino(calificacion_inquilino)
+
+    reserva14 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 30),
+            "fecha_fin": datetime(2025, 7, 1)
+        })
+    reserva14.calificar_inquilino(calificacion_inquilino)
+    reserva14.calificar_propiedad(calificacion_prop)
+
+    reserva15 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 1),
+            "fecha_fin": datetime(2025, 7, 2)
+        })
+    reserva15.calificar_inquilino(calificacion_inquilino)
+    reserva15.calificar_propiedad(calificacion_prop)
+    img26 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva15.id,
+    )
+    reserva16 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 2),
+            "fecha_fin": datetime(2025, 7, 4)
+        })
+    reserva16.calificar_propiedad(calificacion_prop)
+    img27 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva16.id,
+    )
+    reserva17 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 5),
+            "fecha_fin": datetime(2025, 7, 6)
+        })
+    reserva17.calificar_inquilino(calificacion_inquilino)
+    img28 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva17.id,
+    )
+
+    reserva18 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 25),
+            "fecha_fin": datetime(2025, 6, 30)
+        })
+    reserva18.calificar_propiedad(calificacion_prop)
+    reserva18.calificar_inquilino(calificacion_inquilino)
+    img29 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva18.id,
+    )
+    reserva19 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 20),
+            "fecha_fin": datetime(2025, 6, 25)
+        })
+    img30 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva19.id,
+    )
+
+    reserva20 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 20),
+            "fecha_fin": datetime(2025, 6, 25)
+        })
+    
+    # Finalizadas inquilino
+    reserva21 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 6),
+            "fecha_fin": datetime(2025, 7, 7)
+        })
+    reserva22 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 4),
+            "fecha_fin": datetime(2025, 7, 5)
+        })
+    reserva22.calificar_propiedad(calificacion_prop)
+
+    reserva23 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 6),
+            "fecha_fin": datetime(2025, 7, 7)
+        })
+    reserva23.calificar_propiedad(calificacion_prop)
+    reserva23.calificar_inquilino(calificacion_inquilino)
+    img31 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva23.id,
+    )
+    reserva24 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 7, 4),
+            "fecha_fin": datetime(2025, 7, 5)
+        })
+    reserva24.calificar_propiedad(calificacion_prop)
+    img32 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva24.id,
+    )
+    reserva25 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 24),
+            "fecha_fin": datetime(2025, 6, 25)
+        })
+    img33 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva25.id,
+    )
+    reserva26 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": None,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2025, 6, 24),
+            "fecha_fin": datetime(2025, 6, 25)
+        })
+    # Finalizadas propiedades ajenas
+    reserva27 = reservas.create_reserva({
+            "id_propiedad": prop4.id,
+            "id_inquilino": user4.id,
+            "id_usuario_carga": user2.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2023, 7, 6),
+            "fecha_fin": datetime(2023, 7, 7)
+        })
+    reserva28 = reservas.create_reserva({
+            "id_propiedad": prop4.id,
+            "id_inquilino": user4.id,
+            "id_usuario_carga": user2.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2023, 7, 3),
+            "fecha_fin": datetime(2023, 7, 5)
+        })
+    reserva28.calificar_propiedad(calificacion_prop)
+    reserva29 = reservas.create_reserva({
+            "id_propiedad": prop1.id,
+            "id_inquilino": user4.id,
+            "id_usuario_carga": user2.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2023, 7, 1),
+            "fecha_fin": datetime(2023, 7, 3)
+        })
+    img34 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva29.id,
+    )
+    reserva30 = reservas.create_reserva({
+            "id_propiedad": prop1.id,
+            "id_inquilino": user4.id,
+            "id_usuario_carga": user2.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoFinalizada.id,
+            "fecha_inicio": datetime(2023, 5, 18),
+            "fecha_fin": datetime(2023, 5, 23)
+        })
+    img35 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva30.id,
+    )
+    reserva30.calificar_propiedad(calificacion_prop)
+
+    # Reservas confirmadas 
+    reserva31 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoConfirmado.id,
+            "fecha_inicio": datetime(2027, 7,12),
+            "fecha_fin": datetime(2027, 7, 13)
+        })
+    img36 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva31.id,
+    )
+
+    reserva32 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoConfirmado.id,
+            "fecha_inicio": datetime(2027, 7,8),
+            "fecha_fin": datetime(2027, 7, 10)
+        })
+    
+    reserva33 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoConfirmado.id,
+            "fecha_inicio": datetime(2025, 7,10),
+            "fecha_fin": datetime(2025, 7, 12)
+        })
+    img37 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva33.id,
+    )
+    reserva34 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoConfirmado.id,
+            "fecha_inicio": datetime(2025, 7,10),
+            "fecha_fin": datetime(2025, 7, 12)
+        })
+    # Reservas canceladas
+    reserva35 = reservas.create_reserva({
+            "id_propiedad": prop2.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoCancelada.id,
+            "fecha_inicio": datetime(2029, 7,12),
+            "fecha_fin": datetime(2029, 7, 13)
+        })
+    img38 = imagenes.create_imagen(
+        url="/imagenes/documentacion/25.png",
+        id_reserva=reserva35.id,
+    )
+    reserva36 = reservas.create_reserva({
+            "id_propiedad": prop5.id,
+            "id_inquilino": user3.id,
+            "id_usuario_carga": user5.id,
+            "cantidad_personas": 3,
+            "monto_pagado": 120.0,
+            "monto_total": 360.0,
+            "id_chat": None,
+            "id_estado": estadoCancelada.id,
+            "fecha_inicio": datetime(2029, 7,8),
+            "fecha_fin": datetime(2029, 7, 10)
+        })
+
+
+    
+    
+    
+
+    
+
+
+
+
+
+
+
+
 
